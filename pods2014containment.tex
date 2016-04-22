@@ -1,0 +1,827 @@
+Pichler and Skritek studied query containment and query equivalence of well
+designed SPARQL in~\cite[pichler2014containment]. As we want to analyse the
+complexity of the SERVICE operator regarding containment and equivalence it 
+is crucial to understand the work that was previously done.
+Pichler and Skritek did a fine grained analysis of well-designed SPARQL by
+dividing it into several fragments. The fragments are distinguished by
+the operators used. All fragments contain triples and the AND operator. This
+fragment corresponds to conjunctive queries which was proven in
+~\cite{letelier2013static} and is denoted with $\{\emptyset\}$. Adding the UNION 
+operator yields the fragment denoted by $\{\cup\}$. Adding projection to the
+yields the fragment denoted by $\{\pi\}$ and adding both the UNION operator and
+projection yields the fragment denoted by $\{\pi,\cup\}$.
+
+
+\begin{definition}[Containment]
+\medskip\noindent $P_1$ is contained in $P_2$ $(P_1 \subseteq P_2)$ 
+if $\ll P_1 \rr_G^{DS} \subseteq
+\ll P_2 \rr_G^{DS}$, for every RDF dataset 
+$DS$.
+\end{definition}
+
+\begin{definition}[Equivalence]
+Given two graph patterns $P_1$ and $P_2$ they are equivalent (written as $P_1
+\equiv P_2$) if ($\ll P_1 \rr^{DS}_{def}  = \ll P_2 \rr^{DS}_{def} $ for every RDF dataset
+$DS$).
+\end{definition}
+
+\begin{definition}[Subsumption]
+\medskip\noindent $P_1$ is subsumed by $P_2$ (denoted $P_1 \sqsubseteq P_2$ if for every $\mu \in \ll P_1 \rr_G$ there exists a $\mu' \in
+\ll P_2 \rr_G^{DS}$, s.t. $\mu \sqsubseteq \mu'$. 
+\end{definition}
+
+
+\noindent After reading the definitions of containment, equivalence and
+subsumption the following complexity theoretical problems arise:\\
+\begin{framed}\noindent CONTAINMENT[$S_1,S_2$]\\
+	INPUT:\quad graph pattern $P_1$ from wd-SPARQL$[S_1]$,
+		 graph pattern $P_2$ from wd-SPARQL$[S_2]$\\
+	QUESTION:  does $P_1 \subseteq P_2$ hold?
+\end{framed}
+\begin{framed}\noindent EQUIVALENCE[$S_1,S_2$]\\
+	INPUT:\quad graph pattern $P_1$ from wd-SPARQL$[S_1]$,
+		 graph pattern $P_2$ from wd-SPARQL$[S_2]$\\
+	QUESTION:  does $P_1 \equiv P_2$ hold?
+\end{framed}
+\begin{framed}\noindent SUBSUMPTION[$S_1,S_2$]\\
+	INPUT:\quad graph pattern $P_1$ from wd-SPARQL$[S_1]$,
+		 graph pattern $P_2$ from wd-SPARQL$[S_2]$\\
+	QUESTION:  does $P_1 \sqsubseteq P_2$ hold?
+\end{framed}
+$S_1$ and $S_2$ always denote a fragment of well designed SPARQL for example
+$\{\cup,\pi\}$. The main results of~\cite{pichler2014containment} are the
+solutions to CONTAINMENT[$S_1,S_2$] and EQUIVALENCE[$S_1,S_2$] where $S_1,S_2$
+are any of the well designed sparql SPARQL fragments mentioned before.
+The results are best represented by the two
+tables~\ref{conttable}~\ref{equivtable}.
+\begin{table}[!ht]\label{conttable}
+\begin{tabular}{|l | l | l | l | l|}
+	\hline
+	$\downarrow S_1 \backslash S_2 \rightarrow$ & $\{\emptyset\}$  &
+	$\{\cup\}$& $\{\pi \}$ & $\{\cup,\pi \}$ \\
+	\hline
+	$\{\emptyset\}$           & NP-c.	& $\Pi^P_2-c.$  & undec. & undec. \\
+	$\{\pi \}$       & NP-c.	& $\Pi^P_2-c.$  & undec. & undec. \\
+	$\{\cup \}$      & NP-c.	& $\Pi^P_2-c.$  & undec. & undec. \\
+	$\{\cup,\pi \}$ & NP-c.	& $\Pi^P_2-c.$  & undec. & undec. \\
+\hline
+\end{tabular}
+\caption{Containment[$S_1,S_2$]}
+\end{table}
+
+\bigskip
+\begin{table}[!ht]\label{equivtable}
+\begin{tabular}{|l |  l | l | l | l|}
+	\hline
+	$\downarrow S_1 \backslash S_2 \rightarrow$ & $\{\emptyset\}$ &
+	$\{\cup\}$& $\{\pi \}$ & $\{\cup,\pi \}$ \\
+	\hline
+	$\{\emptyset\}$			&  NP-c.				& -				 & -         & - \\
+	$\{\pi \}$		&  $\Pi^P_2-c.$ 		& $\Pi^P_2-c.$   & -		 & - \\
+	$\{\cup \}$		&  $\Pi^P_2-c.$ 		& $\Pi^P_2-h.$   & undec.    & - \\
+	$\{\cup,\pi \}$&  $\Pi^P_2-c.$ 		& undec.         & undec.    & undec. \\
+\hline
+\end{tabular}
+\captionof{table}{Equivalence[$S_1,S_2$]}
+\end{table}
+
+
+\section{Decidable Containment}
+
+Researching query containment and query equivalence is very important in the
+context of static query analysis and optimization: later on when we analyse
+boundedness of the destination variable of the service operator, we will see
+that equivalence plays an important role whether a query is feasible to be
+evaluated. Furthermore optimization of queries is done by replacing a query with
+a new query which posesses better computational properties. Replacing queries
+preserving the meaning of the original meaning can only be done by checking if
+the replaced query is equivalent to the original query. Equivalence is again
+tightly connected to containment because equivalence of two queries holds if and
+only if both direction of containment hold.
+First the decidable cases are proven, i.e., $S_1$ is an arbitrary subsetset of
+$\{\cup,\pi\}$ and $S_2$ doesn't contain $\pi$. 
+In order to minimize the number of proofs a well known strategy is applied: when membership of a
+general case is shown, the more specific case is included and when showing
+hardness for a more specific case, the more general cases are included.  
+Showing the following results fill up the first two columns of the
+Containment[$S_1,S_2$] table:
+\begin{itemize}
+	\item NP-membership of CONTAINMENT[$\{\cup,\pi\},\emptyset$]
+	\item $\Pi^P_2$-membership of CONTAINMENT[$\{\cup,\pi\},\{\cup\}$]
+	\item $\Pi^P_2$-hardness of CONTAINMENT[$\emptyset,\{\cup\}$]
+\end{itemize}
+NP-hardness of CONTAINMENT[$\{\cup,\pi\},\{\emptyset\}$] follows immediately
+from the $NP-hardness$ of EQUIVALENCE[$\emptyset,\emptyset$] which was shown
+in~\cite{letelier2013static}.
+
+For the NP-membership of CONTAINMENT[$\{\cup,\pi \, \emptyset\}$], 
+first CONTAINMENT[$\{\pi \, \emptyset\}$] is shown first and extended to 
+CONTAINMENT[$\{\cup,\pi \, \emptyset\}$]. We notice that we need to compare
+pwdPTs and wdPT as $S_1$ contains projections. Theorem \ref{pojwd} provides a
+necessary and sufficient criterion to decide $(T_1,X) \subseteq T_2$.
+
+\begin{theorem}\label{projwd}\cite{pichler2014containment}
+	Let $(T_1,X)$ be a pwdPT and let $T_2$ be a wdPT. Then $(T_1,X) \subseteq
+	T_2$ iff for every subtree $T_1'$ of $T_1$,
+	\begin{enumerate}
+		\item either there exists a child node $n$ of $T_1'$ and a homomorphism
+			$h:pat(n) \rightarrow pat(T_1')$ with $h(?X) = ?X$ for all $?X \in
+			vars(n) \cap vars(T_1')$
+		\item or there exists a subtree $T_2'$ of $T_2$, s.t.
+			\begin{enumerate}
+				\item $fvars(T_1') = vars(T_2')$
+				\item $pat(T_2') \subseteq pat(T_1')$, and
+				\item for all extensions $\hat{T_2'}$ of $T'_2$ there exists an
+					extension $\hat{T_1'}$ of $T_1'$ and a homomorphism 
+					$h: pat(\hat{T_1'}) \mapsto pat(T_1') \cup pat(\hat{T_2'})$
+					with $h(?X) = ?X$ for all $?X \in vars (T_1')$.
+			\end{enumerate}
+	\end{enumerate}
+\end{theorem}
+\begin{proofidea}
+Let $G$ be an arbitrary RDF graph. Let $T_1'$ be an arbitrary subtree
+of $T_1$. Let $\sigma$ be a mapping s.t. $dom(\sigma) = vars(T_1')$ and $\sigma
+\in \ll T_1 \rr_G$. We need to show that $\sigma_{|X} \in \ll T_2 \rr_G$.
+
+The first case of the theorem captures the case where we have a subtree which is
+not maximal. For this subtree we could take any $\sigma
+\in \ll T_1' \rr_G$ and extend it with the variables in $n$ because  
+$h:pat(n) \rightarrow pat(T_1')$ with $h(?X) = ?X$ for all $?X \in
+vars(n) \cap vars(T_1')$ holds. But such a mapping $\sigma$ can not be in $\ll
+T_1 \rr_G$. Thus the subset relation is obviously fulfilled.
+
+The second case captures solutions $\sigma$ with $dom(\sigma) = vars(T'_1)$.
+It remains to check if $\mu = \sigma_{|X}$ is in $\ll T_2\rr_G$.
+The first two conditions make sure that $\mu$ also maps $T'_2$ into $G$. To make
+it a solution for $T_2$ it remains to show that there is no extension $\mu'$ of $\mu$
+so that $\mu' \in \ll T_2\rr_G$. Property (2c) makes sure that if $\mu'$ exists,
+we can find an extension $\sigma'$ such that it binds more variables than
+$\sigma$. But then $\sigma$ is no solution.
+\end{proofidea}
+
+\begin{example}
+	maybe example for the theorem 3
+\end{example}
+
+It is easy to see that Theorem~\ref{projwd} can be transformed into an algorithm
+with running time $\Pi^P_2$: All subtrees $T_1'$ of $T_1$ are tested if there
+exists a subtree $T_2'$ of $T_2$ which produces the same mappings as $T_1'$.
+It is far from obvious that the problem is not $\Pi^P_2$ hard: One can in fact
+get rid of one source of complexity and push the complexity down to $NP$.
+The crucial idea is, that we don't need to look at all the subtrees $T_1'$ of
+$T_1$ but polynomially many. The subtrees of interest can be described by
+defining the closure of a variable.
+
+It is easy to test if $vars(T_2) = fvars(T_1)$ by traversing the trees once, so
+we assume w.l.o.g. that this property holds. Also, we know that $vars(T_2) =
+fvars(T_1)$ must hold for $(T_1,X) \subseteq T_2$ to be true as this is an
+immediate consequence from Theorem~\ref{projwd} (just consider $T_1' = T_1$).
+
+\begin{definition}[Closure $(C_1(?X),C_2(?X))$ of a
+	variable~\cite{pichler2014containment}]
+	Let $(T_1,X)$ be a pwdPT and let $T_2$ be a wdPT with
+	$vars(T_2) = fvars(T_1)$. Consider $?X \in fvars(T_1)$. The closure
+	of $?X$ in $(T_1,X)$ and $T_2$ is the pair $(C_1(?X),C_2(?X))$ where
+	$C_i(?X)$ (for $i \in \{1,2\}$) is a subtree of $T_i$ such that the
+	following conditions are met:
+	\begin{enumerate}
+		\item $branch(new-node_{T_1}(?X)) \subseteq V(C_1(?X))$,
+		\item $r_2 \in V(C_2(?X))$,
+		\item $fvars(C_1(?X)) = vars(C_2(?X))$, and
+		\item $C_1(?X)$ and $C_2(?X)$ are minimal with regard to properties 1-3.
+	\end{enumerate}
+	Minimality in (4) means that for all subtrees $D_1$ of $T_1$ and $D_2$ of
+	$T_2$, if $D_1$ and $D_2$ satisfy conditions 1-3, then $V(C_1) \subseteq
+	V(D_1)$ and $V(C_2) \subseteq V(D_2)$ meaning the nodes for the subtrees
+	$V(C_1)$ and $V(C_2)$ are minimized.
+\end{definition}
+
+Because we assumed $vars(T_2) = fvars(T_1)$ we can easily see that the closure
+always exists. 
+
+\begin{proposition}[~\cite{pichler2014containment}]
+	Let $(T_1,X)$ be a pwdPT and let $T_2$ be a wdPT with $fvars(T_1) =
+	vars(T_2)$. Then the closure $(C_1(?X),C_2(?X))$ exists and can be
+	efficiently computed.
+\end{proposition}
+\begin{proofidea}
+	The algorithm chooses a not yet chosen variable $?X \in fvars(T_1)$ and
+	initializes the trees $C_1(?X)$ and $C_2(?X)$ by setting $C_1(?X) =
+	branch(new-node_{T_1})$ and $C_2(?X) = V(C_2(?X)) = \{r_2\}$ where $r_2$ is
+	the root of $T_2$. It remains to fulfill the condition $fvars(C_1(?X)) =
+	vars(C_2(?X))$ in such a way that $C_1(X)$ and $C_2(X)$ are minimal with
+	regard to the number of vertices. We either have one of the following cases:
+	\begin{enumerate}
+		\item $fvars(C_1(?X)) = vars(C_2(?X))$: This means we are done and have
+			successfully computed the closure $(C_1(?X), C_2(?X))$
+		\item $fvars(C_1(?X)) \supset vars(C_2(?X))$: This means we miss the
+			variables $fvars(C_1(?X)) \backslash vars(C_2(?X))$. By
+			iteratively adding $branch(new-node_{T_2}(?Y))$ to $C_2(?X)$ for all
+			variables $?Y \in fvars(C_1(?X)) \backslash vars(C_2(?X))$ all
+			the missing variables are now in $C_2(?X)$.
+		\item $fvars(C_1(?X)) \subset vars(C_2(?X))$: This means we miss the
+			variables $vars(C_2(?X)) \backslash fvars(C_1(?X))$. By iteratively
+			adding $branch(new-node_{T_1}(?Y))$ to $C_1(?X)$ for all variables
+			$?Y \in vars(C_2(?X)) \backslash fvars(C_1(?X))$, all the missing
+			variables are now in $C_1(?X)$.
+	\end{enumerate}
+	By the assumed condition $fvars(T_1) = vars(T_2)$, the procedure will
+	eventually reach a fixpoint.
+	It remains to prove why this fixpoint is also the least fixpoint:
+	TODO
+	dadada proof
+	TODO
+\end{proofidea}
+
+Using the closure of the variable is inspired by the following idea:
+Assume $\mu$ is a solution mapping of $(T_1,X)$ and $?Y$ is part of $\mu$, i.e.,
+a free variable. Now we need to show that $\mu$ is also part of $T_2$, i.e.,
+$\mu$ must bind all the variables that occur in $T_2$ on the branch from the
+root to the node $n$ where $?Y$ is introduced. If again an additional variable
+$?Z$ is introduced in this path in tree of $T_2$, $\mu$ must bind all the free
+variables in $(T_1,X)$ along the branch from the root to the first occurrence of
+$?Z$. Using the idea of the closure allows us to formulate an alternative characterization of
+$(T_1,X) \subseteq T_2$. The improvement is that we only need to check
+polynomially many closures and not exponentially many subtrees of $(T_1,X)$.
+
+\begin{theorem}[\cite{pichler2014containment}]\label{projwd2}
+	Let $(T_1,X)$ be a pwdPT and let $T_2$ be a wdPT. Then $(T_1,X) \subseteq
+	T_2$ if and only if $fvars(T_1) = vars(T_2)$ and for every $?X \in
+	fvars(T_1)$
+	\begin{enumerate}
+		\item $pat(C_2(?X)) \subseteq pat(C_1(?X))$
+		\item for every $n \in V(C_1(?X)) \ branch (new-node_{T_1}(?X))$, there
+			exists a homomorphism $h_1: pat(n) \mapsto pat(branch(\hat{n})) \cup
+			pat(branch(new-node_{T_1}(?X)))$ (where $\hat{n}$ is the parent node
+			of n in $T_1$) with $h_1(?X) = ?X$ for all $?X \in vars(n) \cap
+			(vars(branch(\cap{n})) \cup vars(branch(new-node_{T_1}(?X))))$, and
+		\item for every child node $m$ of $C_2(?X)$, and for every variable $?Y
+			\in newvars(m)$, the following property holds: let $n \in
+			branch(new-node_{T_1}(?Y))$. Then there exists a homomorphism
+			$h_2:pat(n) \mapsto pat(C_1(?X)) \cup pat(m) \cup
+			pat(branch(\hat{n}))$ (where $\hat{n}$ is the parent node of $n$)
+			with $h_2(?X) = ?X$ for all $?X \in vars(n) \cap (vars(C_1(?X)) \cup
+			vars(branch(\hat{n})))$.
+	\end{enumerate}
+\end{theorem}
+\begin{proofidea}
+	The first property is the most obvious one: every mapping $\sigma$ which is
+	a solution for $C_1(?X)$ assuming $G$ as our graph, results in $\mu =
+	\sigma_{|X}$ also being a solution for $C_2(?X)$.
+	The second condition makes sure that when $?X$ is in the domain of the
+	solution mapping $sigma$ all of $C_1(?X)$ was used when retrieving the
+	mapping $sigma$ from $G$.
+	The last condition is similar to the condition (2c) in the
+	Theorem\ref{projwd}: When $\mu = \sigma_{|X}$ with $dom(\mu) =
+	vars(C_2(?X))$ is not a solution for $T_2$ because $C_2(?X)$ could have been
+	extended with some child of $C_2(?X)$ it must be that it is possible to
+	extend $\sigma$ to some child of $C_1(?X)$.
+\end{proofidea}
+
+In the actual proof of \ref{projwd2}, Theorem $\ref{projwd1}$ is used to show
+that the conditions of $\ref{projwd2}$ are also sufficient.
+
+\begin{theorem}\label{ccuppiempty}
+	CONTAINMENT$[\{\cup,\pi\},\emptyset]$ is in NP.
+\end{theorem}
+\begin{proof}
+	Notice that we can make a procedure deciding Theorem~\ref{projwd2} in NP.
+	Let $(F,X)$ be a well designed pattern forest (pwdPF) and let $T$ be a
+	$wdPT$. It is thus obvious that we consider every pwdPT in the forest and
+	use our procedure, put more formally we get $(F,X) \subseteq T$ iff.
+	$(T_i,X) \supseteq T$ for every $(T_i,X) \in (F,X)$.
+\end{proof}
+
+The next problem that we tackle is CONTAINMENT$[\{\cup,\pi\},\{\cup\}]$: First
+a necessary and sufficient condition for containment is given and then turned
+into an algorithm. For this formulation the definition of a renamed proper
+extension of a wdPF is important.
+\begin{definition}
+	Let $F = \{ T_i \mid \mbox{with } 1\leq i \leq k\}$ be a wdPDF, $F'$ a
+	subforest of $F$. For every $T_i \in F$, an injective renaming function
+	$\rho_i$ with $dom(\rho_i) = vars(T_i)$, s.t. 
+	\begin{enumerate}
+		\item $\rho_i(?X) = ?X$ for all $?X \in vars(F')$,
+		\item $\rho(?X) \neq \rho(?Y)$ for every $?X \in vars(T_i) \backslash
+			vars(F'),i\neq j \in \{ 1, \dots, k\}$ and $?Y \in dom(\rho_j)$.
+			Finally let $\hat{F}$ be the wdPF $\{ \rho_i(T_i) \mid 1 \leq i \leq
+			k\}$. 
+	\end{enumerate}
+	Then a renamed proper extension of $F'$ is a subforest of
+	$\hat{F}$, call it $\hat{F}'$ that has $F'$ as a proper subforest, i.e.,
+	$\hat{F}'$ is not equal to $F'$.
+\end{definition}
+
+\begin{theorem}\label{projwd3}
+	Let $(T_1,X)$ be a pwdPT and let $F_2$ be a wdPF. Then $(T_1,X) \subseteq
+	F_2$ iff for every subtree $T'_1$ of $(T_1,X)$:
+	\begin{enumerate}
+		\item either there exists a child node $n$ of $T'_1$ s.t. there is a
+			homomorphism $h: path(n) \mapsto pat(T'_1)$ with $h(?X) = ?X$ for
+			all $?X \in varS(n) \cap vars(T_1')$
+		\item or there exists a subtree $T'_2$ of $F_2$ with $vars(T'_2) =
+			fvars(T_1')$ and $pat(T'_2) \supseteq pat(T'_1)$ s.t. every
+			renamed proper extension $F'_2$ of $\{T'_2\}$ in $F_2$ satisfies one
+			of the following properties:
+			\begin{enumerate}
+				\item \label{firstcaseprojwd3}there exists a proper renamed extension $\hat{F}'_2$ of
+					$F'_2$ (i.e. a bigger extension than $F'_2$ nodewise),
+			!!!!comment: sollte es dann nicht heissen of $\{T'_2\}$) !!!!
+					and a homomorphism $h_a: pat(\hat{F}'_2) \mapsto
+					pat(F'_2)$ with $h(?X) = ?X$ for all $?X \in
+					vars(\hat{F}'_2)\cap (vars(F'_2) \cup vars(T'_1))$, or
+				\item there exists an extension $\hat{T}'_1$ of $T'_1$ and a
+					homomorphism $h_b: pat(\hat{T}'_1) \mapsto pat(F_2') \cup
+					pat(T'_1)$ with $h(?X) =?X$ for all $?X \in vars(T_1')$, or
+				\item case \ref{firstcaseprojwd3} does not apply and there
+					exists a tree $T \in F'_2$ with $vars(T)= fvars(T'_1)$.
+			\end{enumerate}
+	\end{enumerate}
+\end{theorem}
+\begin{proofidea}
+ The conditions presented in Theorem~\ref{projwd3} are similar to those presented in
+ Theorem~$\ref{projwd1}$: First we choose an arbitrary subtree $T'_1$ of $(T_1,X)$ and
+ inspect the mappings $\sigma$ that $T'_1$ induces assuming an arbitrary Graph
+ $G$: 
+ \begin{itemize}
+	 \item Either $\sigma$ can be extended to some child node of $T_1'$ but then
+ again $\sigma$ is not a solution of $(T_1,X)$ over $G$
+	 \item  or $\sigma_{|X} \in \ll F_2\rr_G$.
+\end{itemize}
+Condition (1) takes care of subtrees for which $\sigma$ could be extended
+to some additional child node of the subtree. This would mean that the subtree
+is not a valid solution for $(T_1,X)$.
+Condition (2) extends condition (2) from Theorem\ref{projwd1}:
+It is easy to see that we fulfill condition (2a) and condition (2b)
+from Theorem~\ref{projwd1} similarly by saying that the subtree $T'_2$ of $F_2$
+with $vars(T'_2) = fvars(T'_1)$ and $pat(T'_2) \subseteq pat(T_1')$.  
+The condition(2c) of Theorem\ref{projwd1} was used to make sure
+that any extension $\mu'$ of $\mu$ for which $\mu' \in \ll T_2\rr_G$ holds would
+result in $\sigma$ being no solution of $T_1$ over $G$. To extend
+condition (2c) of Theorem\ref{projwd1} the notion of proper renamed extension
+comes into use. This is due to the fact that we now have a pattern forest and
+$\mu$ might still be a solution of another tree in $F_2$. This means that all
+subtrees in $F_2$ with $vars(T'_2) = fvars(T'_1)$ and $pat(T'_2) \subseteq
+pat(T'_1)$ must be eligible to be extended to show that $\mu$ is indeed not a
+solution of $F_2$ but extensions of $\mu$ are solutions.
+Condition $(2a)$ forces a certain maximality condition onto the proper renamed
+extensions of $T'_2$, i.e., we cant have more nodes in the proper renamed
+extension $F'_2$ without having a pattern mismatch in the proper renamed
+extension $F'_2$ and
+the extension $\hat{F}'_2$ of it. A pattern mismatch means that the homomorphism $h_a:
+pat(\hat{F}'_2) \mapsto pat(F'_2)$ does not exist.
+Condition $(2c)$ makes sure that the proper renamed extension $F'_2$
+extends all the relevent subtrees of $F_2$, i.e. a relevant subtree is a tree $T
+\in F'_2$ where $vars(T)  =fvars(T'_1)$ !!anm: that is not already included into
+the subforest $F'_2$.???!!
+Condition (2b) checks for the existence of a homomorphism $h_b$ that maps
+$pat(\hat{T'_1})$ into the patterns of the renamed proper extension $pat(F_2)
+\cup pat(T_1')$.
+
+\end{proofidea}
+
+\begin{theorem}
+	CONTAINMENT$[\{\cup,\pi\},\{\cup\}]$ is in $\Pi^P_2$.
+\end{theorem}
+\begin{proof}
+	The characterization in Theorem~\ref{projwd3} yields a more or less
+	straightforward $\Sigma^P_2$-algorithm for testing $(T_1,X) \not\subseteq
+	F_2$: first guess $T'$ and the proper renamed extension $\hat{F}'_2$, and
+	then use a coNP-oracle that there does not exist a child node $n$ and
+	homomorphism $h$ as described by property $(2b)$.
+	To now show  CONTAINMENT$[\{\cup,\pi\},\{\cup\}]$ we extend the algorithm
+	wdPF in the following way: $(F_1,X) \subseteq F_2$ iff. $(T_i,X) \subseteq
+	F_2$ for every $(T_i,X) \in (F_1,X)$.
+\end{proof}
+
+The hardness proof of CONTAINMENT$[\emptyset,\{\cup\}]$ is done by a reduction from
+the well known $\Pi^P_2-complete$ problem $3-QSAT_{\forall,2}$. !!citation
+needed!!.
+
+\begin{framed}\noindent $3-QSAT_{\forall,2}$\\
+	INPUT:A formula $\phi= \forall \vec{x}\exists \vec{y} \psi$,\\
+	where $\psi$ is a Boolean formula in $CNF$ over the variables
+	$\vec{x}\cup\vec{y}$.
+	
+	QUESTION: Can every assignment $I$ on the variables in $\vec{x}$ be extended
+	to an assignment $J$ on $\vec{y}$, s.t. $J \models \psi$?
+\end{framed}
+
+
+\begin{theorem}\label{cemptycup}
+	CONTAINMENT$[\emptyset,\{\cup\}]$ is $\Pi^P_2$-hard.
+\end{theorem}
+\begin{proofidea}
+	Assume an arbtirary instance of $3-QSAT_{\forall,2}$. And construct an
+	instance of CONTAINMENT$[\emptyset,\{\cup\}]$ in form of the as follows: The wdPT $T_1$
+	consists of the root and two child nodes: $n_i, n'_i$ for every variables
+	$x_i \in \vec{x}$. In this way we are able to model the assignment $I$ of
+	the $3-QSAT_{\forall,2}$ problem in form of subtrees of $T_1$. 
+	Additionally we have a child node $n_0$ containing the
+	variables in $\vec{y}$ and an encoding of the formula $\psi$. 
+	
+	It remains to deal with the ``unintended'' subtrees of $T_1$ where given an
+	$i$ either both $n_i$ and $n'_i$, or neither $n_i$ and $n'_i$ are in the subtree.
+	This is done by adding certain wdPTs to $F_2$ which take care of the two
+	problems. The last wdPT added to the forest $F_2$ contains the triples
+	encoding the formula $\psi$ in its root plus the child nodes $n_i,n'_i$.
+	This wdPT produces the solutions of all ``intended'' subtrees of $T'1$ if
+	and only if every assignment $I$ on the variables in $\vec{x}$ can be
+	extended to an assignment $J$ on $\vec{y}$, s.t. $J \models \psi$.
+\end{proofidea}
+
+The section dealing with decidable containment closes with settling the
+complexity of SUBSUMPTION$[S_1,S_2]$ problem for every $S_1, S_2 \subseteq \{
+\cup, \pi \}$. In prior work~\cite{letelier2013static}it was shown, that the simple case
+$S_1=S_2=\emptyset$ is $\Pi_2^P-complete$. 
+Later on in~\cite{letelier2013static} the $\Pi^P_2$-membership 
+was extended to the case where $S_1 = S_2 = \{\pi\}$ holds.
+To establish the $\Pi^P_2-completeness$ to arbitrary $S_1,S_2 \subseteq \{ \cup,
+\pi \}$, it obviously suffices to show the $\Pi_2^P$-membership for the most general case.
+
+\begin{theorem}\label{scuppicuppi}
+	SUBSUMPTION$[\{\cup,\pi\}, \{ \cup, \pi \}]$ is in $\Pi^P_2$.
+\end{theorem}
+\begin{proofidea}
+	Let $(F_1,X)$ and $(F_2,X)$ be two pwdPFs.
+	The main proofidea is that the following critera for subsumption was found:
+	$(F_1,X) \sqsubseteq (F_2,X)$ iff for every subtree $T'_1$ of $F_1$, there
+	exists a subtree $T'_2$ of $F_2$, s.t.
+	\begin{enumerate}
+		\item $fvars(T'_1) \subseteq fvars(T'_2)$ and
+		\item there exists a homomorphism $h:pat(T'_2) \mapsto pat(T'_1)$
+			with $h(?X)= ?X$ for all $?X \in fvars(T_1')$.
+	\end{enumerate}
+	Consider now the following procedure:
+	For all subtrees $T'_1$ of $F_1$ check that there exists a subtree $T'_2$ of
+	$F_2$ together with a homomorphism of the desired property. This procedure
+	can be executed in $\Pi_2^P$ because we have need to check all subtrees
+	for a property which would be in co-NP, but then the property is a
+	homomorphism check which is in NP. So we have a $co-NP^\{NP\}$ runtime.
+\end{proofidea}
+
+In~\cite{letelier2012static} the authors noticed an interesting feature of
+subsumption in SPARQL: In the fragment of $wd-SPARQL[\emptyset]$ subsumption is
+able to characterize equivalence. Assume graph patterns $P_1,P_2 \in
+wd-SPARQL[\emptyset]$. Then $P_1 \equiv P_2$ iff. $P_1 \sqsubseteq P_2$ and 
+$P_2 \sqsubseteq P_1$. In ~\cite{letelier2013static} the authors were able to
+find a counterexample for $wd-SPARQL[\pi]$. 
+Now in~\cite{pichler2014containment} the result is strengtened:
+Assuming one pattern $P_1$ in wd-SPARQL$[\emptyset]$ and one pattern $P_2$ in either
+wd-SPARQL$[\{\Pi\}]$ or wd-SPARQL$[\{\cup\}]$ one can show that $P_1 \not\equiv
+P_2$ but $P_1 \sqsubseteq P_2$ and $P_2 \sqsubseteq P_1$.
+
+\begin{proposition}
+	There exist pairs $P_1,P_2$ of graph patterns $P_1$ from
+	$wd-SPARQL[\emptyset]$ and $P_2$ from either $wd-SPARQL[\{\pi\}]$
+	$wd-SPARQL[\{\cup\}]$, s.t. $P_1 \sqsubseteq P_2$ and $P_2 \sqsubseteq P_1$
+	hold but $P_1 \not\equiv P_2$.
+\end{proposition}
+\begin{proofidea}
+	It is an easy observation that we need two counterexamples to prove the
+	proposition. 
+	\begin{enumerate}	
+		\item At first we consider the case where  $P_1 \in
+			wd-SPARQL[\emptyset]$ and  $P_2 \in wd-SPARQL[\{\cup\}]$. Let $P_1 = t_1 OPT
+			t_2$ and $P_2 = ((t_1) UNION (t_1 AND t_2))$. The patterns $t_1$ and $t_2$
+			are assumed to be distinct.
+			$P_1 \sqsubseteq P_2$ can be easily seen because $P_2$ more or less models
+			the semantics of $OPT$. $P_2 \sqsubseteq P_1$ Also holds because again the
+			semantics of opt are projected into $P_2$. But $P_1 \sqsubseteq P_2$ does
+			obviously not hold since $P_2$ always has mappings which are solely created by
+			$t_1$.
+		\item 
+			Now for the second counterexample where  $P_1 \in
+			wd-SPARQL[\emptyset]$ and  $P_2 \in wd-SPARQL[\{\pi\}]$. 
+			$P_1 = (?X_1,a,?X_2) OPT ((?X_3,a,?X_2) AND (?X3,a,?X_3))$
+			and
+			$P_2 = ((?X_1,a,?X_2) AND (?Y_1,a,Y_2)) OPT ((?X_3,a,?X_2) AND
+			(?X_3,a,?X_3) AND (?Y_3,a,?Y_2) AND (?Y_3,a,?Y_3))$ and $X =
+			\{?X_1,?X_2,?X_3\}$.
+			It remains to show that $P_1 \sqsubseteq (P_2,X)$ and $(P_2,X)
+			\sqsubseteq P_1$ but $P_1 \not\equiv (P_2,X)$.
+		    Towards this goal we observe that the triple patterns in $P_1$ are
+			contained in $P_2$. Also, $P_2$ contains triple patterns with
+			existential variables. We can easily see that there is a
+			homomorphism mapping the triple patterns containing the existential
+			variables to into the
+			patterns of $P_1$. Thus $P_1 \sqsubseteq (P_2,X)$ holds. Also
+			$(P_2,X) \sqsubseteq P_1$ holds, but in general $(P_2,X) \not\subseteq
+			P_1$ since one can provide a graph $G$ and an appropriate
+			instantiation of the existential variables $?Y_1, ?Y_2$ in the root
+			of $P_2$ that block the extension of mapping to the child node.
+			Consider the following RDF graph $G = \{ a(1,1), a(2,3)\}$. Then
+			$\mu = \{?X_1 \mapsto 1, ?X_2 \mapsto 1\} \in \ll (T_2,X)\rr_G$,
+			because of the mapping $\lambda = \mu \cup \{ ?Y_1 \mapsto 2,
+			?Y_2\mapsto 3 \} \in \ll T_2 \rr_G$ which cannot be extended to the
+			child node of $r_2$ However $\mu \notin \ll T_1\rr_G$ since $\mu$
+			can be extended to the child node of $r_1$ by adding $[?X_3 \mapsto
+		1]$.
+			
+	\end{enumerate}
+\end{proofidea}
+\section{Undecidable Containment}
+As we can see the table~\ref{containmenttable} claims that
+$CONTAINMENT[S_1,S_2]$ is undecidable, when $\pi \in S_i$. We don't need to show
+the undecidability for every case, but just as easiest one, i.e.,
+CONTAINMENT$[\emptyset,\{\pi\}]$. Looking at the big picture, the reduction from the conjunctive query answering problem under integrity constraints in form of tuple generating
+dependencies (tgds) yields the undecidability results !!citation needed !!. In a more detailed view
+three changes need to be made, to make the problem suitable for us:
+\begin{enumerate}
+	\item  The undecidability results for the problem refer to arbitrary
+		databases, which would include infinite databases. Our RDF graphs
+		however are a finite set of triples.
+	\item The problem allows predicates of arbitrary length but our RDF graphs
+		contains only triples. 
+	\item Finally, for the problem reduction in the end, it turns out to be
+		convenient to restrict the problem from a set of tgds to a single tgd.
+\end{enumerate}
+
+Much needed is the definition of a tuple generating dependency (tgd):
+\begin{definition}[tuple generating dependency]
+	Let $\phi(\vec{x})$ and $\psi(\vec{x},\vec{y})$ be conjunctive queries.
+	Also, let all variables $\vec{x}$ occur in $\phi(\vec{x})$.
+	A tuple generating dependency (tgd) is a first-order formula of the form 
+	$\forall \vec{x} (\phi(\vec{x}) \rightarrow \exists \vec{y})
+	\psi(\vec{x},\vec{y})$.
+\end{definition}
+To simplify the notation of a tgd, the $\forall$-quantifiers are omitted.
+Let $I$ be a database instance and $\tau$ be a tgd. Then $I \models \tau$ holds,
+like the usual satisfaction relation for first-order formulas. Another way to
+define satisfaction would be  in terms of homomorphisms. This is feasible,
+because of the construction of a tgd, i.e., it is an implication:
+For every homomorphism $h: \phi(\vec{x}) \mapsto I$ (mapping constants to
+themselves), which is responsible for the antecedent of the implication, there
+must be an extension $h'$ of $h$, for which $h':\psi(\vec{x},\vec{y}) \mapsto I$
+holds. It is then natural to define satisfaction for a set of tgds: Let $\Sigma$
+be a set of tgds. Then $I \models \Sigma$ iff. $I \models \tau$ for every $\tau
+\in \Sigma$.
+Let $Q$ be conjunctive query. For a set $\Sigma$ of tgds, a database instance
+$I$ and a BCQ $Q$, we say that $I,\Sigma \models Q$ holds, if for every
+(possible infinite) database instance $M$, s.t. $M \models \Sigma$ and $I
+\subseteq M$, we also have $M \models Q$. We write $I, \Sigma \models_f Q$ if
+only finite models $M$ are allowed.
+
+Consider now the two problems:
+
+\begin{framed}\noindent CQ-UNDER-TGDs\\
+	INPUT: set $\Sigma$ of tgds, database instance $I$ and a $CQ Q$.
+	QUESTION: does $\Sigma, I\models Q$ hold? 
+\end{framed}
+\begin{framed}\noindent FINITE-CQ-UNDER-TGDs\\
+	INPUT: set $\Sigma$ of tgds, database instance $I$ and a $CQ Q$.
+	QUESTION: does $\Sigma, I\models_f Q$ hold? 
+\end{framed}
+The plan to prove undecidability of CONTAINMENT$[S_1,S_2]$ if $\pi \in S_2$ will
+be the following. By !!citation needed!! CQ-UNDER-TGDS is undecidable. The proof
+in !! cit needed!! will be changed so that $FINITE-CQ-UNDER-TGD$s remains
+undecidable even $|\Sigma| = 1$ and every predicate is restricted to arity two.
+Then a reduction from this restricted version of $FINITE-CQ-UNDER-TGD$ to
+CONTAINMENT$[\emptyset,\{\pi\}]$ will be produced to establish the sought-after
+result.
+
+Examining the proof of undecidability of $BCQ-UNDER-TGDs$ in !! citation needed
+!!, a reduction from the HALTING problem to $BCQ-UNDER-TGDs$ is given: The
+initial configuration of the Turing machine is encoded into the instance $I$ and
+several $tgds$ are used to describe the transitions of the $TM$. The query $Q$
+describes the halting condition.
+It is then shown that the Turing Machine halts iff $\Sigma,I \models Q$ holds.
+When the machine doesn't halt, one can construct a counter-model $M$ for
+$\Sigma,I \models Q$. For this model $M \models \Sigma$ and $I \subseteq M$ but
+$M \not \models Q$. This construction is defined by the straightforwards
+encoding of the infinite run of the $TM$. 
+\begin{proposition}
+The same reduction cannot work for FINITE-CQ-UNDER-TGDs.
+\end{proposition}
+
+\begin{proof}
+Proof by contradiction.	
+Assume the same reduction works for FINITE-CQ-UNDER-TGDs.
+Testing if $I,\Sigma \not\models_f Q$ holds) (the co-problem of
+FINITE-CQ-UNDER-TGDs) is
+semi-decidable:
+In a loop enumerate all finite models $M$ and then in the loop check, if $M
+\models I$, $M \models \Sigma$ and $M \not\models_f Q$ holds. If we then use the
+assumption that the same reduction works, we could reduce from co-CQ-UNDER-TGDs
+to co-FINITe-CQ-UNDER-TGDs. Which would mean co-CQ-UNDER-TGDs is semidecidable.
+But asking if $I,\Sigma \models Q$, i.e. co-CQ-UNDER-TGDs is semi-decidable because it is the same as asking for unsatisfiability of the set of FO formulas $I,\Sigma,\not Q$ due to
+the semi-decidability of first-order logic. But then the established
+undecidability of the halting problem would not halt and we have a
+contradiction.
+\end{proof}
+
+Even though the proof cannot be used to proof FINITE-BCQ-UNDER-TGDs undecidable
+the following theorem was established:
+
+\begin{theorem}\label{fund}
+	FINITE-BCQ-UNDER-TGDs is undecidable.
+\end{theorem}
+\begin{proofidea}
+	The main idea is that co-HALTING is reduced to FINITE-CQ-UNDER-TGDs. 
+	The initial configuration of the TM is encoded in the instance $I$ and the
+	transitions of the TM are encoded by the tgds. 
+	The atoms $state(x,q), cursor(x,p)$ and $contains(x,y,s)$ are used to
+	represent a configuration of the turing machine. Using this atoms one can
+	express that at some time instant $x$, the TM is in state $q$, the cursor is
+	in position $p$ and the tape content of tape cell $y$ is $s$.
+	The successor relation $next(x,x')$ is defined that can be applied to time
+	instants and tape positions.
+	Now back to the adaptions from the original transformation:
+	\begin{enumerate}
+		\item A relation $smaller(\cdot,\cdot)$ is introduced and
+		used to encode the transitive closure of $next(\cdot,\cdot)$.
+	\item The query $Q$, remember this was prior used to encode the halting
+			condition, now asks for $smaller(x,x)$,i.e., if there exists some
+		``loop'' in the time instants.  
+	\end{enumerate}
+	
+	$I,\Sigma \models_f Q$ holds iff the TM does not halt can be shown.
+	Assuming the TM halts, a simple countermodel $M$ in form of the natural encoding
+	of the halting run of the TM can be found.
+
+	Suppose that the TM does not halt. Then every model $M$ of $I,\Sigma$
+	contains an encoding of the infinite number of steps in the non-halting run
+	of the TM. Now we use our assumption that $M$ is finite and every step is
+	identified by some time instant. Thus at least one symbold $a$ is used to
+	encode more than one time instant (which results in the loop). Thus
+	$smaller(a,a) \in M$.
+	
+	If $smaller(x,x)$ occurs we have a (non-halting) run of the TM. 
+	Since each step(state, cursor position and cell content) is identified by
+	some time instant and $M$ is finite. 
+\end{proofidea}
+
+To complete the sought after result, we need to next strengthen the
+undecidability result from~\ref{fund} to atoms with arity two and to restrict
+the set of tgds in FINITE-CQ-UNDER-TGDs to a singleton. 
+Notice that atoms of arity two are just a different representation of triples. 
+$p(s,o) \sim (s,p,o)$.
+
+\begin{theorem}\label{fundplus}
+	FINITE-BCQ-UNDER-TGDs is undecidable, even if the arity of every relation
+	symbol is at most two and even if $\Sigma$ consits of a single tgd.
+\end{theorem}
+
+\begin{proofidea}
+To construct a single tgd $\tau$ from $\Sigma$ all antecedents of the thfd in
+$\Sigma$ are combined into one antecedent in $\tau$. The variables of the
+various antecedents are renamed. The same is done for the consequent of $\tau$.
+The implication is additionally modified: Switches are introduced such that for
+every tgd $\tau_i \in \Sigma$. If the $i-th$ switch is turned-on, every switch
+$j\neq i$, may be turned off which means that $\tau_j$ is trivially satisfied.
+This switch idea models the various implications in only implication.
+
+To only use binary atoms, every atom of arity $k>2$ is replaced by $k$ binary
+atoms such that a chain of equivalences hold: for any such binary atom in the
+tgd or query, there exists a homomorphism into an instance $I$ iff. the
+homomorphism can be extended to map all $k$ atoms into $I$ iff. this
+homomorphism is also a homomorphism in the original non-binary case.
+\end{proofidea}
+
+Having the strenghtened version of FINITE-CQ-UNDER-TGDs we can now prove
+CONTAINMENT$[\emptyset,\{\pi\}]$ undecidable.
+
+\begin{theorem}\label{cemptypi}
+	CONTAINMENT$[\emptyset,\{\pi\}]$ is undecidable.
+\end{theorem}
+\begin{proofidea}
+	Assume an arbitrary instance of FINITE-CQ-UNDER-TGDs containing only a
+	single tgd. Then we construct our instance of
+	CONTAINMENT$[\emptyset,\{\pi\}]$ in the following way:
+	Let $T_1$ be a wdPT and $T_2$ be a pwdPT $(T_2,X)$ each consisting of a root
+	node, with one child node. Both root nodes contains the antecedent of the
+	single tgd $\tau$ and the instance $I$.
+	The root $r_2$ of $T_2$ contains in addition another copy of the antecedent
+	of $\tau$, such that the variables in the antecedent are realized by
+	existential variables in $evars(r_2)$.
+	The consequent of the tgd is contained in the child nodes $n_1,n_2$ of $r_1$ and
+	$r_2$. The child node $n_1$ in $T_1$ contains the query. The child node
+	$n_2$ in $T_2$ contains in addition another copy of the consequent of $\tau$
+	realized by existential variables in $evars(n_2)$.
+	There are auxiliary graph patterns in $r_1$ and $n_1$ which deal with the
+	lack of projection. 
+	The construction ensures that $T_1 \sqsubseteq(T_2,X)$ holds. 
+	Hence the only reason for $T_1 \not\subseteq (T_2,X)$ is that for some RDF
+	graph $G$, we have the following situation: some solution $\mu \in \ll
+	T_1\rr_G$ sends the root into $G$ but cannot be extended to $n_1$ while in
+	$(T_2,X)$ every extension of $\mu$ to the existential variables in the root
+	can be further extended so as to send also the child node $n_2$ into $G$
+	The following three facts are deduced:
+	\begin{enumerate}
+		\item $Q$ is not satisfied by $G$: indeed, $n_2$ consits of triples from
+			$n_1$ plus the triples encoding the CQ $Q$. Since $n_2$ can be
+			mapped into $G$ by an extension of $\mu$ this is also true for all
+			triple patterns in $n_1$ excpets for those encoding $Q$.
+		\item $G$ satisfies $\tau$: indeed, recall that $T_2$ uses existential
+			variables to encode a copy of the antecedent of $tau$ in the root
+			and a copy of the consequent of $tau$ in $n_2$ respectively. we are
+			assuming that every mapping on $vars(r_2)$ that maps the root into
+			$G$ can be extended to the existential variables in $n_2$ s.t. $n_2$
+			is mapped into $G$. Hence, $G$ satisfies $\tau$ by the homomorphism
+			criterion.
+		\item $I$ must be contained in $G$, since we are assuming that $\mu$
+			sends the root of both, $T_1$ and $T_2$ into $G$.
+	\end{enumerate}
+	We can see that $G$ provides a countermodel for $I,\tau \models_f Q$.
+\end{proofidea}
+
+\section{Equivalence}
+When looking at the equivalence table~\ref{equivtable}, it is not so obvious
+what is decidable and what is not: Even though CONTAINMENT$[S_1,S_2]$ becomes
+undecidable iff $\pi \in S_2$, EQUIVALENCE$[\{\pi,\cup\},\emptyset]$
+is decidable. Again to keep the number of proofs to an absolute minimum, the
+fact that membership results propagate to the more special case and the hardness
+results to the more general cases is made use of.
+The following results are proven:
+\begin{itemize}
+\item $\Pi^P_2$-membership of EQUIVALENCE$[\{\cup,\pi\},\emptyset]$
+\item $\Pi^P_2$-hardness of EQUIVALENCE$[\{\cup\},\emptyset]$
+\item $\Pi^P_2$-hardness of EQUIVALENCE$[\{\pi\},\emptyset]$
+\item undecidability of EQUIVALENCE$[\{\pi,\cup \},\{\cup \}]$
+\item undecidability of EQUIVALENCE$[\{\pi\},\{\pi\}]$
+\end{itemize}
+
+After these proofs we can conclude all the complexity results in the cells of table~\ref{equivtable}
+except two:
+\begin{enumerate}
+\item EQUIVALENCE$[\emptyset,\emptyset]$: This result was shown in
+\cite{letelier2012static}. 
+\item EQUIVALENCE$[\cup,\cup]$ follows immediately from the $\Pi^P_2$-membership
+of the CONTAINMENT$[\{\cup\}, \{\cup\}]$ problem and the $\Pi^P_2$-hardness of
+EQUIVALENCE$[\{\cup\}, \emptyset]$ to be shown.
+\end{enumerate}
+Completeness for EQUIVALENCE$[\pi,\cup]$ is not established. The hardness result
+carries over from the proof of  EQUIVALENCE$[\{\pi\},\emptyset]$ and
+EQUIVALENCE$[\{\cup\},\emptyset]$.
+
+We begin with a proof for $\Pi^P_2$-membership of
+EQUIVALENCE$[\{\cup,\pi\},\emptyset]$. 
+
+\begin{theorem}
+Let $T$ be a wdPT and $(F,X)$ be a pwdPF.
+Then $T \equiv (F,X)$ iff.
+\begin{enumerate}
+\item $T \sqsubseteq (F,X)$ and
+\item $(F,X) \subseteq T$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+It is obvious that both properties are necessary for equivalence because 
+$T \subseteq (F,X)$ implies $T \sqsubseteq (F,X)$ and if  $T \subseteq (F,X)$
+and
+$T \supseteq (F,X)$ are assumed then $T \equiv (F,X)$ holds by definition of equivalence.
+
+It thus remains to show that  under assumption of 
+$(F,X) \subseteq T$, $T \sqsubseteq (F,X)$ iff. $T \subseteq (F,X)$  holds. 
+The ``only if'' direction is trivial as mentioned before.
+We now sketch the proof of the if direction:
+Assume  $(F,X) \subseteq T$ and $T \sqsubseteq (F,X)$.
+Now proceed with a proof by contradiction: Assume $T \subseteq (F,X)$ doesn't
+hold. Thus there exists a graph $G$, where some solution $\mu$ of $T$ is not a
+solution of $F(,X)$ over $G$. But there we can find some extension $\mu'$ of
+$\mu$ which is a solution of $(F,X)$. But then $\mu'$ must include mappings
+$\mu$ didn't, and is thus a proper extension of $\mu$. But then again by
+condition (2), $\mu'$ is a also a solution of $T$. But this cannot be true
+because a mapping and its proper extension are both solutions to a wdPT. 
+\end{proof}
+
+\begin{theorem}
+EQUIVALENCE$[\emptyset,\{\cup,\pi\}]$ is in $\Pi_2^P$.
+\end{theorem}
+\begin{proof}
+By Theorem\ref{ccuppiempty} deciding the second property is $NP-complete$ and
+by Theorem\ref{scuppicuppi} deciding the first property is $\Pi_2^P$-complete
+rendering the complexity of the algorithm $\Pi_2^P$-complete.
+\end{proof}
+
+\begin{theorem}
+EQUIVALENCE$[\emptyset,\{\cup\}]$ is $\Pi_2^P$-hard
+\end{theorem}
+\begin{proofidea}
+The same construction as in Theorem~\ref{cemptycup} can be used to prove the
+desired result: The same reduction from $3-QSAT_{\forall,2}$ is used.
+Remembering that in this construction a $wdPT T_1$ and a wdPF $F_2$ such that
+$\phi$ is valid iff.  $T_1 \subseteq F_2$ holds is constructed.
+One can
+not only show $T_1 \subseteq F_2$ but also $T_1 \supseteq F_2$ (iff. $phi$ is
+valid of course). This
+argumentation yields the desired result.
+\end{proofidea}
+
+\begin{theorem}
+EQUIVALENCE$[\emptyset,\{\pi\}]$ is $\Pi_2^P$-hard
+\end{theorem}
+\begin{proofidea}
+Again a reducion from $3-QSAT_{forall,2}$ to  EQUIVALENCE$[\emptyset,\{\pi\}]$
+is given as a proof.
+\end{proofidea}
+
+The following two theorems are proven by adapting the reduction from
+FINITE-BCQ-UNDER-TGDs to CONTAINMENT$[\emptyset,\{\pi\}]$ in the proof of 
+Theorem~\ref{cemptypi}.
+\begin{theorem}
+EQUIVALENCE$[\{\cup,\pi\},\{\cup\}]$ is undecidable.
+\end{theorem}
+\begin{theorem}
+EQUIVALENCE$[\{\pi\},\{\pi\}]$ is undecidable.
+\end{theorem}
