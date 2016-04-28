@@ -29,8 +29,7 @@
 
 % Define convenience functions to use the author name and the thesis title in the PDF document properties.
 \newcommand{\authorname}{Alexander Svozil} % The author name without titles.
-\newcommand{\thesistitle}{The Complexity of SPARQL Query Evaluation and Static
-Analysis with focus on the SERVICE and GRAPH Operators} % The title of the thesis. The English version should be used, if it exists.
+\newcommand{\thesistitle}{Complexity of SPARQL} % The title of the thesis. The English version should be used, if it exists.
 
 % Set PDF document properties
 \hypersetup{
@@ -86,12 +85,12 @@ Analysis with focus on the SERVICE and GRAPH Operators} % The title of the thesi
 %  {title before name}{name}{title after name}{gender}
 %  where both titles are optional (i.e. can be given as empty brackets {}).
 \setauthor{}{\authorname}{Bsc.}{male}
-\setadvisor{Professor Dr.}{Reinhard Pichler}{}{male}
+\setadvisor{Univ.Prof. Mag.rer.nat. Dr.techn.}{Reinhard Pichler}{}{male}
 
 % For bachelor and master theses:
 %\setfirstassistant{Professor Dr.}{Reinhard Pichler}{}{male}
-\setfirstassistant{Dr.}{Sebastian Skritek}{}{male}
-%\setthirdassistant{Pretitle}{Forename Surname}{Posttitle}{male}
+\setfirstassistant{Univ.Ass. Dipl.-Ing. Dr.techn.}{Sebastian Skritek}{}{male}
+\setsecondassistant{Univ.Ass. Dipl.-Ing.}{Markus Kröll}{}{male}
 
 % For dissertations:
 \setfirstreviewer{Pretitle}{Forename Surname}{Posttitle}{male}
@@ -103,9 +102,8 @@ Analysis with focus on the SERVICE and GRAPH Operators} % The title of the thesi
 % Required data.
 \setaddress{Wasnergasse 13}
 \setregnumber{1026213}
-\setdate{01}{01}{2001}
-\settitle{\thesistitle}{The Complexity of SPARQL Query Evaluation and Static
-Analysis with focus on the SERVICE and GRAPH Operators} % Sets English and German version of the title (both can be English or German).
+\setdate{27}{4}{2016}
+\settitle{\thesistitle}{Complexity of SPARQL} % Sets English and German version of the title (both can be English or German).
 %\setsubtitle{Optional Subtitle of the Thesis}{Optionaler Untertitel der Arbeit} % Sets English and German version of the subtitle (both can be English or German).
 
 % Select the thesis type: bachelor / master / doctor / phd-school.
@@ -158,8 +156,8 @@ Analysis with focus on the SERVICE and GRAPH Operators} % Sets English and Germa
 \newtheorem{theorem}{Theorem}
 \newenvironment{proofidea}{\noindent\textit{Proof Idea.}}{\hfill$\square$}
 \newtheorem{lemma}{Lemma}
-\begin{document}
 
+\begin{document}
 \frontmatter % Switches to roman numbering.
 % The structure of the thesis has to conform to
 %  http://www.informatik.tuwien.ac.at/dekanat
@@ -194,24 +192,22 @@ Analysis with focus on the SERVICE and GRAPH Operators} % Sets English and Germa
 \mainmatter
 
 \chapter{Introduction}
+
+\chapter{Preliminaries}
 \input{definitions.tex}
 
 
-\chapter{Containment, Equivalence and Subsumption of Well-Designed SPARQL}
+\chapter{Well-Designed SPARQL}
 \input{pods2014containment.tex}
 
-\chapter{Beyond Well-Designed SPARQL}
-\input{beyondwelldesigned.tex}
-
-\chapter{On evaluating the SERVICE operator with variables}
+\chapter{The SERVICE-operator in Practice}\label{chapter:serviceeval}
 \input{builaranda.tex}
 
-
-
-%%%The big new proof %%%%
-\chapter{Complexity of EVAL extended to the GRAPH and SERVICE operator}
+\chapter{Complexity of well-designed SPARQL with GRAPH and SERVICE}
 \input{serviceproof.tex}
-%%%The big new proof %%%%
+
+\chapter{Beyond well-designed SPARQL}
+\input{beyondwelldesigned.tex}
 
 \backmatter
 

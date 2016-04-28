@@ -904,7 +904,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 				query Q.
 			\item $u \in V$:
 				Then $\mu \in S_1$ where $S_1 =  \bigg\{\mu_1 \cup [ u \rightarrow s ] \mid
-					\exists s \in names(DS), \mu_1 \in \ll P_1
+					s \in names(DS), \mu_1 \in \ll P_1
 					\rr^{DS}_{graph(s,DS)}, [ u \rightarrow s ] \sim
 				\mu_1 \bigg\}$. 
 				By induction hypothesis we know that for $Q_1
@@ -942,7 +942,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 				query Q.
 			\item $u \in V$:
 				then $\mu \in S_1$ where $S_1 =  \bigg\{\mu_1 \cup [ u \rightarrow s ] \mid
-					\exists s \in names(ep(ds')),\\ \mu_1 \in \ll P_1
+					s \in names(ep(ds')),\\ \mu_1 \in \ll P_1
 					\rr^{ep(ds')}_{graph(s,ep(ds'))} \land [ u \rightarrow s ] \sim
 				\mu_1 \bigg\}$. 
 				By induction hypothesis we know that we receive a wdpt $Q_1
@@ -989,7 +989,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 					our query Q.
 				\item $u \in V$:
 					then $\mu \in S_1$ where $S_1 =  \bigg\{\mu_1 \cup [ u \rightarrow s ] \mid
-						\exists s \in names(DS), \mu_1 \in \ll P_1
+						s \in names(DS), \mu_1 \in \ll P_1
 						\rr^{DS}_{graph(s,DS)} \land [ u \rightarrow s ] \sim
 					\mu_1 \bigg\}$. 
 					By induction hypothesis we know that we receive a wdpt $Q_1
@@ -1038,7 +1038,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 
 				\item $u \in V$:
 					then $\mu \in S_1$ where $S_1 =  \bigg\{\mu_1 \cup [ u \rightarrow s ]
-						\mid \exists s \in names(ep(ds')),\\ \mu_1 \in \ll P_1
+						\mid s \in names(ep(ds')),\\ \mu_1 \in \ll P_1
 						\rr^{ep(ds')}_{graph(s,ep(ds'))} \land [ u \rightarrow s ] \sim
 					\mu_1 \bigg\}$. 
 					By induction hypothesis we know that we receive a wdpt $Q_1
@@ -1254,7 +1254,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 					done.
 				\item $u \in \V$:
 					Thus $\mu \in \{ \mu_1 \cup [u \rightarrow s ] \mid
-						\exists s \in dom(ep), \mu_1 \in \ll P_1
+						s \in dom(ep), \mu_1 \in \ll P_1
 						\rr^{ep(s)}_{graph(def,ep(s))} \land
 					[u \rightarrow s] \sim \mu_1 \}$ by semantics. 
 					Assume $\mu(u) = s$.
@@ -1295,7 +1295,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 					done.
 				\item $u \in \V$:\\
 					By semantics $\mu \in \{ \mu_1 \cup [u \rightarrow s ] \mid
-						\exists s \in dom(ep), \mu_1 \in \ll P_1
+						s \in dom(ep), \mu_1 \in \ll P_1
 						\rr^{ep(s)}_{graph(def,ep(s))} \land
 					[u \rightarrow s] \sim \mu_1 \}$. Assume $\mu(u) = s$.
 					By induction hypothesis we know that 
@@ -1336,7 +1336,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 					done.
 				\item $u \in \V$:
 					By semantics $\mu \in \{ \mu_1 \cup [u \rightarrow s ] \mid
-						\exists s \in dom(ep), \mu_1 \in \ll P_1
+						s \in dom(ep), \mu_1 \in \ll P_1
 						\rr^{ep(s)}_{graph(def,ep(s))} \land
 					[u \rightarrow s] \sim \mu_1 \}$. Assume $\mu(u) = s$.
 					By induction hypothesis we know that 
@@ -1383,7 +1383,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 				\item $u \in \V$:
 					
 					By semantics $\mu \in \{ \mu_1 \cup [u \rightarrow s ] \mid
-						\exists s \in dom(ep), \mu_1 \in \ll P_1
+						s \in dom(ep), \mu_1 \in \ll P_1
 						\rr^{ep(s)}_{graph(def,ep(s))} \land
 					[u \rightarrow s] \sim \mu_1 \}$. Assume $\mu(u) = s$. We know that $s \in dom(ep)$.
 					By induction hypothesis we know that 
@@ -1621,14 +1621,16 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 %(homomorphism from $Q$ to $D$). Our aim is to define $trans$ in 
 %such way, that the following equivalence holds: 
 %$\mu \in \ll P \rr^{DS}_{G} \Leftrightarrow h \in Q(D)$.
+The next step is to show that our well designed pattern tree that we received
+from our $trans$ function is a pattern tree, as it was defined by Definition~\ref{def:wdpt}.
 
 \begin{lemma}
-	Let $ds \in dom(ep)$, $g \in names(ep(ds))$ and $P$ a SPARQL pattern.
-	Then $F = trans(P,ds,g)$ is a well-designed pattern forest.
+	Let $ds \in dom(ep)$, $g \in names(ep(ds))$ and $P$ be a SPARQL pattern.
+	Then $F = trans(P,ds,g)$ is a well-designed pattern tree. 
 \end{lemma}
 
 \begin{proof}
-	Let $Q=(T,\lambda,x) \in F$ be an arbitrary. We prove each property seperately:
+	Let $Q=(T,\lambda,x) \in F$ be arbitrary. We prove each property seperately:
 	\begin{enumerate}
 		\item $T$ is rooted in a distinguished node $r$, the root and maps
 			each node $t$ in  $T$ to a set of relational atoms over $\sigma$:
@@ -1647,15 +1649,17 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 			in OPT normal form and well-designed.
 			The induction will be over the structure of the subpatterns $P'$ of $P$.
 			\begin{enumerate}
-				\item If $\hat{P}$ is a triple pattern we only return one node, so there can't be any
+			
+				\item Basecase: If $\hat{P}$ is a triple pattern we only return one node, so there can't be any
 					violation of the property.
 
-				\item If $\hat{P}$ is $(P_1 \AND  P_2)$ there can also never be a violation of the
+				\item Induction Step: If $\hat{P}$ is $(P_1 \AND  P_2)$ there can 
+					also never be a violation of the
 					property because we assumed that $P$ is in OPT normal form and thus OPT never
 					occurs in the scope of AND. We thus also only return a single node making a
 					violation impossible.
 
-				\item If $\hat{P}$ is $(P_1 \OPT  P_2)$:
+				\item Induction Step: If $\hat{P}$ is $(P_1 \OPT  P_2)$:
 					By induction hypothesis $Q_1 = trans(P_1,ds,g)$ and $Q_2 =
 					trans(P_2,ds,g)$ fulfill the property and $P$ 
 					is a well designed SPARQL pattern in OPT normal form by assumption. 
@@ -1676,14 +1680,15 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 							contradiction to the assumption that $P$ is a well designed SPARQL
 							patterns.
 						\item $T_2$ contains a subgraph containing $x$ but the root $r_2$ does not
-							contain the variable $x$.  Analogusly to the previous case.
+							contain the variable $x$. This can be shown
+							analogously. %Analogously to the previous case.
 					\end{enumerate}
 
 
 					%If we then make the wdPT $Q_2$ a child of the wdPT $Q_1$ we know 
 					%that $Q$ fulfills the property. 
 
-				\item If $\hat{P}$ is $(\mbox{GRAPH }  u \ P_1)$:
+				\item Induction Step: If $\hat{P}$ is $(\mbox{GRAPH }  u \ P_1)$:
 					We know that $Q = trans(P_1,ds,u)$ and by induction hypothesis,
 					we know that $Q = (T, \lambda,x)$ fulfills the property. Let
 					$r_1$ be the root of $T$. $trans(\cdot)$ adds the conjunct
@@ -1692,7 +1697,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 					remains to prove that the property holds.
 					Let $x \in \{u,g,ds\}$ and assume that our resulting wdPT $Q$ is
 					not fulfilling the property. There must thus be a node $n_1$ in $Q$ which
-					doesn't contain $x$ and a node $n_2$ for which $n_1$ is a parent 
+					doesn't contain $x$ other than the root and a node $n_2$ for which $n_1$ is a parent 
 					which again contains $x$ creating the conflict.
 					By the definition of the function $trans(\cdot)$ we know that
 					there must have been a subpattern $(P' OPT P'')$ and both $n_1,n_2$ must
@@ -1709,51 +1714,61 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 							(\mbox{GRAPH } u \ P_1)$ we know that
 							$P$ is not well designed because $P_1$ contains the
 							subpattern $(P' \OPT P'')$.
-						\item Let $x = g$. 
-						\item Let $x = ds$.
-					\end{enumerate}
-
-
-
-				\item If $\hat{P}$ is $(\mbox{SERVICE } u \ P_1)$:
-					We know that $Q = trans(P_1,ds,u)$ and by induction hypothesis,
-					we know that $Q = (T, \lambda,x)$ fulfills the property. Let
-					$r_1$ be the root of $T$. $trans(\cdot)$ adds the conjunct
-					$LOC(u,ds)$ and $LOC(g,ds)$ to $r_1$. W.l.o.g. assume $u$,$g$
-					and $ds$ are variables. For every of those three variables it
-					remains to prove that the property holds.
-					Let $x \in \{u,g,ds\}$ and assume that our resulting wdPT $Q$ is
-					not fulfilling the property. There must thus be a node $n_1$ in $Q$ which
-					doesn't contain $x$ and a node $n_2$ for which $n_1$ is a parent 
-					which again contains $x$ creating the conflict.
-					By the definition of the function $trans(\cdot)$ we know that
-					there must have been a subpattern $(P' \OPT P'')$ and both $n_1,n_2$ must
-					have been created by this subpattern. But this again means, that
-					$P'$ did not contain $x$ and $P''$ did contain $x$. 
-					%As the root
-					%of $Q$, i.e. $r_1$, cannot be $n_1$, we have that there must be
-					%another OPT subpattern making $r_1$ an ancestor of $n_1$.(not
-					%needed)
-					Depending on whether $x = u$, $x=g$ or $x=ds$ we have a
-					contradiction:
-					\begin{enumerate}
-						\item Let $x=u$. 
-							Because we assumed $\hat{P}= (\mbox{SERVICE } u \ P_1)$ we know that
-							$P$ is not well designed because $P_1$ contains the
-							subpattern $(P' \OPT P'')$.
 						\item Let $x = g$. This means that we are inside a graph
-							pattern $(\mbox{GRAPH } g \ DS)$ and thus $P$ is not well designed
-							because $P_1$ contains the subpattern $(P' \OPT P'')$.
-						\item Let $x = ds$.
-							Let $x = g$. This means that we are inside a graph
-							pattern $(\mbox{GRAPH } g \ DS)$ and thus $P$ is not well designed
-							because $P_1$ contains the subpattern $(P' \OPT P'')$.
-
+							pattern $(\mbox{GRAPH } g \ P^\sim)$ and thus $P$ is
+							not well designed because $P_1$ contains the
+							subpattern $(P' \OPT P'')$.
+						\item Let $x = ds$. This means that we are inside a
+							SERVICE
+							pattern $(\mbox{SERVICE } g \ P^\sim)$ and thus $P$ is
+							not well designed because $P_1$ contains the
+							subpattern $(P' \OPT P'')$.
 					\end{enumerate}
 
-				\item If $P$ is $(P_1 \UNION  P_2)$:
-					We get a forest and because the property held for $Q_1$ and $Q_2$ by i.h. we are
-					done.
+
+
+				\item Induction Step: If $\hat{P}$ is $(\mbox{SERVICE } u \ P_1)$:
+						The proof is analogously to case where $\hat{P}$ is
+						$(\mbox{GRAPH} u \ P_1)$.
+				%	We know that $Q = trans(P_1,ds,u)$ and by induction hypothesis,
+				%	we know that $Q = (T, \lambda,x)$ fulfills the property. Let
+				%	$r_1$ be the root of $T$. $trans(\cdot)$ adds the conjunct
+				%	$LOC(def,u)$ and $LOC(g,ds)$ to $r_1$. W.l.o.g. assume $u$,$g$
+				%	and $ds$ are variables. For every of those three variables it
+				%	remains to prove that the property holds.
+				%	Let $x \in \{u,g,ds\}$ and assume that our resulting wdPT $Q$ is
+				%	not fulfilling the property. There must thus be a node $n_1$ in $Q$ which
+				%	doesn't contain $x$ and a node $n_2$ for which $n_1$ is a parent 
+				%	which again contains $x$ creating the conflict.
+				%	By the definition of the function $trans(\cdot)$ we know that
+				%	there must have been a subpattern $(P' \OPT P'')$ and both $n_1,n_2$ must
+				%	have been created by this subpattern. But this again means, that
+				%	$P'$ did not contain $x$ and $P''$ did contain $x$. 
+				%	%As the root
+				%	%of $Q$, i.e. $r_1$, cannot be $n_1$, we have that there must be
+				%	%another OPT subpattern making $r_1$ an ancestor of $n_1$.(not
+				%	%needed)
+				%	Depending on whether $x = u$, $x=g$ or $x=ds$ we have a
+				%	contradiction:
+				%	\begin{enumerate}
+				%		\item Let $x=u$. 
+				%			Because we assumed $\hat{P}= (\mbox{SERVICE } u \ P_1)$ we know that
+				%			$P$ is not well designed because $P_1$ contains the
+				%			subpattern $(P' \OPT P'')$.
+				%		\item Let $x = g$. This means that we are inside a graph
+				%			pattern $(\mbox{GRAPH } g \ P^\sim)$ and thus $P$ is
+				%			not well designed because $P_1$ contains the
+				%			subpattern $(P' \OPT P'')$.
+				%		\item Let $x = ds$. This means that we are inside a
+				%			SERVICE
+				%			pattern $(\mbox{SERVICE } g \ P^\sim)$ and thus $P$ is
+				%			not well designed because $P_1$ contains the
+				%			subpattern $(P' \OPT P'')$.
+				%	\end{enumerate}
+
+			%	\item Induction Step: If $P$ is $(P_1 \UNION  P_2)$:
+			%		We get a forest and because the property held for $Q_1$ and $Q_2$ by i.h. we are
+			%		done.
 			\end{enumerate}
 		\item The last property is that $x$ is a tuple of distinct variables
 			occurring in $T$. As we don't use projection and use set operations
@@ -1801,7 +1816,7 @@ pattern trees without projection is coNP-complete and conclude a coNP runtime to
 check if $\mu \in Q(D)$.
 The hardness of the problem follows immediately from the hardness of
 \textbf{EVAL($P_{wd}$)}.
-Incase of projection we use the results in \cite{letelier2013static}
+In case of projection we use the results in \cite{letelier2013static}
 that the evaluation of $\mu \in Q(D)$ is $\Pi^P_2$-complete.
 Again hardness of the problem follows immediately from the hardness of 
 \textbf{EVAL($\s_{wd}$)}.
@@ -1809,48 +1824,46 @@ Again hardness of the problem follows immediately from the hardness of
 
 \section{Static Analysis}
 \begin{theorem}
-	The problems \textbf{EQUIVALENCE}($\l$, $\l$), \textbf{CONTAINMENT}($\l$,
-	$\l$)  are $NP$-complete for $\l = P_{wdgs}$ and $\Pi^p_2$-complete $\l = \u_{wdgs}$.
+	The problems \textbf{EQUIVALENCE}($\l$), \textbf{CONTAINMENT}($\l$)  
+	are $NP$-complete for $\l = P_{wdgs}$ and $\Pi^p_2$-complete $\l =
+	\u_{wdgs}$ when we assume the function $ep(\cdot)$ as additional input.
 \end{theorem}
 \begin{proof}
 	Hardness for each of these problems follows immediately from the fact that
-	that they are already $NP$-complete for the language $P_{wd}$~\cite{letelier2012static} 
-	and $\Pi^{P}_2$ for the language $\U_{wd}$~\cite{pichler2014containment}.\\
+	that they are already $NP$-complete for the language
+	$P_{wd}$~\cite{letelier2012static}.
+	%and $\Pi^{P}_2$ for the language $\U_{wd}$~\cite{pichler2014containment}.\\
 	For the membership, we propose the following algorithm:
 	Let $P_1,P_2$ be two arbitrary patterns where $P_1,P_2 \in P_{wdgs}$ or
 	$P_1,P_2 \in \u_{wdgs}$ holds.
-	Let $ds \in dom(ep)$ be arbitrary, i.e. an arbitrary URI of a dataset. 
-	Use our polynomial time transformation function twice to obtain two
-	wdpts: $Q_i = trans(P_i,ds,def)$ for $i\in \{1,2\}$. Let $D =
-	\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
-	obviously in polynomial time if $dom(ep)$ is assumed to be finite.
-	Using the NP-algorithm proposed in~\cite{letelier2012static} for $\l = P_{wdgs}$ or the
-	$\Pi^P_2$ algorithm proposed in~\cite{pichler2014containment} when $\l =
-	\u_{wdgs}$. Using the result of the respective procedure we can distinguish
-	between two cases:
+	Let $x \in \V$ and use our polynomial time transformation function twice to obtain two wdpts: 
+	$Q_i = trans(P_i,x,def)$ for $i\in \{1,2\}$. 
+	Using the NP-algorithm proposed in~\cite{letelier2012static} for $\l =
+	P_{wdgs}$ we can decide whether $Q_1 \subseteq Q_2$:
+%	or the
+%	$\Pi^P_2$ algorithm proposed in~\cite{pichler2014containment} when $\l =
+%	\u_{wdgs}$.
 	\begin{enumerate}
-		\item $Q_1(D) \subseteq Q_2(D)$:
-			%In this case we can use Theorem~\ref{biglemma} to conclude that $P_1
-			%\subseteq P_2$ and we are done.
-			%hier noch genauer
+		\item $Q_1 \subseteq Q_2$:
+			Let $ds \in dom(ep)$ be arbitrary, i.e. an arbitrary URI of a dataset. 
+			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
+			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
 			Let $\mu$ be an arbitrary mapping in $\ll P_1 \rr^{DS}_{def}$. Because
 			of Theorem~\ref{biglemma} we can conclude that $\mu \in Q_1(D)$.
 			Because of our assumption we get that $\mu \in Q_2(D)$. Because
 			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \in \ll P_2
 			\rr^{DS}_{def}$.
-		\item $Q_1(D) \not\subseteq Q_2(D)$: By assumption there is a $\mu \in
+		\item $Q_1 \not\subseteq Q_2$: 
+			Let $ds \in dom(ep)$ be arbitrary, i.e. an arbitrary URI of a dataset. 
+			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
+			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
+			By assumption there is a $\mu \in
 			Q_1(D)$ such that $\mu \notin Q_2(D)$. Because
 			of Theorem~\ref{biglemma} and $\mu \in Q_1(D)$ we can conclude that $\mu \in \ll P_1
 			\rr^{DS}_{def}$.
 			Because of our assumption we get that $\mu \notin Q_2(D)$. Because
 			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \notin \ll P_2
 			\rr^{DS}_{def}$.
-			%das problem ist das wir nicht wissen welcher DS das gegenbeispiel
-			%liefert.	
-			
-			%Using
-			%Theorem~\ref{biglemma} we can conclude that $\mu \in \ll P_1
-			%\rr^{DS}_{def}$ and  $\mu \notin \ll P_2\rr^{DS}_{def}$.
 	\end{enumerate}
 \end{proof}
 %Through Lemma~\ref{biglemma} we get that SPARQL evaluation with the GRAPH and

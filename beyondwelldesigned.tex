@@ -53,10 +53,18 @@ that the fragment has the same complexity
 of query evaluation as well-designed queries. 
 Also, $99\%$ of the practical queries over DBPedia containing OPT are now captured by a 
 fragment which is well designed and thus efficient to evaluate.
+To define the fragment of weakly well-designed pattern we need to define what it
+means for a subpattern to be dominated by another subpattern:
+\begin{definition}[~\cite{kaminski_bwd}]
+	Given a graph pattern $P$, an occurrence $i_1$ in $P$ dominates another
+	occurrence $i_2$ if there exists a OPT-pattern such
+	that $i_1$ is inside the left argument of the OPT-pattern and $i_2$ is
+	inside the right argument of the OPT-pattern.
+\end{definition}
 
 \begin{definition}[Weakly well-designed patterns~\cite{kaminski_bwd}]
 	A pattern $P$ is weakly well-designed (wwd-pattern) if each occurrence $i$
-	of an OPT-subpattern  $(P_1\OPT P_2)$ variables in $vars(P_2) \backslash
+	of an OPT-subpattern $(P_1\OPT P_2)$ variables in $vars(P_2) \backslash
 	vars(P_1)$ appear outside $i$ only in
 	\begin{itemize}
 		\item subpatterns whose occurrences are dominated by $i$, and
@@ -494,6 +502,13 @@ Queries over unions of wwd-patterns are as expressive as full SPARQL.
 \end{theorem}
 
 \section{Static Analysis of wwd-Patterns}
+
+The following results technically imply some of the results in
+Section~\ref{section:decidablecontainment} but the results in the Section~\ref{section:decidablecontainment}
+were also of algorithmical interest because one could derive an ``out of the box''
+procedure to decide the problems. The proof in this section is technically
+correct but doesn't go into detail about the witnessing mapping that would allow
+for such procedure.
 
 \begin{theorem}[\cite{kaminski_bwd}]
 	The problems \textbf{EQUIVALENCE($\l$)}, \textbf{CONTAINMENT($\l$)} and

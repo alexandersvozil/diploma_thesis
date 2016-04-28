@@ -1,10 +1,8 @@
 This section is a summary of ~\cite[p. 4-7]{BuilAranda20131}. In order to get a
 deeper understanding of the SERVICE operator it is mandatory to understand which
-problems occur when evaluating the SERVICE operator.
-The goal of the semantic definition of the SERVICE operator is to provide an
-unambiguous way to evaluate a SPARQL pattern containing SERVICE. A direct
-implementation of the SERVICE operator based of the semantics is not feasible 
-because we would need to evaluate, given, for example $(\mbox{SERVICE }  x \
+problems occur when evaluating the SERVICE-operator.
+A direct implementation of the SERVICE-operator based of the semantics is not
+feasible in practice because we would need to evaluate, given, for example $(\mbox{SERVICE }  x \
 P_1)$ where $P_1$ is any SPARQL graph pattern, $P_1$ over every 
 possible SPARQL endpoint. This is obviously impossible. To ensure that $P_1$
 only gets evaluated over a finite set of IRIs, $x$ needs to be bound to exactly
@@ -13,7 +11,7 @@ service operator~\cite{w3standardservice} when the location is a variable and
 not an URI. In~\cite{BuilAranda20131} the authors deal with this issue by
 providing a notion of boundedness. In order to demonstrate how one could
 evaluate a service operator using a variable to evaluate a query over more than
-one destination the following example is given:
+one endpoint the following example is given:
 \begin{example}[\cite{BuilAranda20131}]
 Let $G$ be an RDF graph that uses triples of the form\\ $(a, service\_address,b)$
 with the intention to express that $b$ is a SPARQL endpoint URI with name $a$.
@@ -30,9 +28,45 @@ By evaluating $\ll (x,service\_address,y) \rr^{DS}_G$ first and then for every
 mapping $\mu$ in this set we further evaluate $\ll (\mbox{SERVICE } a \ (z_n, email, z_e)
 \rr^{DS}_G$, where $a = \mu(y)$. 
 \end{example}
+Throughout the chapter we will provide four different definitions on how the
+destinations of a SERVICE-operator can be bound within a graph pattern given the
+destination is a variable:
+\begin{enumerate}
+	\item Boundedness: Boundedness is a na{\"i}ve semantic approach to the
+		problem. After formally defining the property, we will show that
+		deciding whether a variable is bound in a graph pattern
+		is undecidable and thus not feasible for practical use.
 
-\noindent This example leads to a natural definition of boundedness which relies
-on the definition of a domain of a graph, a dataset and a graph pattern.
+	\item Strong boundedness: Strong boundedness is a syntactical approach to
+		the problem. We will, by defining the property provide a recursive
+		procedure on how to decide which variables in a graph pattern are
+		strongly bound. It will also be shown that if a variable is strongly
+		bounded, it is bounded aswell. 
+		Although this procedure would be feasible for practical
+		use complexity-wise, it is not able to decide whether a graph pattern
+		can be evaluated in practice. We will provide an example in form of a
+		graph pattern which is feasible to be evaluated in practice but not
+		strongly bound.
+
+	\item Service-boundedness: Service-boundedness is the ultimate solution for
+		deciding which graph patterns can be evaluated in practice. If a pattern
+		is service-bound, it can be evaluated in practice. The problem however
+		is, that the definition builds on the definition of boundedness which is
+		undecidable. Therefore service-boundedness is not feasible for practical
+		use.
+	\item Service-safeness: This is the final solution for the original problem.
+		Service-safeness is easy to decide and we will show that if a pattern is
+		service-safe, it is also service-bound.
+\end{enumerate}
+
+In the last section we will discuss the difference of boundedness and strong
+boundedness (and thus service-boundedness and service-safeness because the
+latter definitions build on former definitions).
+
+\section{The four different ways to bind the destination of a SERVICE-operator}
+
+To describe boundedness we need three definitions namely the domain of a graph,
+a dataset and a graph pattern.
 
 \begin{definition}[Domain of a graph, a dataset and a graph pattern,\cite{BuilAranda20131}]
     The domain of a graph $G$ denoted $dom(G)$ is defined as $dom(G) = \bigcup\limits_{(u,v,w) \in G}
@@ -42,6 +76,11 @@ on the definition of a domain of a graph, a dataset and a graph pattern.
 mentioned in $P$.
 \end{definition}
 
+Boundedness makes sure, given a graph pattern $P$ and a variable $x \in var(P)$
+that whatever the solutions may be, $x$ is always in the domain of each
+and every solution and the image is either in the domain of the dataset $P$ gets
+evaluated over, it is a graph name or it is in the domain of the pattern.
+
 \begin{definition}[Boundedness,\cite{BuilAranda20131}]
 Let $P$ be a graph pattern and $x \in var(P)$. Then $x$ is bound in $P$ if the
 following condition holds:
@@ -50,11 +89,9 @@ and every $\mu \in \ll P \rr^{DS}_G:$\\
 \[ x \in dom(\mu) \mbox{ and } \mu(x) \in (dom(DS) \cup names(DS) \cup dom(P)). \]
 \end{definition}
 
-\noindent We notice that this definition also makes sure that every location 
-variable of a $GRAPH$
-operator to be bound because $\mu(x) \in names(DS)$ counts as a bound variable.
 Resulting from this definition a very natural way seems to arise to ensure that
 a graph pattern $P$ can be evaluated in practice: 
+We will now define a na[\"i]ve way to make sure we can evaluate a pattern:
 Assuming we want to evaluate a sub-pattern $(\mbox{SERVICE } x \ P_1)$ of $P$
 we require $x$ to be bound in $P$. We can then define the problem for deciding if a variable
 is bound in a graph pattern $P$:
@@ -81,7 +118,7 @@ By providing a reduction from the \textbf{SPARQL SAT} problem to the
 Let $P$ be a graph pattern, i.e., an arbitrary instance of \textbf{SPARQL SAT} and
 $x,y,z$ variables not mentioned in $P$. Then define the graph pattern $Q$,
 i.e. the instance of \textbf{VARIABLE BOUND IN GRAPH} pattern as follows: $Q =
-((x,y,z) \UNION  P)$ and take $x$ to be the distinguished variable.
+((x,y,z) \UNION  P)$ and choose $x$ to be the special variable.
 It remains to show that $x$ is bound in $Q$  if and only if $P$ is not
 satisfiable.\\
 $(\Rightarrow)$:\\
@@ -89,7 +126,7 @@ Assume now that the variable $x$ is bound in $Q$, i.e., for every RDF graph $G$
 in $DS$ and every $\mu \in \ll Q \rr^{DS}_G:$ $x \in dom(\mu)$ and $\mu(x) \in
 (dom(DS) \cup names(DS) \cup dom(P))$. We can instantly see that $x \in
 dom(\mu)$ must hold. And because by construction $P$ doesn't contain $x$, $\ll Q
-\rr^{DS}_G$ does not contain a mapping that satisfies $P$.
+\rr^{DS}_G$ does not contain a mapping that satisfies $P$.\\
 \noindent$(\Leftarrow)$:\\
 Assume now that $P$ is satisfiable, i.e., there exists a dataset $DS$ and an RDF
 graph $G$ in $DS$ such that $\ll P \rr^{DS}_G \neq \emptyset$. Because 
@@ -98,11 +135,12 @@ $x \notin dom(\mu)$ by the definition of $P$ and thus $x$ cannot be bound in
 $P$ and we are done.
 \end{proof} 
 
-As deciding boundedness for a variable is undecidable the definition of
+As deciding boundedness for a variable is undecidable the notion of
 \emph{strong boundedness} is introduced, which is a syntactic condition and
 efficiently verifiable. 
 
-\begin{definition}[Strong Boundedness~\cite{BuilAranda20131}]
+\begin{definition}[Strong
+	Boundedness~\cite{BuilAranda20131}]\label{def:strongboundedness}
 Let $P$ be a graph pattern. Then the set of strongly bound variables in $P$,
 denoted by $SB(P)$, is recursively defined as follows.
 
@@ -139,18 +177,21 @@ in~\cite[Appendix A]{BuilAranda20131}.
 We notice that this proposition is not an if and only if statement and hence we may be
 able to provide a pattern $P$ where variables $x \in vars(P)$ exist, which are bound but not
 strongly bound. Furthermore another example is provided which makes things more
-complicated. The previous definition of boundedness is not enough to describe
-all the patterns which are feasible to compute. 
+complicated. In Example~\ref{ex:boundedbad} we provide a graph pattern $P$ where a variable in the
+destination of a SERVICE-operator occurs which is neither bounded nor strongly
+bounded. We will then provide a plan on how to evaluate $P$ and thus show that
+the definition of neither boundedness nor strongly boundedness is sufficient for
+practical usage. 
 
-\begin{example}
+\begin{example}\label{ex:boundedbad}
 Consider the following graph pattern:
 \begin{align*}
 P_1 = [(x,service\_description,z) \UNION ((x,service\_address, y) \AND
 \\\
 (\mbox{SERVICE } y \ (x_n,email,x_e)))]
 \end{align*}
-$x$ and $z$ store the name of a SPARQL endpoint and a description of its
-functionalities through the $service\_description$ triple. $x$ and $y$ store the
+The variables $x$ and $z$ store the name of a SPARQL endpoint and a description of its
+functionalities through the $service\_description$ triple. The variables $x$ and $y$ store the
 name of a SPARQL endpoint and the URI where it is located through the
 service\_address triple. The problem is, that variable $y$ is neither bound nor
 strongly bound in $P_1$. However we can still easily evaluate the pattern by
@@ -165,7 +206,8 @@ bound and strongly bound in the subpattern \\ $((x,service\_address, y) \AND
 
 \noindent To describe a condition that ensures all SPARQL queries containing the SERVICE
 operator can be evaluated in practice, the definition of Service-Boundedness is
-introduced.  
+introduced. The definition of service-boundedness uses a parse tree to make sure
+that our evaluation takes bounded subpatterns into account.
 
 \begin{definition}[Parse Tree, \cite{BuilAranda20131}]
 	A parse tree of a graph pattern $P$, $\T(P)$ is a tree where each
@@ -179,7 +221,7 @@ Using the definition of a Parse Tree, Service-Boundedness can be defined.
 	label $(SERVICE \ x\  P_1)$, it holds that
 	\begin{enumerate}
 		\item there exists a node $v$ of $\T(P)$ with label $P_2$ such that $v$
-			is an ancestor of $u$ in $\T(P)$ and $x$ is bound in $P_2$.
+			is an ancestor of $u$ in $\T(P)$ and $x$ is bound in $P_2$,
 		\item $P_1$ is service-bound.
 	\end{enumerate}
 \end{definition}
@@ -192,7 +234,7 @@ problem:
 \end{framed}
 
 Intuitively one can already imagine that deciding the \textbf{SERVICE BOUND}
-problem is undecidable because we use boundedness in it.
+problem is undecidable because it uses boundedness in it.
 
 \begin{theorem}[\cite{BuilAranda20131}]
 	\textbf{SERVICE BOUND} is undecidable.
@@ -229,12 +271,14 @@ $x$ occurs in the triple pattern $(x,y,z)$.
 $(\Rightarrow)$\quad Assume that $P$ is satisfiable. Then we know that variable
 $x \not\in vars(P)$ and thus we have that $x$ is not a bound variable in $Q$,
 and thus because $x$ occurs in a service operator, $Q$ is not service bound.
-
-
 \end{proof}
 
-We then use the syntactic condition, i.e., strong boundedness to define
-service-safeness.
+As the problem of undecidability prevails with the definition of
+service-boundedness, we can again use the syntactic condition, i.e., strong boundedness to define
+service-safeness which is the same as service-boundedness but uses strongly
+boundedness instead of boundedness. We know from
+Definition~\ref{def:strongboundedness} that evaluating if a variable is strongly
+bound in a graph pattern can be done efficiently.
 
 \begin{definition}[Service Safeness~\cite{BuilAranda20131}]
 	A graph pattern $P$ is service-safe if for every node $u$ of $\T(P)$ with
@@ -251,8 +295,9 @@ As corollary to Proposition 1, the following proposition is obtained:
 	If a graph pattern $P$ is service-safe, then $P$ is service-bound.
 \end{proposition}
 
-It remains to find out the difference between strong boundedness
-and boundedness. Because boundedness $\not \Leftrightarrow$ strong-boundedness, there
+\section{The difference between boundedness and strong boundedness}
+It remains to find out what the difference between strong boundedness
+and boundedness is. Because boundedness $\not \Leftrightarrow$ strong-boundedness, there
 must be patterns which are bounded but not strongly bounded. These patterns are at least
 of theoretical interest and could harm the decidable procedure:
 Assume a pattern is bounded but not strongly bounded. Then it is feasible to be evaluated, 
@@ -262,9 +307,14 @@ but the proposed algorithm returns that it is not.
 	\begin{align*}
 		P = (x,a, b) \OPT (x, a, y).
 	\end{align*}
-	$y$ is obviously bound in $P$ because for every RDF graph $G$ in $DS$ and
+	$y$ is bound in $P$ because for every RDF graph $G$ in $DS$ and
 	every $\mu \in \ll P \rr^{DS}_G$ we have that $y \in dom(\mu)$ and
-	$\mu(y) \in (dom(DS))$ but $SB = \{ x \}$.
+	$\mu(y) \in (dom(DS))$: Assume we have a $\mu \in \ll P \rr^{DS}_G$. Then $x
+	\in dom(\mu)$ by semantics of OPT. Assume w.l.o.g. $\mu(x) = c$. Then
+	$(c,a, b) \in G$. But then the mapping $\{ x \mapsto c , y\mapsto b \} \in
+	\mu \in \ll P \rr^{DS}_G$.
+	The set of strongly bound variables contains
+	only $x$, i.e., $SB = \{ x \}$ by Definition~\ref{def:strongboundedness}.
 \end{example}
 
 Example~\ref{bbutnotsbound} shows that there patterns 
@@ -285,10 +335,12 @@ examples this would mean $P \equiv Q$, where $P$ is service-bound but not
 service-safe and $Q$ is service-bound and service-safe.
 
 \begin{theorem}\label{ezprop}
-	The problem of verifying, given a graph pattern $P$ and a variable $x \in
+	The problem of verifying, given a graph pattern $P$ in a fragment
+	$\mathbf{P}$ and a variable $x \in
 	var(P)$, whether $x$ is bound in $P$ is as hard as deciding $(P_1 \AND 
 	P_2)
-	\equiv (P_1 \OPT P_2)$ for every subpattern $(P_1 \OPT  P_2)$ of $P$.
+	\equiv (P_1 \OPT P_2)$ for every subpattern $(P_1 \OPT  P_2)$ of $P$ in the
+	given fragment $\mathbf{P}$.
 \end{theorem}
 \begin{proof}
 	It is very easy to decide strong boundedness and Proposition~\ref{sbinb}
@@ -326,11 +378,15 @@ service-safe and $Q$ is service-bound and service-safe.
 			lost in the procedure.
 	\end{itemize}
 \end{proof}
+
 \begin{corollary}
-	The problem of verifying, given a graph pattern $P$, whether $P$ is
-	service-bound is as hard as deciding $(P_1 \AND \ P_2)
-	\equiv (P_1 \OPT  P_2)$ for every subpattern $(P_1 \OPT P_2)$ of $P$.
+	The problem of verifying, given a graph pattern $P$ in a fragment
+	$\mathbf{P}$ , whether $P$ is
+	service-bound is as hard as deciding $(P_1 \AND \ P_2) \equiv (P_1 \OPT
+	P_2)$ for every subpattern $(P_1 \OPT P_2)$ of $P$ in the fragment
+	$\mathbf{P}$.
 \end{corollary}
+
 \begin{proof}
 	It is obvious that checking the boundedness in the ancestor of a service
 	node causes the undecidability. Thus we use the result in Lemma~\ref{ezprop} to
@@ -339,14 +395,14 @@ service-safe and $Q$ is service-bound and service-safe.
 	\equiv (P_1 \OPT  P_2)$ for every subpattern $(P_1 \OPT P_2)$ of $P$, where
 	$P$ is the label of the ancestor node.
 \end{proof}
-\begin{corollary}
-	The problem of verifying, given a well-designed graph pattern $P$, whether $P$ is
-	service-bound is NP-hard.
-\end{corollary}
-\begin{proof}
-	Hier sind auch meine results wichtig weil $P_1$ und $P_2$ wiederum SERVICE
-	und GRAPH beinhalten koennten. Sonst ist natuerlich
-	$\cite{pichler2014containment}$ zu zitieren.
-\end{proof}
+%\begin{corollary}
+%	The problem of verifying, given a well-designed graph pattern $P$, whether $P$ is
+%	service-bound is NP-hard.
+%\end{corollary}
+%\begin{proof}
+%	Hier sind auch meine results wichtig weil $P_1$ und $P_2$ wiederum SERVICE
+%	und GRAPH beinhalten koennten. Sonst ist natuerlich
+%	$\cite{pichler2014containment}$ zu zitieren.
+%\end{proof}
 
 
