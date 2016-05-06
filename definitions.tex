@@ -1,14 +1,31 @@
-%\section{Conjunctive Queries, RDF and SPARQL Prerequisites}
 \section{Definitions}
 
-\begin{definition}[Conjunctive Queries]
-	$U$ is an infinite set of constants and $X$ is an infinite set of variables.
-	Assuming $\sigma$ is a relational schema we have that a relational atom over
-	$\sigma$ is an expression of the form $R(\vec{v})$, where $R \in \sigma$ and 
-	$R$ has arity $n>0$. $\vec{v}$ is an $n-tuple$ over $X \cup U$.
-	A database $D$ over $\sigma$ is a set of relational atoms without variables
-	where each relational atom is in $\sigma$.
+Before providing any content it is important that several definitions that
+establish a firm basis are introduced. We will start out with the definition of a 
+relational schema, database and conjunctive query. 
 
+A relational name describes the name and arity of a relation.
+\begin{definition}[Relational Schema]
+	A relational schema is a nonempty finite set of relational names.
+\end{definition}
+Following up we have the definition of a database and relational atom over a
+schema..
+
+\begin{definition}[Database and relational atom]
+	Let $\sigma$ be a relational schema, 
+	$\U$ be an infinite set of constants and $X$ an infinite set of variables.
+	A relational atom over $\sigma$ is an expression of the form $R(v)$ where $R$
+	is a relational name in $\sigma$ and $v$ is an n-tuple over $\U \cup X$
+
+	A database $D$ over $\sigma$ is a set of relational atoms without variables
+	where each relational atom is over $\sigma$.
+\end{definition}
+
+After defining the meaning of a database and a schema we are ready to define
+conjunctive queries.
+
+\begin{definition}[Conjunctive Queries]
+	Let $\sigma$ be a relational schema.
 	A conjunctive query (CQ) $q$ over $\sigma$ is a rule of the form:
 	\begin{align*}
 		X \leftarrow R_1(\vec{v_1}), \dots, R_m(\vec{v_m}).
@@ -16,29 +33,40 @@
 	Each $R_i(\vec{v_i}) (1\leq i \leq m)$ is a relational atom in $\sigma$ and 
 	$X$ is a set of distinct variables among the ones that appear in the
 	$\vec{v_i}$'s.
+\end{definition}
 
+It remains to define the semantics of a conjunctive query, i.e., how to evaluate
+a query over a given database and schema.
+\begin{definition}[Semantics of Conjunctive Queries]
 	In order to evaluate a CQ given a database $D$ over a relational schema $\sigma$
 	we need to define the semantics which is given in terms of homomorphisms.
 	Let $D$ be a database over $\sigma$.  A homomorphism from a CQ $Q$ to $D$ is a
 	partial mapping $h: X \rightarrow U$ such that $R_i(h(\vec{v_i})) \in D,$ for 
-	$1 \leq i \leq m$. $h_{X}$ is the restriction of $h$ to the variables in
+	$1 \leq i \leq m$. $h_{|X}$ is the restriction of $h$ to the variables in
 	$X$. The evaluation $Q(D)$ is the set of all mappings of the form
-	$h_{X}$, such that $h$ is a homomorphism from $q$ to $D$.
+	$h_{|X}$, such that $h$ is a homomorphism from $q$ to $D$.
 \end{definition}
 
+We will now define a simplified but absolutely (for our purposes) sufficient version of the
+original formalisation of the RDF W3C-recommendation~\cite{rdf}:
+URI stands for Uniform Resource Identifier and is a string used to identify
+abstract and physical resources in the web.
+The focus is on ground RDF graphs and we assume them to be composed of URIs only.
 
 \begin{definition}[RDF]
-	The focus is on ground RDF graphs and we assume them to be composed of URIs only.
-	$\U$ is the infinite set of URIs. An RDF triple is a tuple in $\U \times \U \times \U$, whereas an
+	Let $\U$ is the infinite set of URIs. An RDF triple is a tuple in $\U \times \U \times \U$, whereas an
 	RDF graph is a finite set of RDF triples. $dom(G) \subseteq \U$ of an RDF graph $G$ is the set of URIs actually appearing in $G$.
 \end{definition}
 
-\bigskip
+RDF is the database and SPARQL will be our query language. To use SPARQL we need
+to define the SPARQL syntax and semantics.
+
 \begin{definition}[SPARQL SYNTAX]
+	Again $\U$ is an infinite set of URIs. 
 	$\V$ is an infinite set of variables with $\U \cap V = \emptyset$. 
-	Variables in $\V$ are denoted with by the letters $x,y,z,x',y',z'$. 
-	A sparql triple pattern is a tuple in 
-	$(\U \cup \V) \times (\U \cup \V) \times (\U \cup \V)$. 
+	We will denote Variables in $\V$ with the letters $x,y,z,x',y',z',\dots$ and
+	symbols which could be in $\V \cup \U$ with $u,v,w,u',v',w',\dots$.
+	A SPARQL triple pattern is a tuple in  $(\U \cup \V) \times (\U \cup \V) \times (\U \cup \V)$. 
 	SPARQL graph patterns are recursively defined as follows:
 	\begin{enumerate}
 		\item A triple pattern is a graph pattern.
@@ -50,7 +78,10 @@
 	\noindent Assuming $P$ is a graph pattern, $vars(P)$ denotes the set of variables occuring in $P$.
 \end{definition}
 
-\begin{definition}[SPARQL Semantics]
+We proceed in defining the semantics of SPARQL. 
+
+\begin{definition}[SPARQL Semantics~\cite{pichler2014containment,
+	builaranda20131}]
 	A mapping is a function $\mu: A \rightarrow  \U$ for some $A \subset \V$. 
 	For a triple pattern $t$ with $vars(t) \subseteq dom(\mu)$, we write $\mu(t)$ to 
 	denote the triple after replacing the variables in $t$ by the corresponding 
@@ -95,171 +126,89 @@
 					\rr_G^{DS} \ | \ \forall \mu_2 \in \ll P_2 \rr_G^{DS}: \mu_1 \not\sim \mu_2\}$.
 				\item $\ll P_1 \ \mbox{UNION} \ P_2 \rr_G^{DS} = \ll P_1 \rr_G^{DS} \cup \ll P_2
 					\rr_G^{DS}$.
-				\item  $\ll \mbox{GRAPH } c \ P_1 \rr_G^{DS}  = \begin{cases} 
+				\item  $\ll \mbox{GRAPH } c \ P_1 \rr_G^{DS}  = 
+					\begin{cases} 
 						\ll P_1\rr_{graph(c,DS)}^{DS} &\mbox{if } c \in names(DS)\\	
-						\{ \} & \mbox{if } c \in I \backslash names(DS)\\
-						\bigg\{\mu \cup [c \rightarrow s ] \mid \exists s \in names(DS), \mu
-							\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [ c \rightarrow s ] \sim \mu
-						\bigg\} & \mbox{if } c \in \V
-						\end{cases}$\\ for $c \in \U \cup \V$.
+						\{ \}						  & \mbox{if } c \in \U \backslash names(DS)\\
+						\bigg\{\mu \cup [c \rightarrow s] \mid s \in names(DS), \mu
+							\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [c \rightarrow s] \sim \mu
+						\bigg\}						  & \mbox{if } c \in \V
+						\end{cases}
+						$\\ 
+						for $c \in \U \cup \V$.
 
-					\item  $\ll \mbox{SERVICE } c \ P_1 \rr_G^{DS}  = \begin{cases} 
+					\item $\ll \mbox{SERVICE } c \ P_1 \rr_G^{DS}  = 
+						\begin{cases} 
 							\ll P_1\rr_{graph(def,ep(c))}^{ep(c)} &\mbox{if } c \in dom(ep)\\	
-							\{ \mu_\emptyset\} & \mbox{if } c \in I \backslash dom(ep)\\
-							\bigg\{\mu \cup [c \rightarrow s ] \mid  \exists s \in dom(ep), \mu
+							\{ \mu_\emptyset\} & \mbox{if } c \in \U \backslash dom(ep)\\
+							\bigg\{\mu \cup [c \rightarrow s ] \mid s \in dom(ep), \mu
 								\in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))} \land [ c \rightarrow s ] \sim \mu
-							\bigg\} & \mbox{if } c \in \V
-							\end{cases}$\\ for $c \in \U \cup \V$.
+							\bigg\}			   & \mbox{if } c \in \V
+							\end{cases}$\\ 
+							for $c \in \U \cup \V$.
 					\end{enumerate}
 				}
 			}
 		\end{definition}
 
-			\begin{definition}[Well-designed SPARQL]
-				A graph pattern $P$ built only from AND and OPT is well-designed if there does
-				not exist a subpattern $P' = (P_1 \  \mbox{OPT} \ P_2)$ of $P$ and a variable $?X \in
-				vars(P_2)$ that occurs in $P$ outside $P'$, but not in $P_1$. A graph pattern $P
-				= P_1 \mbox{ UNION } \dots \mbox{ UNION } P_n$ is well-designed if each subpattern $P_i$ is UNION
-				free and well-designed.
-			\end{definition}
+		When we don't use the SERVICE or GRAPH operators and assume a graph $G$
+		we will implicitly assume a dataset $DS = \{(def,G)\}$ and
+		we will denote the evaluation function with $\ll \cdot \rr_G$ instead
+		of $\ll \cdot \rr^{DS}_G$.
 
-			\begin{definition}[OPT normal form]
-				A graph pattern containing only the operators AND and OPT is in OPT normal form
-				if the OPT operator never occurs in the scope of an AND operator. In
-				\cite{letelier2013static} it was shown that every well-designed graph pattern
-				can be transformed into OPT normal form in polynomial time. Moreover the graph
-				patterns allow for a natural tree representation, formalized by so-called
-				pattern trees.
-			\end{definition}
+		We often use the term ``destination'' of a subquery containing the SERVICE or
+		GRAPH operator in the top level.
+		The destination refers to the URI or variable inbetween the graph
+		pattern and the GRAPH or SERVICE operator.
 
+		\begin{definition}[Destination of a SERVICE- or GRAPH-operator]
+			Given a pattern $P$ of the form $P = (\mbox{SERVICE } u \ P_1)$ or
+			$(P	= \mbox{GRAPH } u \ P_1)$ we call $u$ the
+			destination of the pattern $P$.
+		\end{definition}
 
-			\begin{definition}[WDPTs~\cite{barcelo2015efficient}]\label{def:wdpt}
-				A WDPT over a relational schema $\sigma$ is a tuple $(T, \lambda, \overline{x})$
-				such that the following holds:
+		We will also define the fragment $P_{wdsg}$ which is crucial for proving the
+		complexity results. $P_{wdsg}$ is a fragment which allows the arbitrary use of
+		the GRAPH and SERVICE operator in any part of the query.
+		\begin{definition}[$P_{wdsg}$]
+			A pattern $Q \in P_{wdsg}$ if it adheres to the following grammar:
+			\begin{align*}
+				Q::= &  (Y \OPT R)  \mid B \\
+				Y::= & (Y \AND Y) \mid (\mbox{SERVICE } u \ Y) \mid (\mbox{GRAPH } u \
+				Y) \mid  B\\
+				R::= &(R \OPT R) \mid (\mbox{GRAPH } u \ R) \mid (\mbox{SERVICE } u \ R) \mid B  \\
+				B::= &(u,v,w)
+			\end{align*}
+			where	$u,v,w \in \U \cup \V$. In the first layer we seperate the pattern
+			into an AND-part and an OPT-part. In the AND- and OPT-part we can use
+			SERVICE and GRAPH freely.
+		\end{definition}
+
+		\section{Thoughts on the Semantics of the SERVICE and GRAPH Operator}
+		We were introduced to the GRAPH and
+		SERVICE operators by \cite{builaranda20131} where Buil-Aranda et al.
+		describe the syntax and semantics of the SERVICE operator and how an efficient query
+		evaluation system can be implemented. 
+		Conversely to the semantic definition we provided, they provided the
+		following definition for GRAPH (note the difference in the second case):	
+
+		\scalebox{0.68}{
+			\vbox{
 				\begin{enumerate}
-					\item $T$ is tree rooted in a distinguished node $r$, the root and $\lambda$
-						maps each node $t$ in $T$ to a set of relational atoms over $\sigma$.
-					\item For every variable $y$ that appears in $T$, the set of nodes of $T$ where
-						$y$ is mentioned is connected.
-					\item We have that $\overline{x}$ is a tuple of distinct variables occurring in
-						$T$. They are the free variables of the WDPT.
-				\end{enumerate}
-			\end{definition}
-
-			\begin{definition}
-				A WDPT $(T,\lambda, \overline{x})$ is called projection-free if $\overline{x}$
-				contains all variables mentioned in $T$.
-			\end{definition}
-
-			\begin{definition}\label{wdptq}
-				Assume $p = (T,\lambda,\overline{x})$ is a WDPT over $\sigma$. We write $r$ to
-				denote the root of $T$. Given a subtree $T'$ of $T$ rooted in $r$ we define
-				$q_{T'}$ to be the CQ $Y \leftarrow R_1(\overline{v_1}), \dots,
-				R_m(\overline{v}_m)$, where the $R_i(\overline{v_i})$'s are the reational atoms
-				that label the nodes of $T'$, i.e., 
-				\begin{align*}
-					\{ R_1(\overline{v}_1), \dots, R_m(\overline{v_m}) \} = \bigcup_{t \in T'} \lambda(t) 
-				\end{align*} and $\overline{y}$ are all the variables that are mentioned in
-				$T'$. 
-			\end{definition}
-
-			The main idea of the semantics of a WDPT is to look at each subtree $T'$ of
-			$T$ rooted in $r$. As mentioned above, each of them describes a pattern, i.e.,
-			the conjunctive query CQ $q_T'$. A mapping $h$ satisfies $(T,\lambda)$ over
-			a database $D$ if $h$ satisfies the pattern defined by a subtree $T'$ and there
-			is no subtree $T''$ which is bigger than $T'$ and $h$ can be extended to satisfy
-			$T''$.
-			\begin{definition}[Semantics of WDPTs~\cite{barcelo2015efficient}]
-				Let $p=(T,\lambda,\overline{x})$ be a WDPT and $D$ a database over $\sigma$.
-
-				\begin{enumerate}
-					\item A homomorphism from $p$ to $D$ is a partial mapping $h: X \rightarrow U$,
-						where $X$ is an infinite set of a variables and $U$ an infinite set of
-						constants, for which it is the case that there is a subtree $T'$ of $T$ rooted
-						in $r$ such that $h \in q_{T'}(D)$.
-					\item The homomorphism $h$ is maximal if there is no homomorphism $h'$ from $p$
-						to $D$ such that $h \sqsubset h'$.
-				\end{enumerate}
-				The evaluation of WDPT $p = (T,\lambda,\overline{x})$ over $D$ denoted $p(D)$,
-				corresponds to all mappings of the form $h_{\overline{x}}$, such that $h$ is a
-				maximal homomorphism from $p$ to $D$.
-			\end{definition}
-
-			It is important to notice that WDPTs properly extend CQs.
-			Given a CQ $q(x)$ of the form $X \leftarrow R_1(v_1),\dots,R_m(v_m)$
-			it is easy to see that $q(x)$ is equivalent to the WDPT $p = (T,\lambda,x)$,
-			where $T$ consists of a single node $r$ and $\lambda(r) =
-			\{R_1(v_1),\dots,R_m(v_m)\}$. In other words, $q(D) = p(D)$ for each database
-			$D$. Further on we will not distinguish between a CQ and the single node WDPT
-			that represents it. WDPTs can on the other hand represent interesting properties
-			that cannot be expressed as CQs, which we will discuss in the following example:
-			\begin{example}
-				$Q =  \bigg(((x,recorded\_by,y) \ AND \ (x,published, ``after\_2010'')) \ \\ OPT \ (x,
-				NME\_rating,z)\bigg) \ OPT \ (y, formed\_in, z') $
-
-				\noindent Consider now the following RDF database $D$ consisting of the triples:
-
-				\begin{verbatim}
-				(``title_1'' recorded_by, ``studio_1''),
-				(``title_1'' published, ``after_2010''),
-				(``title_2'' recorded_by, ``studio_1''),
-				(``title_2'' published, ``after_2010''),
-				(``title_2'' NME_rating, ``2'')
-				(``studio_1'' formed_in, ``miami''),
-				\end{verbatim}
-				Evaluating the query $Q$ over $D$ results in two mappings $\mu_1$ and $\mu_2$:
-				$\mu_1 = \{ x \rightarrow ``title\_1'', y \rightarrow ``studio_1'',z'
-				\rightarrow ``miami'' \}$ 
-				$\mu_2 = \{ x \rightarrow ``title\_2'', y \rightarrow ``studio_1'',z\rightarrow
-				``2'', z' \rightarrow ``miami'' \}$ 
-			\end{example}
-
-			\bigskip \noindent
-			\textbf{Well designed pattern forests~\cite{barcelo2015efficient}}
-			To capture the UNION operator the definition of well designed pattern trees
-			need to be modified.  
-			\begin{definition}[Unions of WDPTs]
-				A Union of WDPTs is an expression $\phi$ of the form $\bigcup_{1\leq i \leq n} p_i$, 
-				where each $p_i$ is a WDPT over $\sigma$.
-				We denote $\varphi(D)$ as the evaluation of $\phi$ over database $D$.
-				It corresponds to the set $\bigcup_{1\leq i \leq n}p_i(D)$.
-
-			\end{definition}
-			\begin{definition}[Destination of a SERVICE-operator]
-				Given a pattern $P$ of the form $P = \mbox{SERVICE } u \ P_1$ we call $u$ the
-				destination of the pattern $P$.
-
-			\end{definition}
-
-			\begin{definition}
-				polynomial hierarchy $\Sigma^P_2$ etc..
-			\end{definition}
-
-			\begin{definition}[$P_{wdsg}$]
-				A pattern $Q \in P_{wdsg}$ if it adheres to the following grammar:
-				\begin{align*}
-					Q::= &  (Y \OPT R)  \mid B \\
-					Y::= & (Y \AND Y) \mid (\mbox{SERVICE } u \ Y) \mid (\mbox{GRAPH } u \
-					Y) \mid  B\\
-					R::= &(R \OPT R) \mid (\mbox{GRAPH } u \ R) \mid (\mbox{SERVICE } u \ R) \mid B  \\
-					B::= &(u,v,w)
-				\end{align*}
-				where	$u,v,w \in \U \cup \V$. In the first layer we seperate the pattern
-				into an AND-part and an OPT-part. In the AND- and OPT-part we can use
-				SERVICE and GRAPH freely.
-
-			\end{definition}
-
-			\subsection*{Pattern trees and SPARQL graph patterns
-			Section 2 from Pichler Skritek}
-
-			\section{Thoughts on the Semantics of the SERVICE and GRAPH Operator}
+					\item  $\ll \mbox{GRAPH } c \ P_1 \rr_G^{DS}  = \begin{cases} 
+							\ll P_1\rr_{graph(c,DS)}^{DS} &\mbox{if } c \in names(DS)\\	
+							\{ \mu_{\emptyset}\} & \mbox{if } c \in \U \backslash names(DS)\\
+							\bigg\{\mu \cup [c \rightarrow s ] \mid \exists s \in names(DS), \mu
+								\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [ c \rightarrow s ] \sim \mu
+							\bigg\} & \mbox{if } c \in \V
+							\end{cases}$\\ for $c \in \U \cup \V$.
+					\end{enumerate}
+				}
+			}
 
 			We tried to propose an algorithm for evaluating CONTAINMENT[$S_1$,$S_2$] in the
-			fragment $P_{wdgs}$ and
-			along the way we recognized some unintuitive features regarding the semantics of the
+			fragment $P_{wdgs}$ and we saw some unintuitive features regarding the semantics of the
 			SERVICE and GRAPH operators. Consider the following example:
-
 			\begin{example}
 				$DS=\{(G_0,def), (G_1,a) \}$ where $G_0 = \{
 				(c,k,g), (a,k,g) \}$, $G_1$ is arbitrary and  $Q = (GRAPH \ ?X  \ (GRAPH  \ c \  P_1)) \ AND \ (?X,k,g)$.
@@ -295,18 +244,12 @@
 			But this means that $\ll Q_1 \rr^{DS}_G = \{?X \rightarrow a\}$ and  $\ll Q_2
 			\rr^{DS}_G = \{?Y \rightarrow a\}$ rendering neither equivalence nor containment
 			in any possible way.
-
-			\noindent\textbf{The history of the formal definition of the GRAPH and the SERVICE
-			operator}\\
-			We were introduced to the GRAPH and
-			SERVICE operators by \cite{BuilAranda20131} where Buil-Aranda et al.
-			describe the syntax and semantics of the SERVICE operator and how an efficient query
-			evaluation system can be implemented. In \cite{BuilAranda20131} the authors
+			In \cite{builaranda20131} the authors
 			state that the GRAPH-Operator was introduced formally
-			in \cite{perez2009semantics} but we were not able to find the definition in \cite{perez2009semantics}.
-			Instead we tried to look into the w3c-standard\cite{w3standard} 
+			in \cite{perez2009semantics} but we were not able to find the definition
+			in it.
+			Instead we tried to look into the W3C-recommendation\cite{w3standard} 
 			where we found the following definition:
-
 			\begin{lstlisting}
 			if IRI is a graph name in D
 			eval(D(G), Graph(IRI,P)) = eval(D(D[IRI]), P)
@@ -321,34 +264,20 @@
 
 			If we look at the second case, we can see that the empty multiset (because the
 			definition goes with bag semantics)
-			is returned if the IRI is not a graph name in the Dataset. 
-			To eliminate the unintuitive semantics of the SERVICE and GRAPH Operators we
-			would thus like to define the following semantics:\\
-			\scalebox{0.68}{
-				\vbox{
-					\begin{enumerate}
-						\item  $\ll \mbox{GRAPH } c \ P_1 \rr_G^{DS}  = \begin{cases} 
-								\ll P_1\rr_{graph(c,DS)}^{DS} &\mbox{if } c \in names(DS)\\	
-								\{ \} & \mbox{if } c \in I \backslash names(DS)\\
-								\bigg\{\mu \cup [c \rightarrow s ] \mid \exists s \in names(DS), \mu
-									\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [ c \rightarrow s ] \sim \mu
-								\bigg\} & \mbox{if } c \in \V
-								\end{cases}$\\ for $c \in \U \cup \V$.
-						\end{enumerate}
-					}
-				}
+			is returned if the URI is not a graph name in the Dataset resulting
+			in our original definition of SPARQL semantics. However the second
+			case of the SERVICE-operator, i.e., $ if \c \in \U \backslash dom(ep)$ return
+			$\mu_\emptyset$ stays the same and is intended by the authors in
+			$\cite{builaranda20131}$.
 
-				Looking at GRAPH again, it's a bit unintuitive that if we have
-				the third case, namely $c \in \V$, the query $P_1$ will not be considered over the
-				default graph. The reason for this can also be found in the definition of the
-				dataset in the standard \cite{w3standard}:
-				``A SPARQL query is executed against an RDF Dataset which represents a collection
-				of graphs. An RDF Dataset comprises one graph, the default graph, which does not
-				have a name, and zero or more named graphs, where each named graph is identified
-				by an IRI. A SPARQL query can match different parts of the query pattern against
-				different graphs as described in section 13.3 Querying the Dataset.''
-				In~\cite{pichler2014containment} the complexity of the \textbf{CONTAINMENT},
-				\textbf{EQUIVALENCE} and \textbf{SUBSUMPTION}
-				problems of well-designed SPARQL regarding the operators AND, OPT, UNION and 
-				projection were examined.  We extend the results with the GRAPH- and the SERVICE
-				operator. 
+			It's a bit unintuitive at first that if we have
+			the third case (of both GRAPH and SERVIE), 
+			namely $c \in \V$, the query $P_1$ will not be considered over the
+			default graph. The reason for this can also be found in the definition of the
+			dataset in the standard \cite{w3standard}:
+			``A SPARQL query is executed against an RDF Dataset which represents a collection
+			of graphs. An RDF Dataset comprises one graph, the default graph, which does not
+			have a name, and zero or more named graphs, where each named graph is identified
+			by an IRI. A SPARQL query can match different parts of the query pattern against
+			different graphs as described in section 13.3 Querying the Dataset.''
+

@@ -1,3 +1,102 @@
+We need a different but equivalent definitions of WDPTs in this section. The
+main structural difference to Definition~\ref{def:pt} is that the nodes in the
+tree are labelled with a set
+of relational atoms over a schema instead of a set of triples. Also the semantic
+evaluation of WDPTs use the notion of conjunctive queries.
+
+\begin{definition}[WDPTs~\cite{barcelo2015efficient}]\label{def:wdpt}
+	A WDPT over a relational schema $\sigma$ is a tuple $(T, \lambda, \overline{x})$
+	such that the following holds:
+	\begin{enumerate}
+		\item $T$ is tree rooted in a distinguished node $r$, the root and $\lambda$
+			maps each node $t$ in $T$ to a set of relational atoms over $\sigma$.
+		\item For every variable $y$ that appears in $T$, the set of nodes of $T$ where
+			$y$ is mentioned is connected.
+		\item We have that $\overline{x}$ is a tuple of distinct variables occurring in
+			$T$. They are the free variables of the WDPT.
+	\end{enumerate}
+\end{definition}
+
+\begin{definition}
+	A WDPT $(T,\lambda, \overline{x})$ is called projection-free if $\overline{x}$
+	contains all variables mentioned in $T$.
+\end{definition}
+
+\begin{definition}\label{wdptq}
+	Assume $p = (T,\lambda,\overline{x})$ is a WDPT over $\sigma$. We write $r$ to
+	denote the root of $T$. Given a subtree $T'$ of $T$ rooted in $r$ we define
+	$q_{T'}$ to be the CQ $Y \leftarrow R_1(\overline{v_1}), \dots,
+	R_m(\overline{v}_m)$, where the $R_i(\overline{v_i})$'s are the reational atoms
+	that label the nodes of $T'$, i.e., 
+	\begin{align*}
+		\{ R_1(\overline{v}_1), \dots, R_m(\overline{v_m}) \} = \bigcup_{t \in T'} \lambda(t) 
+	\end{align*} and $\overline{y}$ are all the variables that are mentioned in
+	$T'$. 
+\end{definition}
+
+The main idea of the semantics of a WDPT is to look at each subtree $T'$ of
+$T$ rooted in $r$. As mentioned above, each of them describes a pattern, i.e.,
+the conjunctive query CQ $q_T'$. A mapping $h$ satisfies $(T,\lambda)$ over
+a database $D$ if $h$ satisfies the pattern defined by a subtree $T'$ and there
+is no subtree $T''$ which is bigger than $T'$ and $h$ can be extended to satisfy
+$T''$.
+\begin{definition}[Semantics of WDPTs~\cite{barcelo2015efficient}]
+	Let $p=(T,\lambda,\overline{x})$ be a WDPT and $D$ a database over $\sigma$.
+
+	\begin{enumerate}
+		\item A homomorphism from $p$ to $D$ is a partial mapping $h: X \rightarrow U$,
+			where $X$ is an infinite set of a variables and $U$ an infinite set of
+			constants, for which it is the case that there is a subtree $T'$ of $T$ rooted
+			in $r$ such that $h \in q_{T'}(D)$.
+		\item The homomorphism $h$ is maximal if there is no homomorphism $h'$ from $p$
+			to $D$ such that $h \sqsubset h'$.
+	\end{enumerate}
+	The evaluation of WDPT $p = (T,\lambda,\overline{x})$ over $D$ denoted $p(D)$,
+	corresponds to all mappings of the form $h_{\overline{x}}$, such that $h$ is a
+	maximal homomorphism from $p$ to $D$.
+\end{definition}
+
+It is important to notice that WDPTs properly extend CQs.
+Given a CQ $q(x)$ of the form $X \leftarrow R_1(v_1),\dots,R_m(v_m)$
+it is easy to see that $q(x)$ is equivalent to the WDPT $p = (T,\lambda,x)$,
+where $T$ consists of a single node $r$ and $\lambda(r) =
+\{R_1(v_1),\dots,R_m(v_m)\}$. In other words, $q(D) = p(D)$ for each database
+$D$. Further on we will not distinguish between a CQ and the single node WDPT
+that represents it. WDPTs can on the other hand represent interesting properties
+that cannot be expressed as CQs, which we will discuss in the following example:
+\begin{example}
+	$Q =  \bigg(((x,recorded\_by,y) \ AND \ (x,published, ``after\_2010'')) \ \\ OPT \ (x,
+	NME\_rating,z)\bigg) \ OPT \ (y, formed\_in, z') $
+
+	\noindent Consider now the following RDF database $D$ consisting of the triples:
+	\begin{verbatim}
+	(``title_1'' recorded_by, ``studio_1''),
+	(``title_1'' published, ``after_2010''),
+	(``title_2'' recorded_by, ``studio_1''),
+	(``title_2'' published, ``after_2010''),
+	(``title_2'' NME_rating, ``2'')
+	(``studio_1'' formed_in, ``miami''),
+	\end{verbatim}
+	Evaluating the query $Q$ over $D$ results in two mappings $\mu_1$ and $\mu_2$:
+	$\mu_1 = \{ x \rightarrow ``title\_1'', y \rightarrow ``studio_1'',z'
+	\rightarrow ``miami'' \}$ 
+	$\mu_2 = \{ x \rightarrow ``title\_2'', y \rightarrow ``studio_1'',z\rightarrow
+	``2'', z' \rightarrow ``miami'' \}$ 
+\end{example}
+
+To capture the UNION operator the definition of well designed pattern trees
+need to be modified.  
+\begin{definition}[Unions of WDPTs]
+	A Union of WDPTs is an expression $\phi$ of the form $\bigcup_{1\leq i \leq n} p_i$, 
+	where each $p_i$ is a WDPT over $\sigma$.
+	We denote $\varphi(D)$ as the evaluation of $\phi$ over database $D$.
+	It corresponds to the set $\bigcup_{1\leq i \leq n}p_i(D)$.
+	Unions of WDPTs are also called Well-designed pattern
+	forests(WDPF).
+\end{definition}
+
+
+
 First we are going to show an easy example of how to translate a graph pattern
 only using AND and triple patterns to a conjunctive query. Then we propose a
 polynomial time translation from a graph pattern $P \in P_{wdgs}$ to $Q \in P_{wd}$. For this

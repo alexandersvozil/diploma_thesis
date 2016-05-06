@@ -1,3 +1,185 @@
+A first we are going to introduce the fragment of well-designed SPARQL, then we
+will analyze the results of~\cite{pichler2014containment}, in three seperate
+chapters namely decidable containment, undecidable containment and equivalence.
+
+\section{Introduction to well-designed SPARQL}
+Well-designed SPARQL is a good fundamental basis for complexity analysis because
+the evaluation problem is only coNP-complete in contrast to general SPARQL where
+it is PSPACE-complete~\cite{perez2009semantics}.
+%dbpeda query amount 
+
+\begin{definition}[Well-designed SPARQL]
+	A graph pattern $P$ built only from AND and OPT is well-designed if there does
+	not exist a subpattern $P' = (P_1 \  \mbox{OPT} \ P_2)$ of $P$ and a variable $?X \in
+	vars(P_2)$ that occurs in $P$ outside $P'$, but not in $P_1$. A graph pattern $P
+	= P_1 \mbox{ UNION } \dots \mbox{ UNION } P_n$ is well-designed if each subpattern $P_i$ is UNION
+	free and well-designed.
+\end{definition}
+
+In \cite{letelier2013static} it was shown that every well-designed graph pattern
+can be transformed into OPT normal form in polynomial time. 
+\begin{definition}[OPT normal form]
+	A graph pattern containing only the operators AND and OPT is in OPT normal form
+	if the OPT operator never occurs in the scope of an AND operator. 
+\end{definition}
+
+Graph Patterns in OPT normal form can be displayed in a natural tree representation, 
+formalized by so-called well-designed pattern trees. But before defining the
+well-designed pattern trees we need some basic notation about pattern trees.
+\begin{definition}[Pattern Tree]\label{def:pt}
+	A pattern tree (PT) $T$ is a pair $(T,P)$ where  $T= (V,E,r)$ is a rooted,
+	unordered tree and $P = (P_n)_{n \in V}$ is a labelling of the nodes in $V$,
+	s.t. $P_n$ is a non-empty set of triple patterns for every $n \in V$.  
+\end{definition}
+
+In Example~\ref{ex:pt} we can see how a pattern in OPT normal form is
+transformed into a pattern tree.
+\begin{example}[~\cite{pichler2014containment}]\label{ex:pt}
+	Consider the graph pattern
+	\begin{align*}
+		P = \big(\big( (x,name,y) \AND (x,email,z) \big) \OPT (x,web,x') \big)
+		\OPT \big((x,phone,x'') \OPT (x,fax,x''')\big)
+	\end{align*} and the corresponding pattern tree:\\
+	\begin{tikzpicture}[sibling distance=10em]
+			\node {\{$(x,name,y),(x, email, z)$\}}
+			child { node {$\{(x,web,x')\}$} }
+			child { node {$\{(x,phone,x'')\}$}
+		child { node {$\{(x,fax,x''')\}$}}};
+		\end{tikzpicture}
+\end{example}
+
+We will now define further details of a pattern tree and after that
+proceed with defining well-designed pattern trees.
+\begin{definition}[Components of a pattern tree~\cite{pichler2014containment}]
+Let $T = ((V,E,r), P)$ be a pattern tree.
+
+We call the pattern tree $T' = ((V',E',r'), (P_n)_{n \in V'})$ a subtree of $T$
+if $(V',E',r')$ is a subtree of $T$. 
+
+An extension of $\hat{T}'$ of a subtree
+$T'$ of $T$ is a subtree $\hat{T}'$ of $T$, s.t. $T'$ is in turn a subtree of
+$\hat{T}'$. A subtree or extension is proper if some node of the bigger tree is
+missing in the smaller tree.
+
+Given $T$, we write $V(T)$ to denote the set $V$ of vertices.
+
+We denote with $pat(T)$ the set $\bigcup_{n\in V(T)} P_n$ and write $vars(T)$ as an
+abbreviation for $vars(pat(T))$.
+
+Given a node $n \in V(T)$, we define $branch(n) = n^1, \dots, n^k$ with $n^1 = r$
+and $n^k = n$ as the unique sequence of nodes from the root $r$ to $n$.
+
+For nodes $n,\hat{n} \in V(T)$,s.t. $\hat{n}$ is the parent of $n$, let
+$newvars(n) = vars(n) \backslash vars(branch(\hat{n}))$. 
+
+A node $n$ is a child
+of a PT $T$ if $n\notin V(T)$ and $n$ is the child of some node $n' \in V(T)$.
+\end{definition}
+After thoroughly describing special details of pattern trees, we are now ready
+to look at the definition of well-designed pattern trees(wdPTs).
+\begin{definition}[Well-designed pattern tree
+	(wdPT)~\cite{pichler2014containment}]
+	A well-designed pattern tree (wdPT) is a pattern tree $T = (T,P)$ where for
+	every variable $x \in V(T)$, the nodes $\{n \in V(T) \mid x \in vars(n)\}$
+	induce a connected subgraph of $T$.
+\end{definition}
+We can observe that the pattern tree in Example~\ref{ex:pt} is well-designed.
+There are two important properties of wdPTs that need to be mentioned. 
+\begin{proposition}
+	\begin{enumerate}	
+		\item Every wdPT $T$ can be transformed efficiently into NR normal form, if $newvars(n) \neq
+			\emptyset$ for every $n \in V(T)$~\cite{letelier2012static}. From now on we
+			assume w.l.o.g. that all wdPTs dealth with in this paper are in NR normal form.
+		\item For every variable $x \in vars (T)$, there is a unique node $n \in
+			V(T)$, s.t. $x \in newvars(n)$ and all other nodes $n' \in V(T)$
+			with $x \in vars(n')$ are descendants of
+			$n$.~\cite{pichler2014containment}
+	\end{enumerate}
+\end{proposition}
+
+
+We denote the results of evaluating a wdPT $T$ over some RDF graph by $\ll T
+\rr_G$. The set $\ll T \rr_G$ of solutions can be defined via a translation to
+graph patterns. We will do something similar in our alternate Definition of
+wdPT\ref{def:wdpt}. Lemma~\ref{lemma:altsemwdpt} allows us to use a direct
+characterization in terms of maximal subtrees of a wdPT $T$ assuming it is in NR
+normal form.
+\begin{lemma}[Semantics of pattern trees~\cite{letelier2012static}]\label{lemma:altsemwdpt}
+	Let $T$ be a wdPT in NR normal form and $G$ an RDF graph. then $\mu \in
+	\ll T\rr_G$ iff there exists a subtree $T'$ of $T$, s.t. 
+	\begin{enumerate}
+		\item  $dom(\mu) = vars(T')$, and
+		\item $T'$ is the maximal subtree of $T$, s.t. $\mu \sqsubset \ll
+			pat(T') \rr_G$.
+	\end{enumerate}
+\end{lemma}
+
+Projection is interpretet as a top level operator on top of a graph pattern.
+\begin{definition}[Projection of a mapping]
+For a mapping $\mu$ and a set $X$ of variables we denote $\mu_{|X}$ as the
+projectino of $\mu$ to the variables in $X$, call it $\mu'$. $dom(\mu'):=X \cap
+dom(\mu)$ and $\mu'(x) := \mu(x)$ for all $x \in dom(\mu')$.
+\end{definition}
+
+We are now ready to define projected well-designed trees:
+A projected well-designed tree (pwdPT) is a pair $(T,X)$ where $T$ is a wdPT and
+$X$ a set of variables.
+\begin{definition}[Result of pwdPTs \cite{pichler2014containment}]
+Let $G$ be a RDF graph. 
+Then $\ll (T,X)\rr_G = \{ \mu_{|X} \mid \mu \in \ll T \rr_G\}$.
+\end{definition}
+
+In a projected wdPT there are free variables and existential variables.
+\begin{definition}[Free and existentail variables
+	~\cite{pichler2014containment}]
+	Let $(T,X)$ be a pwdPT. Then the free variables of $(T,X)$ are defined as
+	$fvars(T)= vars(T) \cap X$ and
+	the existential variables of $(T,X)$ are defined as $vars(T) \backslash
+	fvars(T)$.
+	Analogously, we write $fvars(n)$ and $evars(n)$, respecitvely, for nodes
+	$n\in V(T)$.
+\end{definition}
+
+In $\cite{letelier2013static}$ it was shown that a 
+similar characterization of solution as in Lemma~\ref{lemma:altsemwdpt} exists.
+A pwdPT $(T,X)$ is in NR normal form if $T$ is. W.l.o.g., we assume that
+existential variables when we look at more than one pwdPT are always renamed apart.
+
+\begin{lemma}[\cite{letelier2013static}]
+	Let $(T,X)$ be a pwdPT in $NR$ normal form, $G$ an RDF graph and $\mu$ a
+	mapping with $dom(\mu) \subseteq X$. Then $\mu \in \ll ( T,X)\rr_G$ iff
+	there exists a subtree $T'$ of $T$, s.t. 
+	\begin{enumerate}
+		\item $dom(\mu) = fvars(T')$ and
+		\item there exists a mapping $\lambda: evars(T') \mapsto dom(G)$, s.t.
+			$\mu \cup \lambda \in \ll T \rr_G$.
+
+	\end{enumerate}
+\end{lemma}
+
+The last outgrowth of pwdPTs we will consider are unions of well-designed
+pattern trees. Unions of well-design patterns correspond to the usage of the
+UNION operator in a graph pattern consisting over several well-designed graph
+patterns connected by UNION, i.e. $P = P_1 \UNION \dots \UNION P_k$. They can be
+considered as a set $\{T_1, \dots, T_k\}$ of wdPTs. Such a set is called
+well-designed pattern forest (wdPF) $F$. We can analogously define projected
+well-designed pattern forests (pwdPFs) as a tuple $(F',X)$ where $F'=\{(T_1,X),\dots,(T_k,X)\}$.
+
+\begin{definition}[Result of wdPFs and pwdPF \cite{pichler2014containment}]
+Let $G$ be a RDF graph. 
+Then $\ll F \rr_G = \bigcup_{T\in F}\ll T \rr_G$ and $\ll(F',X)\rr_G =
+\bigcup_{(T,X) \in F'} \ll (T,X) \rr_G$. 
+\end{definition}
+
+
+A subforest of a forest $F$ is a set of subtrees of $F$.
+We can extend $pat(\cdot)$ to wdPFs: Let $F$ be a wdPF then $pat(F) =
+\cup_{T \in F}  pat(T)$ and analogously $vars(F)$.
+
+\bigskip \noindent
+To capture the UNION operator the definition of well designed pattern trees
+need to be modified.  
+
 Pichler and Skritek studied query containment and query equivalence of well
 designed SPARQL in~\cite{pichler2014containment}. As we want to analyse the
 complexity of the SERVICE-operator regarding containment and equivalence it 
@@ -787,11 +969,11 @@ Having the strenghtened version of \textbf{FINITE-CQ-UNDER-TGDs} we can now prov
 \end{proofidea}
 
 \section{Equivalence}
-When looking at the equivalence table~\ref{equivtable}, it is not so obvious
-what is decidable and what is not: Even though CONTAINMENT$[S_1,S_2]$ becomes
+When looking at the equivalence table~\ref{equivtable}, it is not easy to
+distinguish the decidable cases from the undecdiable ones: Even though CONTAINMENT$[S_1,S_2]$ becomes
 undecidable iff $\pi \in S_2$, EQUIVALENCE$[\{\pi,\cup\},\emptyset]$
-is decidable. Again to keep the number of proofs to an absolute minimum, the
-fact that membership results propagate to the more special case and the hardness
+is decidable. To keep the number of proofs to an absolute minimum, the
+fact that membership results propagate to the more special cases and the hardness
 results to the more general cases is made use of.
 The following results are proven:
 \begin{itemize}
@@ -818,7 +1000,7 @@ carries over from the proof of \textbf{EQUIVALENCE[$\{\pi\},\emptyset$]} and
 We begin with a proof for $\Pi^P_2$-membership of
 \textbf{EQUIVALENCE[$\{\cup,\pi\},\emptyset$]}. 
 
-\begin{theorem}~\cite{pichler2014containment}
+\begin{theorem}~\cite{pichler2014containment}\label{equivcuppiempty}
 Let $T$ be a wdPT and $(F,X)$ be a pwdPF.
 Then $T \equiv (F,X)$ iff.
 \begin{enumerate}
@@ -845,9 +1027,11 @@ $\mu$ didn't, and is thus a proper extension of $\mu$. But then again by
 condition (2), $\mu'$ is a also a solution of $T$. But this cannot be true
 because a mapping and its proper extension are both solutions to a wdPT. 
 \end{proof}
-
+We can easily see that the characterization in Theorem~\ref{equivcuppiempty} can be
+transformed into an algorithm which yields the membership proof for
+\textbf{EQUIVALENCE[$\emptyset,\{\cup,\pi\}$]}.
 \begin{theorem}~\cite{pichler2014containment}
-EQUIVALENCE$[\emptyset,\{\cup,\pi\}]$ is in $\Pi_2^P$.
+	\textbf{EQUIVALENCE[$\emptyset,\{\cup,\pi\}$]} is in $\Pi_2^P$.
 \end{theorem}
 \begin{proof}
 By Theorem\ref{ccuppiempty} deciding the second property is $NP-complete$ and
@@ -855,12 +1039,15 @@ by Theorem\ref{scuppicuppi} deciding the first property is $\Pi_2^P$-complete
 rendering the complexity of the algorithm $\Pi_2^P$-complete.
 \end{proof}
 
+Following up we have the hardness result of\\
+\textbf{EQUIVALENCE[$\emptyset,\{\cup\}$]} and
+\textbf{EQUIVALENCE[$\emptyset,\{\pi\}$]}.
 \begin{theorem}~\cite{pichler2014containment}
-EQUIVALENCE$[\emptyset,\{\cup\}]$ is $\Pi_2^P$-hard
+	\textbf{EQUIVALENCE[$\emptyset,\{\cup\}$]} is $\Pi_2^P$-hard
 \end{theorem}
 \begin{proofidea}
 The same construction as in Theorem~\ref{cemptycup} can be used to prove the
-desired result: The same reduction from $3-QSAT_{\forall,2}$ is used.
+desired result: The same reduction from \textbf{3-QSAT$_{\forall,2}$} is used.
 Remembering that in this construction a $wdPT T_1$ and a wdPF $F_2$ such that
 $\phi$ is valid iff.  $T_1 \subseteq F_2$ holds is constructed.
 One can
@@ -870,19 +1057,20 @@ argumentation yields the desired result.
 \end{proofidea}
 
 \begin{theorem}~\cite{pichler2014containment}
-EQUIVALENCE$[\emptyset,\{\pi\}]$ is $\Pi_2^P$-hard
+	\textbf{EQUIVALENCE[$\emptyset,\{\pi\}$]} is $\Pi_2^P$-hard
 \end{theorem}
 \begin{proofidea}
-Again a reducion from $3-QSAT_{forall,2}$ to  EQUIVALENCE$[\emptyset,\{\pi\}]$
-is given as a proof.
+	A reducion from \textbf{3-QSAT$_{forall,2}$} to
+	\textbf{EQUIVALENCE[$\emptyset,\{\pi\}$]}
+is needed to obtain the desired result.
 \end{proofidea}
 
 The following two theorems are proven by adapting the reduction from
-FINITE-BCQ-UNDER-TGDs to CONTAINMENT$[\emptyset,\{\pi\}]$ in the proof of 
+\textbf{FINITE-BCQ-UNDER-TGDs} to \textbf{CONTAINMENT[$\emptyset,\{\pi\}$]} in the proof of 
 Theorem~\ref{cemptypi}.
 \begin{theorem}~\cite{pichler2014containment}
-EQUIVALENCE$[\{\cup,\pi\},\{\cup\}]$ is undecidable.
+	\textbf{EQUIVALENCE[$\{\cup,\pi\},\{\cup\}$]} is undecidable.
 \end{theorem}
 \begin{theorem}~\cite{pichler2014containment}
-EQUIVALENCE$[\{\pi\},\{\pi\}]$ is undecidable.
+	\textbf{EQUIVALENCE[$\{\pi\},\{\pi\}$]} is undecidable.
 \end{theorem}
