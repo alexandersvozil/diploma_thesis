@@ -1877,10 +1877,14 @@ from our $trans$ function is a pattern tree, as it was defined by Definition~\re
 \end{proof}
 
 
+We will now write our final result: When we have a graph pattern $P$ in
+$P_{wdgs}$ with a dataset $DS$ and a function $ep$ we want to transform it into a
+wdPT $Q$ and database $D$ with our function $trans$ so that
+$\ll P \rr^{DS}_def = Q(D)$.
 \begin{theorem}\label{biglemma}
-	Let $P$ be a SPARQL graph pattern, $DS$ a dataset and $G$ a graph in $DS$.
-	Let $DS = ep(ds)$  and $G = graph(g,DS)$. Let $Q = trans(P,ds,g)$ and $D =
-	(data(DS))$.	Then $\ll P \rr^{DS}_G = Q(D)$.
+    Let $P$ be a graph pattern in $P_{wdgs}$, $DS$ a dataset and $G$ a graph in $DS$.
+    Let $DS = ep(ds)$  and $G = graph(g,DS)$. Let $Q = trans(P,ds,g)$ be the
+    wdPT and $D = \bigcup\limits_{c \in dom(ep)} data(c)$. Then $\ll P \rr^{DS}_G = Q(D)$.
 \end{theorem}
 \begin{proof}
 	The database $D$ is the same database that is created in
@@ -1889,6 +1893,16 @@ from our $trans$ function is a pattern tree, as it was defined by Definition~\re
 	$DS = ep(ds)$  and $G = graph(g,DS)$ hold and thus $ds,g \in \U$:
 	$\ll P \rr^{DS}_G = Q(D)$ follows.
 \end{proof}
+
+For the static analysis we dont have $DS$ as input, so we want to
+generalize the theorem in the following way:
+\begin{theorem}\label{biglemma}
+	Let $P$ be a graph pattern in $P_{wdgs}$, 
+	$DS$ be an arbitrary dataset in $img(ep)$.
+	Let $x \in \V$. Then $Q = trans(P,x,def)$ be the wdPT and 
+	$D = \bigcup\limits_{c \in dom(ep)} data(c)$. 
+	Then $\ll P \rr^{DS}_G = Q(D)$.
+\end{theorem}
 
 \section{The complexity of EVAL($\l$) where $\l \in \{P,\u,\s\}$ }
 
@@ -1929,7 +1943,7 @@ Again hardness of the problem follows immediately from the hardness of
 \end{theorem}
 \begin{proof}
 	Hardness for each of these problems follows immediately from the fact that
-	that they are already $NP$-complete for the language
+	that they are already NP-complete for the language
 	$P_{wd}$~\cite{letelier2012static}.
 	%and $\Pi^{P}_2$ for the language $\U_{wd}$~\cite{pichler2014containment}.\\
 	For the membership, we propose the following algorithm:
@@ -1944,7 +1958,8 @@ Again hardness of the problem follows immediately from the hardness of
 %	\u_{wdgs}$.
 	\begin{enumerate}
 		\item $Q_1 \subseteq Q_2$:
-			Let $ds \in dom(ep)$ be arbitrary, i.e. an arbitrary URI of a dataset. 
+			Let $ds \in dom(ep)$ be arbitrary, i.e., 
+			an arbitrary URI of a dataset and $DS = ep(ds)$. 
 			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
 			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
 			Let $\mu$ be an arbitrary mapping in $\ll P_1 \rr^{DS}_{def}$. Because
@@ -1952,8 +1967,77 @@ Again hardness of the problem follows immediately from the hardness of
 			Because of our assumption we get that $\mu \in Q_2(D)$. Because
 			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \in \ll P_2
 			\rr^{DS}_{def}$.
+
 		\item $Q_1 \not\subseteq Q_2$: 
-			Let $ds \in dom(ep)$ be arbitrary, i.e. an arbitrary URI of a dataset. 
+			Let $ds \in dom(ep)$ be arbitrary, i.e., an arbitrary URI of a dataset 
+			and $DS = ep(ds)$.
+			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
+			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
+			By assumption there is a $\mu \in
+			Q_1(D)$ such that $\mu \notin Q_2(D)$. Because
+			of Theorem~\ref{biglemma} and $\mu \in Q_1(D)$ we can conclude that $\mu \in \ll P_1
+			\rr^{DS}_{def}$.
+			Because of our assumption we get that $\mu \notin Q_2(D)$. Because
+			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \notin \ll P_2
+			\rr^{DS}_{def}$.
+	\end{enumerate}
+\end{proof}
+%der proof geht nicht weil wenn man oben die variable reinhaut kriegt man kein
+%nicht \ll P \rr^DS_G = Q(D) sondern was anderes.
+To generalize this result which means removing the $ep(\cdot)$ function from the
+input, we observed that a problem occurred in the step where we transformed the
+SERVICE function into a wdpt. 
+In detail, this is the case when we have a query of the form $(\mbox{SERVICE }
+a \
+P_1)$, where $a \in \U \backslash dom(ep)$. In this case our transformation
+function $trans(\cdot)$ directly accesses the function $ep(\cdot)$ and checks if $a \in
+ep(\cdot)$ and produces a result directly depending on the outcome of this
+function. When transforming the GRAPH operator into a wdPT we don't run into the
+same problem. Assume we want to transform $(\mbox{GRAPH} \ a \ P_1)$ with $trans(\cdot)$
+and our current dataset is $ds$.
+Then $trans(\cdot)$ produces the same output regardless of the outcome of $a \in
+dom(names(ds))$.
+\begin{theorem}
+	The problem \textbf{CONTAINMENT}($P_{wdgs}$)  
+	is NP-hard and in $\Sigma^P_2$.
+\end{theorem}
+\begin{proof}
+	NP-Hardness for the problem follows immediately from the fact that
+	that they are already NP-complete for the language
+	$P_{wd}$~\cite{letelier2012static}.
+	%and $\Pi^{P}_2$ for the language $\U_{wd}$~\cite{pichler2014containment}.\\
+
+	For the $\Sigma^P_2$ membership  of \textbf{CONTAINMENT}($P_{wdgs}$), we propose the following algorithm:
+	Let $P_1,P_2$ be two arbitrary patterns where $P_1,P_2 \in P_{wdgs}$ holds.
+	Scan the queries $P_1,P_2$ for every occurrence of $(\mbox{SERVICE} \ a \ P_1)$ where $a \in
+	\U$. Put each destination URI of a SERVICE subpattern in $P_i$ into the set $O_i$ for $i\in
+	\{1,2\}$.
+	Let $O = O_1 \cup O_2$ so we have all the distinct occurences of destination
+	URIs in both queries. Assume $|O| = n$. 
+	Notice that we have exactly $2^n$ possibilities to construct $dom(ep)$ that would
+	influence our translation function $trans(\cdot)$ because this is the
+	number of subsets of the set $O$.
+	Let this family of domains be described as $Doms$.
+	Let $x \in \V$ and guess a domain $D_i\in Doms$. Then let 
+	$Q_i = trans(P_i,x,def,D_i)$ for $i\in \{1,2\}$. 
+	Using the NP-algorithm proposed in~\cite{letelier2012static} 
+	we can decide whether $Q_1 \subseteq Q_2$:
+	\begin{enumerate}
+		\item $Q_1 \subseteq Q_2$:
+			Let $ep$ have the domain $D_i$ and assume it else to be arbitrary.
+			Let $ds \in dom(ep)$ be arbitrary, i.e., an arbitrary
+			URI of a dataset and $DS = ep(ds)$. 
+			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
+			obviously in polynomial time if $dom(ep)$ is assumed to be finite. 
+			Let $\mu$ be an arbitrary mapping in $\ll P_1 \rr^{DS}_{def}$. Because
+			of Theorem~\ref{biglemma} we can conclude that $\mu \in Q_1(D)$.
+			Because of our assumption we get that $\mu \in Q_2(D)$. Because
+			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \in \ll P_2
+			\rr^{DS}_{def}$.
+		\item $Q_1 \not\subseteq Q_2$: 
+			Let $ep$ have the domain $D_i$ and assume it else to be arbitrary.
+			Let $ds \in dom(ep)$ be arbitrary, i.e., an arbitrary URI of a dataset 
+			and $DS = ep(ds)$.
 			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
 			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
 			By assumption there is a $\mu \in

@@ -1,4 +1,3 @@
-\section{Motivation and Problem Statement}
 Within the last years more and more Resource Description Framework
 (RDF)~\cite{rdf} data is
 published on the Web. RDF is an integral part of the semantic web concept
@@ -6,15 +5,18 @@ because it allows to express relationships between resources similar to class
 diagrams. Like basic grammar, RDF allows to make statements in the form of subject-predicate-object
 expressions. These expressions are called ``triples'' in RDF terminology and are
 stored in so called RDF graphs, the RDF database.
-%%Who formalized this concept first
-An important way to access RDF data, i.e., triples, in the internet is the SPARQL Protocal And
-RDF Query Language (SPARQL). SPARQL is standardized by the RDF Data Access
-Working Group of the World Wide Web Consortium (WWC)~\cite{w3standard}.
+An important way to access RDF data in the internet is the SPARQL Protocol And
+RDF Query Language (SPARQL). One of the most cited and important publishers of
+RDF data is DBPedia, a large-scale, multilingual knowledge base extracted from
+Wikipedia~\cite{lehmann2015dbpedia}. You can access the data of DBPedia through
+a SPARQL endpoint (interface). 
+SPARQL is standardized by the RDF Data Access Working Group of the World Wide
+Web Consortium (WWC)~\cite{w3standard}.
 %%formalizing this standard
-SPARQL is similar to conjunctive queries as it also allows the use of conjunction but SPARQL is even
-more powerful: It also allows the use of disjunction and optional patterns and one
-can even switch between several SPARQL endpoints and graphs which would mean using several
-databases in one query. %with the use of the SERVICE and GRAPH queries.
+SPARQL allows the use of disjunction and optional patterns and one
+can even switch between several SPARQL endpoints and graphs which would
+correspond to using several
+databases in one query\cite{w3standard}. %with the use of the SERVICE and GRAPH queries.
 Optional patterns allow to construct queries where we know that some part of the
 queried data is in the RDF database for sure and some may be not. 
 An example would be a phone book where some people decide to
@@ -23,98 +25,59 @@ address as well. If we want to query all names, telephone numbers and
 addresses (if provided) in the database we could query the whole database and put the adress in the
 optional pattern. When only the name and telephone number of a person are
 specified our query will not fail to give an answer but just return the provided (incomplete)
-information. Summing it up we can say that SPARQL offers an interesting set of tools which need to be
-formalized~\cite{perez2006semantics} and analyzed thoroughly. For this reason a complexity analysis of
-SPARQL~\cite{perez2009semantics} is needed. It is mandatory to extract fragments of SPARQL which are easy to evaluate and thus feasible for practical use~\cite{perez2009semantics}. We also need algorithms which can
-analyze if two SPARQL queries always return the same
-result~\cite{pichler2014containment}.
-If we had two queries and one is slow to evaluate and the other one fast we could
-analyze them and if they always return the same results swap out the slow query
-for the fast query.
-%evtl pichler hier zitieren
+information. Summing it up we can say that SPARQL offers an interesting set of
+tools which are important to be analyzed thoroughly. 
+SPARQL 1.0 was first formalized in~\cite{perez2006semantics} by Perez, Arenas
+and Gutierrez. They extended this version of the paper with 
+basic complexity~\cite{perez2009semantics}.
+In~\cite{perez2009semantics} the authors also found a fragment of SPARQL which
+was feasible for practical use, namely well-designed SPARQL. Pichler and Skritek
+made a fine grained analysis of the Containment- and Equivalence Problem in
+well-designed SPARQL~\cite{pichler2014containment}. Lately well-designed SPARQL was augmented to
+weakly-well designed SPARQL~\cite{kaminski_bwd} by Kaminski and
+Kostylev. Weakly well-designed SPARQL enables the use of the FILTER operator in the well-designed fragment and
+relaxes some constraints of the well-designed fragment. The weakly well-designed
+fragment comprises $99\%$ of the queries using the OPT operator over DBPedia~\cite{kaminski_bwd}. 
+In the SPARQL 1.1 recommendation~\cite{w3standard}, i.e., the current version of SPARQL, 
+the SERVICE operator was introduced. It was formalized and analyzed for
+practical use
+by Buil-Aranda et al. in ~\cite{BuilAranda20131}.
 
-%Optional patterns also play a huge role in the complexity of SPARQL as can
-%potentially make them very difficult to evaluate. 
-
-\section{Aim of the Work}
 The aim of this work is to provide a well-rounded overview of the complexity of
 SPARQL. A fragment of SPARQL which is easy to evaluate should be the foundation
 of our analysis and well-designed SPARQL 
-would lend itself perfectly for this job. The two ``database changing'' tools of SPARQL, i.e., the GRAPH and
-SERVICE operator are not yet thoroughly analyzed complexity wise and will be looked into. 
-We want to do a statical analysis of the GRAPH and SERVICE operator (analyze if queries using the two
-operators always return the same result) and thus it would be very useful to understand
-the previous work on statical analysis of well-designed SPARQL. We also want to
-examine a way to use the SERVICE operator more generally in practice. Finally we
-want to catch a glimpse beyond well-designed SPARQL where some constraints of
-well-designedness are relaxed to obtain a more powerful fragment called  weakly well-designed SPARQL.
+would lend itself perfectly for this job. Because query optimization is a very
+important topic in practice and we want to learn methods to analyze SPARQL
+complexity-wise it is important to
+understand what was done in statical analysis of well-designed SPARQL. The two ``database changing'' tools of SPARQL, i.e., the GRAPH and
+SERVICE operator are not yet thoroughly analyzed complexity-wise and will be looked into. 
+We also examine a way to use the SERVICE operator more generally in practice introduced
+in~\cite{kaminski_bwd}. Finally we catch a glimpse beyond well-designed SPARQL where some constraints of
+well-designedness are relaxed to obtain a more powerful fragment called weakly well-designed SPARQL.
 
-\section{Methodological Approach}
-The methodological approach consists of the following steps:
-\begin{enumerate}
-	\item \textbf{Literature Research.}\\
-		Background information must be gathered which will serve as the
-		theoretical basis of our mathematical work.
-	\item \textbf{Presentation of Results}\\
-		After the literature research the obtained results are discussed and
-		presented in detail to give a good understanding of the matter.
-	\item \textbf{The mathematical proof}\\
-		Obviously to prove any statement we must be able to argue
-		logically correct. 
-\end{enumerate}
-\section{Structure of the Work}
-\begin{enumerate}
-	\item Introduction
-	\item Preliminaries
-		\begin{enumerate}
-			\item Definitions
-			\item Thoughts on the Semantics of the SERVICE and GRAPH operators
-		\end{enumerate}
-	\item Well-Designed SPARQL
-		\begin{enumerate}
-			\item Decidable Containment
-			\item Undecidable Containment
-			\item Equivalence
-		\end{enumerate}
-	\item Complexity of well-designed SPARQL with GRAPH and SERVICE
-		\begin{enumerate}
-			\item Translations to well-designed pattern forests
-			\item The complexity of EVAL($\mathcal{L}$) where $\mathcal{L} \in \{
-				P, \mathcal{U}, \mathcal{S} \}$
-			\item Static Analysis
-		\end{enumerate}
-	\item The SERVICE-operator in Practice
-		\begin{enumerate}
-			\item Binding the SERVICE-operator
-			\item The difference between boundedness and strong boundedness
-		\end{enumerate}
-	\item Beyond well-designed SPARQL
-		\begin{enumerate}
-			\item OPT-FILTER-Normal Form and Constraint Pattern Trees
-			\item Evaluation of wwd-Patterns
-			\item Epressivity of wwd-Patterns and their Extensions
-			\item Static Analysis of wwd-Patterns
-		\end{enumerate}
-\end{enumerate}
+After the introduction, chapter two provides the most important basic definitions
+(i.e., conjunctive queries, RDF and SPARQL). In the second part of chapter two
+we will discuss the pecularities of the semantics
+of the SERVICE operator. In chapter three well-designed SPARQL is introduced and
+we look into the results of Pichler and Skritek~\cite{pichler2014containment}. Following up
+in Chapter four we analyse a fragment of well-designed SPARQL which includes 
+the GRAPH and SERVICE operator. This has not been done before and contains new
+content. In chapter 5 we look how SERVICE queries could be evaluated in practice
+and which problems and anomalies can occur doing so. Most of these questions we
+discuss are answered in~\cite{BuilAranda20131}. The second part of chapter
+5 discusses a detail which is not covered in~\cite{BuilAranda20131}. In chapter
+6 we will introduce weakly well-designed SPARQL which was introduced by Kostylev and Kaminski~\cite{kaminski_bwd}.
 
-\section{State-of-the Art}
-The W3C released a recommendation to standardize SPARQL~\cite{w3standardold}. 
-In 2006 the authors of~\cite{perez2006semantics} provided a formalization of the SPARQL
-language recommendation which is absolutely necessary to conclude any complexity results. 
-In the 2009 version of the paper~\cite{perez2009semantics} the authors
-provide several complexity results of SPARQL and introduce the
-well-designed fragment. It was also found out in~\cite{perez2009semantics} that
-the SPARQL evaluation problem using all operators is PSPACE-complete whereas well-designed patterns are
-coNP-complete. In~\cite{pichler2014containment}, Pichler and Skritek made a fine
-grained analysis of the Containment and Equivalence Problems in the
-well-designed SPARQL fragment. Lately well-designed SPARQL was augmented to
-weakly-well designed SPARQL~\cite{kaminski_bwd}. Weakly well-designed
-SPARQL enables the use of the FILTER operator in the well-designed fragment and
-relaxes some constraints of the well-designed fragment. The weakly well-designed
-fragment comprises $99\%$ of the queries using the OPT operator, over DBPedia.
-DBpedia is a large-scale, multilingual knowledge base extracted from
-Wikipedia~\cite{lehmann2015dbpedia} with a SPARQL endpoint which stores data in
-RDF format.
-The W3C standard was extended in 2011~\cite{w3standard} with the SERVICE
-operator. The SERVICE operator was formalized in~\cite{builaranda20131} where
-also a practical approach for evaluation was proposed. 
+%The W3C released a recommendation to standardize SPARQL~\cite{w3standardold}. 
+%In 2006 the authors of~\cite{perez2006semantics} provided a formalization of the SPARQL
+%language recommendation which is absolutely necessary to conclude any complexity results. 
+%In the 2009 version of the paper~\cite{perez2009semantics} the authors
+%provide several complexity results of SPARQL and introduce the
+%well-designed fragment. It was also found out in~\cite{perez2009semantics} that
+%the SPARQL evaluation problem using all operators is PSPACE-complete whereas well-designed patterns are
+%coNP-complete. In~\cite{pichler2014containment}, Pichler and Skritek made a fine
+%grained analysis of the Containment and Equivalence Problems in the
+%well-designed SPARQL fragment. 
+%The W3C standard was extended in 2011~\cite{w3standard} with the SERVICE
+%operator. The SERVICE operator was formalized in~\cite{builaranda20131} where
+%also a practical approach for evaluation was proposed. 

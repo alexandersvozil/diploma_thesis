@@ -1,5 +1,5 @@
-A first we are going to introduce the fragment of well-designed SPARQL, then we
-will analyze the results of~\cite{pichler2014containment}, in three seperate
+We will start out the section with defining the fundament for our complexity
+analysis: Well-designed SPARQL. Then we will analyze the results of~\cite{pichler2014containment}, in three seperate
 chapters namely decidable containment, undecidable containment and equivalence.
 
 \section{Introduction to well-designed SPARQL}
@@ -8,12 +8,13 @@ the evaluation problem is only coNP-complete in contrast to general SPARQL where
 it is PSPACE-complete~\cite{perez2009semantics}.
 %dbpeda query amount 
 
-\begin{definition}[Well-designed SPARQL]
+\begin{definition}[Well-designed SPARQL~\cite{perez2009semantics}]
 	A graph pattern $P$ built only from AND and OPT is well-designed if there does
-	not exist a subpattern $P' = (P_1 \  \mbox{OPT} \ P_2)$ of $P$ and a variable $?X \in
-	vars(P_2)$ that occurs in $P$ outside $P'$, but not in $P_1$. A graph pattern $P
-	= P_1 \mbox{ UNION } \dots \mbox{ UNION } P_n$ is well-designed if each subpattern $P_i$ is UNION
-	free and well-designed.
+	not exist a subpattern $P' = (P_1 \  \mbox{OPT} \ P_2)$ of $P$ and a
+	variable $x \in	vars(P_2)$ that occurs in $P$ outside $P'$, but not in $P_1$. 
+	
+	A graph pattern $P = P_1 \mbox{ UNION } \dots \mbox{ UNION } P_n$ is
+	well-designed if each subpattern $P_i$ is UNION-free and well-designed.
 \end{definition}
 
 In \cite{letelier2013static} it was shown that every well-designed graph pattern
@@ -37,7 +38,7 @@ transformed into a pattern tree.
 \begin{example}[~\cite{pichler2014containment}]\label{ex:pt}
 	Consider the graph pattern
 	\begin{align*}
-		P = \big(\big( (x,name,y) \AND (x,email,z) \big) \OPT (x,web,x') \big)
+		P = \big(\big( (x,name,y) \AND (x,email,z) \big) \OPT (x,web,x') \big)\\
 		\OPT \big((x,phone,x'') \OPT (x,fax,x''')\big)
 	\end{align*} and the corresponding pattern tree:\\
 	\begin{tikzpicture}[sibling distance=10em]
@@ -69,7 +70,7 @@ abbreviation for $vars(pat(T))$.
 Given a node $n \in V(T)$, we define $branch(n) = n^1, \dots, n^k$ with $n^1 = r$
 and $n^k = n$ as the unique sequence of nodes from the root $r$ to $n$.
 
-For nodes $n,\hat{n} \in V(T)$,s.t. $\hat{n}$ is the parent of $n$, let
+For nodes $n,\hat{n} \in V(T)$, s.t. $\hat{n}$ is the parent of $n$, let
 $newvars(n) = vars(n) \backslash vars(branch(\hat{n}))$. 
 
 A node $n$ is a child
@@ -84,26 +85,31 @@ to look at the definition of well-designed pattern trees(wdPTs).
 	induce a connected subgraph of $T$.
 \end{definition}
 We can observe that the pattern tree in Example~\ref{ex:pt} is well-designed.
+
 There are two important properties of wdPTs that need to be mentioned. 
-\begin{proposition}
+\begin{proposition}[\cite{letelier2012static,pichler2014containment}]
+The first property says that we can transform every wdPT we will discuss into NR
+normal form. The second property says that there is a unique node in a wdPT where a
+variable occurs first.
 	\begin{enumerate}	
-		\item Every wdPT $T$ can be transformed efficiently into NR normal form, if $newvars(n) \neq
-			\emptyset$ for every $n \in V(T)$~\cite{letelier2012static}. From now on we
-			assume w.l.o.g. that all wdPTs dealth with in this paper are in NR normal form.
+		\item Every wdPT $T$ can be transformed efficiently into NR normal form, 
+			if $newvars(n) \neq	\emptyset$ for every $n \in V(T)$. From now on we
+			assume w.l.o.g. that all wdPTs are in NR normal form.
+
 		\item For every variable $x \in vars (T)$, there is a unique node $n \in
 			V(T)$, s.t. $x \in newvars(n)$ and all other nodes $n' \in V(T)$
-			with $x \in vars(n')$ are descendants of
-			$n$.~\cite{pichler2014containment}
+			with $x \in vars(n')$ are descendants of $n$.
 	\end{enumerate}
 \end{proposition}
 
 
-We denote the results of evaluating a wdPT $T$ over some RDF graph by $\ll T
+We denote the results of evaluating a wdPT $T$ over some RDF graph $G$ by $\ll T
 \rr_G$. The set $\ll T \rr_G$ of solutions can be defined via a translation to
 graph patterns. We will do something similar in our alternate Definition of
-wdPT\ref{def:wdpt}. Lemma~\ref{lemma:altsemwdpt} allows us to use a direct
+wdPTs~\ref{def:wdpt}. Lemma~\ref{lemma:altsemwdpt} allows us to use a direct
 characterization in terms of maximal subtrees of a wdPT $T$ assuming it is in NR
 normal form.
+
 \begin{lemma}[Semantics of pattern trees~\cite{letelier2012static}]\label{lemma:altsemwdpt}
 	Let $T$ be a wdPT in NR normal form and $G$ an RDF graph. then $\mu \in
 	\ll T\rr_G$ iff there exists a subtree $T'$ of $T$, s.t. 
@@ -117,7 +123,7 @@ normal form.
 Projection is interpretet as a top level operator on top of a graph pattern.
 \begin{definition}[Projection of a mapping]
 For a mapping $\mu$ and a set $X$ of variables we denote $\mu_{|X}$ as the
-projectino of $\mu$ to the variables in $X$, call it $\mu'$. $dom(\mu'):=X \cap
+projection of $\mu$ to the variables in $X$, call it $\mu'$. $dom(\mu'):=X \cap
 dom(\mu)$ and $\mu'(x) := \mu(x)$ for all $x \in dom(\mu')$.
 \end{definition}
 
@@ -130,13 +136,13 @@ Then $\ll (T,X)\rr_G = \{ \mu_{|X} \mid \mu \in \ll T \rr_G\}$.
 \end{definition}
 
 In a projected wdPT there are free variables and existential variables.
-\begin{definition}[Free and existentail variables
+\begin{definition}[Free and existential variables
 	~\cite{pichler2014containment}]
 	Let $(T,X)$ be a pwdPT. Then the free variables of $(T,X)$ are defined as
 	$fvars(T)= vars(T) \cap X$ and
 	the existential variables of $(T,X)$ are defined as $vars(T) \backslash
 	fvars(T)$.
-	Analogously, we write $fvars(n)$ and $evars(n)$, respecitvely, for nodes
+	Analogously, we write $fvars(n)$ and $evars(n)$, respectively, for nodes
 	$n\in V(T)$.
 \end{definition}
 
@@ -147,7 +153,7 @@ existential variables when we look at more than one pwdPT are always renamed apa
 
 \begin{lemma}[\cite{letelier2013static}]
 	Let $(T,X)$ be a pwdPT in $NR$ normal form, $G$ an RDF graph and $\mu$ a
-	mapping with $dom(\mu) \subseteq X$. Then $\mu \in \ll ( T,X)\rr_G$ iff
+	mapping with $dom(\mu) \subseteq X$. Then $\mu \in \ll (T,X)\rr_G$ iff
 	there exists a subtree $T'$ of $T$, s.t. 
 	\begin{enumerate}
 		\item $dom(\mu) = fvars(T')$ and
@@ -159,7 +165,7 @@ existential variables when we look at more than one pwdPT are always renamed apa
 
 The last outgrowth of pwdPTs we will consider are unions of well-designed
 pattern trees. Unions of well-design patterns correspond to the usage of the
-UNION operator in a graph pattern consisting over several well-designed graph
+UNION operator in a graph pattern consisting of several well-designed graph
 patterns connected by UNION, i.e. $P = P_1 \UNION \dots \UNION P_k$. They can be
 considered as a set $\{T_1, \dots, T_k\}$ of wdPTs. Such a set is called
 well-designed pattern forest (wdPF) $F$. We can analogously define projected
@@ -167,23 +173,18 @@ well-designed pattern forests (pwdPFs) as a tuple $(F',X)$ where $F'=\{(T_1,X),\
 
 \begin{definition}[Result of wdPFs and pwdPF \cite{pichler2014containment}]
 Let $G$ be a RDF graph. 
-Then $\ll F \rr_G = \bigcup_{T\in F}\ll T \rr_G$ and $\ll(F',X)\rr_G =
-\bigcup_{(T,X) \in F'} \ll (T,X) \rr_G$. 
+Then $\ll F \rr_G = \bigcup\limits_{T\in F}\ll T \rr_G$ and $\ll(F',X)\rr_G =
+\bigcup\limits_{(T,X) \in F'} \ll (T,X) \rr_G$. 
 \end{definition}
 
 
 A subforest of a forest $F$ is a set of subtrees of $F$.
 We can extend $pat(\cdot)$ to wdPFs: Let $F$ be a wdPF then $pat(F) =
-\cup_{T \in F}  pat(T)$ and analogously $vars(F)$.
-
-\bigskip \noindent
-To capture the UNION operator the definition of well designed pattern trees
-need to be modified.  
+\bigcup\limits_{T \in F}  pat(T)$ and analogously $vars(F)$.
 
 Pichler and Skritek studied query containment and query equivalence of well
 designed SPARQL in~\cite{pichler2014containment}. As we want to analyse the
-complexity of the SERVICE-operator regarding containment and equivalence it 
-is crucial to understand the work that was previously done regarding other
+complexity of the SERVICE-operator it is crucial to understand the work that was previously done regarding other
 SPARQL operators.
 Research in query containment and query equivalence is very important in the
 context of static query analysis and optimization: Optimization of queries can
@@ -198,13 +199,13 @@ evaluated.
 Pichler and Skritek did a fine grained analysis of well-designed SPARQL by
 dividing it into several fragments. The fragments are distinguished by
 the operators used. All fragments contain triple patterns and the AND-operator. This
-fragment corresponds to conjunctive queries which was proven in~\cite{letelier2013static} 
+fragment corresponds to conjunctive queries regarding complexity~\cite{letelier2013static} 
 and is denoted with $\{\emptyset\}$. Adding the UNION-operator yields the fragment 
 denoted by $\{\cup\}$. Adding projection yields the fragment denoted by $\{\pi\}$ 
 and adding both the UNION-operator and projection yields the fragment denoted by $\{\pi,\cup\}$.
 
 In order to define the problems \textbf{CONTAINMENT}, \textbf{EQUIVALENCE} and
-\textbf{SUBSUMPTION} which we will investigate on the fragments that we
+\textbf{SUBSUMPTION} which we will investigate over the fragments that we
 mentioned above, we need to define what containment, equivalence and subsumption mean
 in the SPARQL language.
 \begin{definition}[Containment]

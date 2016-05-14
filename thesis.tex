@@ -43,7 +43,7 @@
 \lstset{
   basicstyle=\ttfamily,
   mathescape,
-  numbers=left,                   % where to put the line-numbers
+%  numbers=left,                   % where to put the line-numbers
   numberstyle=\footnotesize,      % the size of the fonts that are used for the
   stepnumber=1,                   % the step between two line-numbers. If it is
   numbersep=10pt,                  % how far the line-numbers are from the code
@@ -64,10 +64,10 @@
     %     stringstyle=\color{white}\ttfamily, % Farbe der String
     %     showspaces=false,           % Leerzeichen anzeigen ?
     %     showtabs=false,             % Tabs anzeigen ?
-         xleftmargin=17pt,
-         framexleftmargin=17pt,
-         framexrightmargin=5pt,
-         framexbottommargin=4pt
+		 %         xleftmargin=17pt,
+         %framexleftmargin=17pt,
+         %framexrightmargin=5pt,
+         %framexbottommargin=4pt
          %backgroundcolor=\color{lightgray},
     %     showstringspaces=false      % Leerzeichen in Strings anzeigen ?        
 }
@@ -166,20 +166,44 @@
 \addtitlepage{english} % English title page.
 \addstatementpage
 
-\begin{danksagung*}
-\todo{Ihr Text hier.}
-\end{danksagung*}
-
 \begin{acknowledgements*}
-\todo{Enter your text here.}
+	First of all I want to thank my advisor, Prof. Dr. Reinhard Pichler not only
+	for his guidance, support and patience but also for opening up this topic for me.
+	I would also like to thank him for introducing me to his team at the
+	database institute; in particular,  Dr. Sebastian Skritek and Dipl.-Ing. Markus Kr{\"o}ll. I would like to
+	thank them all for letting me participate in their discourse. In particular I would like to thank
+	Dr. Sebastian Skritek as he spent a great amount of time discussing and
+	improving the proofs in the thesis with me. 
+
+	\noindent
+	Last I would like to thank my family and my friends. 
+	My parents Karl and Karin for not only making my academic studies possible but
+	also for encouraging me to pursue my goals. I would like to especially thank my dad 
+	for always sharing a cup of coffee with me when I needed it the most. 
+	I would also like to thank my friends Mihail and Chris for making studying
+	at the TU Wien one of the best experiences in my life. 
 \end{acknowledgements*}
 
 \begin{kurzfassung}
-\todo{Ihr Text hier.}
+	Wenn abstract OK ist kommt hier die uebersetzung hin.
 \end{kurzfassung}
 
 \begin{abstract}
-	abstract hier
+	SPARQL Protocol and RDF Query Language (SPARQL) is a standardized way to
+	query the growing amount of Resource Description Framework (RDF) data in the web. SPARQL has a special 
+	toolkit fitting the needs of querying RDF data in the semantic web. This toolkit is
+	powerful and needs to be analyzed complexity wise not only because the
+	results themselves are interesting but also to optimize and check if the
+	tools SPARQL provides are feasible for practical use. A 
+	fragment of SPARQL which is convenient for practical use called
+	well-designed SPARQL is introduced. Well-designed SPARQL will be enhanced with the
+	GRAPH and SERVICE operators which are used to query several databases from the
+	web in only one query. Evaluating the SERVICE operator in practice elicits
+	difficulties which will be adressed. Well-designed SPARQL is too
+	restrictive for practical use and can be extended to weakly-well designed SPARQL. 
+	Weakly well-designed SPARQL relaxes some constraints of well-designed SPARQL achieving an even
+	more powerful language without increasing the complexity of well-designed
+	SPARQL.
 \end{abstract}
 
 % Select the language of the thesis, e.g., english or naustrian.
@@ -208,6 +232,8 @@
 
 \chapter{Beyond well-designed SPARQL}
 \input{beyondwelldesigned.tex}
+
+\chapter{Conclusion}
 
 \backmatter
 

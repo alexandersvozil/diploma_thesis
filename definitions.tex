@@ -1,7 +1,10 @@
+Before providing any content it is important that several definitions that
+establish a firm basis are introduced. We will begin with conjunctive
+queries then proceed with RDF and SPARQL.
+
 \section{Definitions}
 
-Before providing any content it is important that several definitions that
-establish a firm basis are introduced. We will start out with the definition of a 
+We will start out with the definition of a 
 relational schema, database and conjunctive query. 
 
 A relational name describes the name and arity of a relation.
@@ -13,12 +16,12 @@ schema..
 
 \begin{definition}[Database and relational atom]
 	Let $\sigma$ be a relational schema, 
-	$\U$ be an infinite set of constants and $X$ an infinite set of variables.
+	$\U$ be an infinite set of constants and $\V$ an infinite set of variables.
 	A relational atom over $\sigma$ is an expression of the form $R(v)$ where $R$
-	is a relational name in $\sigma$ and $v$ is an n-tuple over $\U \cup X$
+	is a relational name in $\sigma$ and $v$ is an n-tuple over $\U \cup \V$
 
-	A database $D$ over $\sigma$ is a set of relational atoms without variables
-	where each relational atom is over $\sigma$.
+	A database $D$ over $\sigma$ is a set of relational atoms over $\sigma$ and
+	each n-tuple is in $\U$.
 \end{definition}
 
 After defining the meaning of a database and a schema we are ready to define
@@ -31,7 +34,7 @@ conjunctive queries.
 		X \leftarrow R_1(\vec{v_1}), \dots, R_m(\vec{v_m}).
 	\end{align*}
 	Each $R_i(\vec{v_i}) (1\leq i \leq m)$ is a relational atom in $\sigma$ and 
-	$X$ is a set of distinct variables among the ones that appear in the
+	$X$ is a subset of the set of variables that appear in the
 	$\vec{v_i}$'s.
 \end{definition}
 
@@ -49,9 +52,9 @@ a query over a given database and schema.
 
 We will now define a simplified but absolutely (for our purposes) sufficient version of the
 original formalisation of the RDF W3C-recommendation~\cite{rdf}:
-URI stands for Uniform Resource Identifier and is a string used to identify
+URI stands for Uniform Resource Identifier and is a string which is used to identify
 abstract and physical resources in the web.
-The focus is on ground RDF graphs and we assume them to be composed of URIs only.
+We will focus on ground RDF graphs which means that we assume them to be composed of URIs only.
 
 \begin{definition}[RDF]
 	Let $\U$ is the infinite set of URIs. An RDF triple is a tuple in $\U \times \U \times \U$, whereas an
@@ -61,40 +64,51 @@ The focus is on ground RDF graphs and we assume them to be composed of URIs only
 RDF is the database and SPARQL will be our query language. To use SPARQL we need
 to define the SPARQL syntax and semantics.
 
-\begin{definition}[SPARQL SYNTAX]
+\begin{definition}[SPARQL SYNTAX~\cite{pichler2014containment,
+	BuilAranda20131,perez2006semantics}]
 	Again $\U$ is an infinite set of URIs. 
-	$\V$ is an infinite set of variables with $\U \cap V = \emptyset$. 
+	$\V$ is an infinite set of variables with $\U \cap \V = \emptyset$. 
 	We will denote Variables in $\V$ with the letters $x,y,z,x',y',z',\dots$ and
-	symbols which could be in $\V \cup \U$ with $u,v,w,u',v',w',\dots$.
+	symbols which are in $\V \cup \U$ with $u,v,w,u',v',w',\dots$ and
+	symbols which are in $\U$ with $a,b,c,d,e,f,g,a',b',c',d',e',f',g',\dots$.
+	
+	Filter constraints are conditions of the following form:
+	\begin{enumerate}
+		\item $\top, x=a, x=y$, or $bound(x)$ (atomic constraints),
+		\item If $R_1, R_2$ are filter constraints, then $\neg R_1$, $R_1 \land R_2$,
+			or $R_1 \lor R_2$ are filter constraints.
+	\end{enumerate}
+
 	A SPARQL triple pattern is a tuple in  $(\U \cup \V) \times (\U \cup \V) \times (\U \cup \V)$. 
 	SPARQL graph patterns are recursively defined as follows:
 	\begin{enumerate}
 		\item A triple pattern is a graph pattern.
 		\item If $P_1$ and $P_2$ are graph patterns, then $(P_1  \ \circ \ P_2)$ for
 			$\circ \in \{ AND, OPT, UNION\}$ is a graph pattern.
-		\item If $P$ is a graph pattern and $a \in (I \cup V)$, then $(\mbox{GRAPH} \  a \ P)$ is a graph pattern.
-		\item If $P$ is a graph pattern and $a \in (I \cup V)$, then $(\mbox{SERVICE} \  a \ P)$ is a graph pattern.
+		\item If $P$ is a graph pattern and $R$ a filter constraint, then $(P \ FILTER \ R)$ is a graph pattern.
+		\item If $P$ is a graph pattern and $u \in (I \cup V)$, then $(\mbox{GRAPH} \  u \ P)$ is a graph pattern.
+		\item If $P$ is a graph pattern and $u \in (I \cup V)$, then $(\mbox{SERVICE} \  u \ P)$ is a graph pattern.
 	\end{enumerate}
-	\noindent Assuming $P$ is a graph pattern, $vars(P)$ denotes the set of variables occuring in $P$.
+If $P$ is a graph pattern, $vars(P)$ denotes the set of variables occuring in $P$.
 \end{definition}
 
 We proceed in defining the semantics of SPARQL. 
 
 \begin{definition}[SPARQL Semantics~\cite{pichler2014containment,
-	builaranda20131}]
+	BuilAranda20131,perez2006semantics}]\label{def:sparqlsem}
 	A mapping is a function $\mu: A \rightarrow  \U$ for some $A \subset \V$. 
 	For a triple pattern $t$ with $vars(t) \subseteq dom(\mu)$, we write $\mu(t)$ to 
 	denote the triple after replacing the variables in $t$ by the corresponding 
 	URIs according to $\mu$. 
 
 	\noindent Two mappings $\mu_1$ and $\mu_2$ are called compatible (denoted $\mu_1 \sim \mu_2$) 
-	if $\mu_1(?X) = \mu_2(?X)$ for all $?X \in dom(\mu_1) \cap dom(\mu_2)$.
+	if $\mu_1(x) = \mu_2(x)$ for all $x \in dom(\mu_1) \cap dom(\mu_2)$.
 
 	\noindent A mapping $\mu_1$ is subsumed by $\mu_2$ (written $\mu_1 \sqsubseteq \mu_2$) 
 	if $\mu_1 \sim \mu_2$ and $dom(\mu_1) \subseteq dom(\mu_2)$. $\mu_2$ is then called ``extension'' of $\mu_1$.
 
 	A dataset is a set $DS = \{(def, G), (g_1,G_1), \dots, (g_k, G_k) \}$, with
-	$k\geq 0$ is a set of pairs of URIs and graphs,
+	$k\geq 0$. It contains pairs of URIs and graphs,
 	where the default graph $G$ is identified by the special symbol $def \notin \U$
 	and the remaining so-called ``named'' graphs $(G_i)$ are identified by URIs
 	$(g_i \in \U)$. We assume that any query is evaluated over a fixed dataset $DS$
@@ -103,17 +117,18 @@ We proceed in defining the semantics of SPARQL.
 	$DS_c = \{ (def, G_c),(g_{c,1},G_{c,1}), \dots, (g_{c,k},G_{c,k})\}$.
 	We assume a function $graph(g,DS)$ which, given a Dataset $DS$ and a graph name $g$ as
 	input returns the graph corresponding to the symbol $g$. The function
-	$names(DS)$ returns the set of names of the given dataset $DS$:
-	$\{g_1,g_2,\dots,g_k\}$.
+	$names(DS)$ returns the set of names of the input dataset $DS$.
+	$names(DS) = \{g_1,g_2,\dots,g_k\}$.
 	We also assume a partial function $ep: \U \rightarrow DS$, such that for every $c \in
 	\U$, if $ep(c)$ is defined, then $ep(c) = DS_c$, i.e., the dataset associated with
 	the endpoint accessible via the URI c.
 	$\mu_\emptyset$ denotes the mapping with empty domain. This means it is
 	compatible with any other mapping.
-	The evaluation of graph patterns over an RDF Graph $G$ is formalized as a
+	The evaluation of graph patterns over an RDF Graph $G$, where $(g_1,G) \in
+	DS$ for $g_1 \in \U\cup\{def\}$ is formalized as a
 	function  $\llbracket \cdot \rrbracket_G^{DS}$, which, given a SPARQL graph pattern
 	returns a set of mappings.
-	For a graph pattern $P$, it is again defined recursively:
+	For a graph pattern $P$, it is defined recursively:\\
 	\scalebox{0.64}{
 		\vbox{
 			\begin{enumerate}
@@ -126,29 +141,43 @@ We proceed in defining the semantics of SPARQL.
 					\rr_G^{DS} \ | \ \forall \mu_2 \in \ll P_2 \rr_G^{DS}: \mu_1 \not\sim \mu_2\}$.
 				\item $\ll P_1 \ \mbox{UNION} \ P_2 \rr_G^{DS} = \ll P_1 \rr_G^{DS} \cup \ll P_2
 					\rr_G^{DS}$.
-				\item  $\ll \mbox{GRAPH } c \ P_1 \rr_G^{DS}  = 
+				\item  $\ll \mbox{GRAPH } u \ P_1 \rr_G^{DS}  = 
 					\begin{cases} 
-						\ll P_1\rr_{graph(c,DS)}^{DS} &\mbox{if } c \in names(DS)\\	
-						\{ \}						  & \mbox{if } c \in \U \backslash names(DS)\\
-						\bigg\{\mu \cup [c \rightarrow s] \mid s \in names(DS), \mu
-							\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [c \rightarrow s] \sim \mu
-						\bigg\}						  & \mbox{if } c \in \V
+						\ll P_1\rr_{graph(u,DS)}^{DS} &\mbox{if } u \in names(DS)\\	
+						\{ \}						  & \mbox{if } u \in \U \backslash names(DS)\\
+						\bigg\{\mu \cup [u \rightarrow s] \mid s \in names(DS), \mu
+							\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [u \rightarrow s] \sim \mu
+						\bigg\}						  & \mbox{if } u \in \V
 						\end{cases}
 						$\\ 
-						for $c \in \U \cup \V$.
+						for $u \in \U \cup \V$.
 
-					\item $\ll \mbox{SERVICE } c \ P_1 \rr_G^{DS}  = 
+					\item $\ll \mbox{SERVICE } u \ P_1 \rr_G^{DS}  = 
 						\begin{cases} 
-							\ll P_1\rr_{graph(def,ep(c))}^{ep(c)} &\mbox{if } c \in dom(ep)\\	
-							\{ \mu_\emptyset\} & \mbox{if } c \in \U \backslash dom(ep)\\
-							\bigg\{\mu \cup [c \rightarrow s ] \mid s \in dom(ep), \mu
-								\in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))} \land [ c \rightarrow s ] \sim \mu
-							\bigg\}			   & \mbox{if } c \in \V
+							\ll P_1\rr_{graph(def,ep(u))}^{ep(u)} &\mbox{if } u \in dom(ep)\\	
+							\{ \mu_\emptyset\} & \mbox{if } u \in \U \backslash dom(ep)\\
+							\bigg\{\mu \cup [u \rightarrow s ] \mid s \in dom(ep), \mu
+								\in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))} \land [u \rightarrow s ] \sim \mu
+							\bigg\}			   & \mbox{if } u \in \V
 							\end{cases}$\\ 
-							for $c \in \U \cup \V$.
+							for $u \in \U \cup \V$.
+				\item $\ll (P' \FILTER R) \rr_G = \{ \mu \mid \mu \in \ll P'
+					\rr_G \mbox{ and } \mu \models R \}$,
 					\end{enumerate}
 				}
-			}
+			}\\
+		where $\mu$ satisfies a filter constraint $R$, denoted $\mu \models R$,
+		if one of the following holds:
+		\begin{enumerate}
+			\item $R$ is $\top$;
+			\item $R$ is $x = a$, $x \in dom(\mu)$ and $\mu(x) = a$;
+			\item $R$ is $x = y$, $\{x,y\} \subseteq dom(\mu)$ and $\mu(x) =
+				\mu(y)$;
+			\item $R$ is $bound(x)$ and $x \in dom(\mu)$;
+			\item $R$ is a boolean combination of filter constraints evaluating
+				to true under the usual interpretation of $\neg,\land$ and
+				$\lor$.
+		\end{enumerate}
 		\end{definition}
 
 		When we don't use the SERVICE or GRAPH operators and assume a graph $G$
@@ -163,7 +192,7 @@ We proceed in defining the semantics of SPARQL.
 
 		\begin{definition}[Destination of a SERVICE- or GRAPH-operator]
 			Given a pattern $P$ of the form $P = (\mbox{SERVICE } u \ P_1)$ or
-			$(P	= \mbox{GRAPH } u \ P_1)$ we call $u$ the
+			$P	= (\mbox{GRAPH } u \ P_1)$ we call $u$ the
 			destination of the pattern $P$.
 		\end{definition}
 
@@ -173,11 +202,11 @@ We proceed in defining the semantics of SPARQL.
 		\begin{definition}[$P_{wdsg}$]
 			A pattern $Q \in P_{wdsg}$ if it adheres to the following grammar:
 			\begin{align*}
-				Q::= &  (Y \OPT R)  \mid B \\
-				Y::= & (Y \AND Y) \mid (\mbox{SERVICE } u \ Y) \mid (\mbox{GRAPH } u \
+				Q::= &\quad Y \mid (Y \OPT R)  \mid B \\
+				Y::= &\quad (Y \AND Y) \mid (\mbox{SERVICE } u \ Y) \mid (\mbox{GRAPH } u \
 				Y) \mid  B\\
-				R::= &(R \OPT R) \mid (\mbox{GRAPH } u \ R) \mid (\mbox{SERVICE } u \ R) \mid B  \\
-				B::= &(u,v,w)
+				R::= &\quad(R \OPT R) \mid (\mbox{GRAPH } u \ R) \mid (\mbox{SERVICE } u \ R) \mid B  \\
+				B::= &\quad(u,v,w)
 			\end{align*}
 			where	$u,v,w \in \U \cup \V$. In the first layer we seperate the pattern
 			into an AND-part and an OPT-part. In the AND- and OPT-part we can use
@@ -186,98 +215,113 @@ We proceed in defining the semantics of SPARQL.
 
 		\section{Thoughts on the Semantics of the SERVICE and GRAPH Operator}
 		We were introduced to the GRAPH and
-		SERVICE operators by \cite{builaranda20131} where Buil-Aranda et al.
+		SERVICE operators by \cite{BuilAranda20131} where Buil-Aranda et al.
 		describe the syntax and semantics of the SERVICE operator and how an efficient query
 		evaluation system can be implemented. 
-		Conversely to the semantic definition we provided, they provided the
+		Conversely to the semantic definition of the GRAPH operator in~\ref{def:sparqlsem}, they provided the
 		following definition for GRAPH (note the difference in the second case):	
 
 		\scalebox{0.68}{
 			\vbox{
 				\begin{enumerate}
-					\item  $\ll \mbox{GRAPH } c \ P_1 \rr_G^{DS}  = \begin{cases} 
-							\ll P_1\rr_{graph(c,DS)}^{DS} &\mbox{if } c \in names(DS)\\	
-							\{ \mu_{\emptyset}\} & \mbox{if } c \in \U \backslash names(DS)\\
-							\bigg\{\mu \cup [c \rightarrow s ] \mid \exists s \in names(DS), \mu
-								\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [ c \rightarrow s ] \sim \mu
-							\bigg\} & \mbox{if } c \in \V
-							\end{cases}$\\ for $c \in \U \cup \V$.
+					\item  $\ll \mbox{GRAPH } u \ P_1 \rr_G^{DS}  = \begin{cases} 
+							\ll P_1\rr_{graph(i,DS)}^{DS} &\mbox{if } u \in names(DS)\\	
+							\{ \mu_{\emptyset}\} & \mbox{if } u \in \U \backslash names(DS)\\
+							\bigg\{\mu \cup [u \rightarrow s ] \mid \exists s \in names(DS), \mu
+								\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [ u \rightarrow s ] \sim \mu
+							\bigg\} & \mbox{if } u \in \V
+							\end{cases}$\\ for $u \in \U \cup \V$.
 					\end{enumerate}
 				}
 			}
 
 			We tried to propose an algorithm for evaluating CONTAINMENT[$S_1$,$S_2$] in the
 			fragment $P_{wdgs}$ and we saw some unintuitive features regarding the semantics of the
-			SERVICE and GRAPH operators. Consider the following example:
+			GRAPH operator. Consider the following example:
 			\begin{example}
-				$DS=\{(G_0,def), (G_1,a) \}$ where $G_0 = \{
-				(c,k,g), (a,k,g) \}$, $G_1$ is arbitrary and  $Q = (GRAPH \ ?X  \ (GRAPH  \ c \  P_1)) \ AND \ (?X,k,g)$.
+				$DS=\{(def,G_0), (a,G_1) \}$ where $G_0 = \{
+				(c,k,g), (a,k,g) \}$, $G_1$ is arbitrary and  $Q = (GRAPH \ x  \
+				(GRAPH  \ c \  P_1)) \ AND \ (x,k,g)$.
 			\end{example}
 
-			By evaluating the first part of the query, namely $\ll (GRAPH \ ?X  \ (GRAPH  \
-			c \  P_1)) \rr$ where $P_1$ could be any arbitrary pattern, because $c \notin
-			names(DS)$ and thus $\ll (GRAPH \ c  \ P_1) \rr = \mu_\emptyset$  we obtain $?X
-			\rightarrow a$ ($\mu_\emptyset$ is compatible with every mapping). This is in
-			our opinion unintuitive because it affects the rest of the query.
-			If we would evaluate the right side of the $AND$ we would obtain the following: $\ll(?X,k,g)\rr = \{ (X \rightarrow a) , (X \rightarrow c) \}$ considering the
-			left part of the $AND$-Operator we get the result of the query: $\{ (X \rightarrow a )
+			Evaluating the first part of the query, namely $\ll(GRAPH \ x  \ (GRAPH  \
+			c \  P_1))\rr^{DS}_{G_0} $ where $P_1$ could be any arbitrary
+			pattern yields an interesting result. Because $c \notin	names(DS)$ 
+			and thus $\ll (GRAPH \ c  \ P_1) \rr^{DS}_{G_1} = \mu_\emptyset$  we
+			obtain $x \rightarrow a$ ($\mu_\emptyset$ is compatible with every
+			mapping). This seems unintuitive because it affects the rest of the query.
+			If we would evaluate the right side of the $AND$ we would obtain the
+			following: $\ll(x,k,g)\rr^{DS}_{G_0} = \{ (x \rightarrow a) , (x \rightarrow c) \}$ considering the
+			left part of the $AND$-Operator we get the result of the query: $\{ (x \rightarrow a )
 			\}$. Note that even though the graph with the URI $c$ does not exist and we are not able
 			to evaluate pattern $P_1$ over it, we are able to somehow receive results using
-			the $AND$ operator.
+			the $AND$ operator. This syntax might be fitting for the SERVICE
+			operator where we query SPARQL endpoints in the web which might be
+			currently unavailable, but for the GRAPH operator where we query
+			different graphs within a reachable endpoint
+			this semantics is not needed.
 			\bigskip
 
 			\noindent Considering containment/equivalence of two queries which just use the GRAPH
 			Operator, there are specific instances where it is not obvious if one query is contained in the other query even though it should be intuitively.
 
 			\begin{example}
-				$Q_1$ = (GRAPH ?X ( GRAPH c ( GRAPH ?Y) $P_1$)),\\ 
-				$Q_2$ = (GRAPH ?Y ( GRAPH c ( GRAPH ?X) $ P_1$))\\
+				$Q_1$ = (GRAPH x ( GRAPH c ( GRAPH y) $P_1$)),\\ 
+				$Q_2$ = (GRAPH y ( GRAPH c ( GRAPH x) $ P_1$))\\
 				$?X,?Y \notin P_1$.
 			\end{example}
 
-			Approaching this example intuitively, one could say that $\ll Q_1 \rr = \ll Q_2
-			\rr$ because $?X$ and $?Y$ get bound to every variable in the dataset because neither
-			$?X$ nor $?Y$ occur in $P_1$, the triple pattern at the end
+			Approaching this example intuitively, one could say that $\ll Q_1
+			\rr^{DS}_{G} = \ll Q_2 \rr^{DS}_G$ for all datasets $DS$ and graphs
+			$G$ in $DS$ because $x$ and $y$ get bound to every variable in the dataset because neither
+			$x$ nor $y$ occur in $P_1$, the triple pattern at the end
 			of the query is the same and also the graph queried second is the same. 
 			To show the opposite, just  consider the following dataset:
-			$DS=\{(def,G_0), (a,G_1)\}$. Note that the URI $c$ does not occur in the dataset.
-			But this means that $\ll Q_1 \rr^{DS}_G = \{?X \rightarrow a\}$ and  $\ll Q_2
-			\rr^{DS}_G = \{?Y \rightarrow a\}$ rendering neither equivalence nor containment
-			in any possible way.
-			In \cite{builaranda20131} the authors
+			$DS=\{(def,G), (a,G_1)\}$. Note that the URI $c$ does not occur in the dataset.
+			But this means that $\ll Q_1 \rr^{DS}_G = \{x \rightarrow a\}$ and  $\ll Q_2
+			\rr^{DS}_G = \{y \rightarrow a\}$.			
+			In \cite{BuilAranda20131} the authors
 			state that the GRAPH-Operator was introduced formally
 			in \cite{perez2009semantics} but we were not able to find the definition
 			in it.
 			Instead we tried to look into the W3C-recommendation\cite{w3standard} 
 			where we found the following definition:
-			\begin{lstlisting}
-			if IRI is a graph name in D
-			eval(D(G), Graph(IRI,P)) = eval(D(D[IRI]), P)
-			if IRI is not a graph name in D
-			eval(D(G), Graph(IRI,P)) = the empty multiset
-			eval(D(G), Graph(var,P)) =
-			Let R be the empty multiset
-			foreach IRI i in D
-			R := Union(R, Join( eval(D(D[i]), P) , $\Omega$(?var->i) )
+
+			\begin{algorithm}
+				\caption{W3C-recommendation on evaluating the GRAPH operator}
+			%\begin{lstlisting}
+			if IRI is a graph name in D\\
+				\quad eval(D(G), Graph(IRI,P)) = eval(D(D[IRI]), P)\\
+			if IRI is not a graph name in D\\
+				\quad eval(D(G), Graph(IRI,P)) = the empty multiset\\
+				\quad eval(D(G), Graph(var,P)) =\\
+			Let R be the empty multiset\\
+				\quad foreach IRI i in D\\
+					\qquad R := Union(R, Join( eval(D(D[i]), P) , $\Omega$(?var->i) )\\
 			the result is R
-			\end{lstlisting}
+			%\end{lstlisting}
+		\end{algorithm}
 
 			If we look at the second case, we can see that the empty multiset (because the
 			definition goes with bag semantics)
 			is returned if the URI is not a graph name in the Dataset resulting
-			in our original definition of SPARQL semantics. However the second
-			case of the SERVICE-operator, i.e., $ if \c \in \U \backslash dom(ep)$ return
-			$\mu_\emptyset$ stays the same and is intended by the authors in
-			$\cite{builaranda20131}$.
-
-			It's a bit unintuitive at first that if we have
-			the third case (of both GRAPH and SERVIE), 
-			namely $c \in \V$, the query $P_1$ will not be considered over the
-			default graph. The reason for this can also be found in the definition of the
-			dataset in the standard \cite{w3standard}:
-			``A SPARQL query is executed against an RDF Dataset which represents a collection
-			of graphs. An RDF Dataset comprises one graph, the default graph, which does not
-			have a name, and zero or more named graphs, where each named graph is identified
-			by an IRI. A SPARQL query can match different parts of the query pattern against
-			different graphs as described in section 13.3 Querying the Dataset.''
+			in our original definition of SPARQL semantics. 
+			
+			However remembering the definition of the SERVICE
+			operator~\ref{def:sparqlsem}, we emphasize
+			that the second case of the SERVICE-operator (if $c \in \U \backslash
+			dom(ep)$ return $\mu_\emptyset$) is intended and correct. It makes
+			sure that if a SPARQL endpoint is temporarily unavailable the query
+			does not fail.
+			
+			%Finally I wish to make the remark that bit unintuitive at first that if we have
+			%the third case (of both GRAPH and SERVIE), 
+			%namely $c \in \V$, the query $P_1$ will not be considered over the
+			%default graph. The reason for this can also be found in the definition of the
+			%dataset in the standard \cite{w3standard}:
+			%``A SPARQL query is executed against an RDF Dataset which represents a collection
+			%of graphs. An RDF Dataset comprises one graph, the default graph, which does not
+			%have a name, and zero or more named graphs, where each named graph is identified
+			%by an IRI. A SPARQL query can match different parts of the query pattern against
+			%different graphs as described in section 13.3 Querying the Dataset.''
 
