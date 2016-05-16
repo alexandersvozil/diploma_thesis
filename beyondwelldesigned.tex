@@ -1,11 +1,10 @@
-
 Though well-designed SPARQL is a fragment that covers a lot of practical SPARQL
 queries, (50\% of the queries over DBpedia that use the
 OPT-operator~\cite{Picalausa})
 many practical queries are not well designed and need to be analyzed. 
 Kaminski and Kostylev found another
 interesting fragment of SPARQL called weakly well-designed fragment~\cite{kaminski_bwd}. This
-fragment captures 99\% of the queries over DBPedia that use the OPT-operator. 
+fragment captures 99\% of the queries over DBpedia that use the OPT-operator. 
 There are mainly two use cases of queries that are not well-designed but used in
 practice.
 \begin{enumerate}
@@ -42,17 +41,17 @@ practice.
 		The query $P_2$ again is not well-designed because the FILTER constraint
 		mentions the variable $y$, which occurs only in the optional
 		part. The practical intention of the query is to filter for people
-		where the name is not 'Ana' or do not have a name but an identifier
-		bound by variable $x$.
+		where the name is not 'Ana' or do only have an id which is bound by
+		variable $x$. 
 \end{enumerate}
 
 To capture the two use-cases mentioned in
 Example~\ref{prefpattern} and Example~\ref{toplevelfilter}, well-designed SPARQL is extended to weakly well-designed SPARQL.
 This new fragment subsumes well-designed queries and it was shown in~\cite{kaminski_bwd} 
-that the fragment has the same complexity 
+that it has the same complexity 
 of query evaluation as well-designed queries. 
 Also, $99\%$ of the practical queries over DBPedia containing OPT are now captured by a 
-fragment which is well designed and thus efficient to evaluate.
+fragment which is well designed and thus proven to be efficient to evaluate.
 To define the fragment of weakly well-designed pattern we need to define what it
 means for a subpattern to be dominated by another subpattern:
 \begin{definition}[~\cite{kaminski_bwd}]
@@ -62,6 +61,7 @@ means for a subpattern to be dominated by another subpattern:
 	inside the right argument of the OPT-pattern.
 \end{definition}
 
+Now we can proceed to define weakly well-designed patterns.
 \begin{definition}[Weakly well-designed patterns~\cite{kaminski_bwd}]
 	A pattern $P$ is weakly well-designed (wwd-pattern) if each occurrence $i$
 	of an OPT-subpattern $(P_1\OPT P_2)$ variables in $vars(P_2) \backslash
@@ -84,7 +84,7 @@ Checking if a pattern is wwd is very easy computationally:
 \end{proofidea}
 
 \section{OPT-FILTER-Normal Form and Constraint Pattern Trees}
-A convenience of using wd-patterns is being able to convert them to the so-called
+When used wd-patterns we can convert them to the so-called
 OPT-normal form. In the OPT-normal form, all AND- and FILTER- subpatterns are
 OPT-free and most importantly the pattern can then be naturally represented as a
 tree. The resulting tree can be used to visualize how to evaluate and optimize
@@ -98,12 +98,12 @@ notation can be generalised to wwd-patterns.
 		&P ::=  F \mid (P \FILTER R) \mid (P \OPT S), \qquad S::= F\mid(S \OPT S),\\ 
 	 &F ::=(B \FILTER R)
 	\end{align*}
-	where $B$ ranges over triple patterns and $R$ over filter
-	constraints.
+	where $B$ is a set of triple patterns and $R$ is a filter
+	constraint.
 \end{definition}
 As we can see from Definition~\ref{ofnf}, each triple pattern has a FILTER expression. 
 This is no restriction because one can easily insert a dummy FILTER expression 
-by letting $R = \top$. The basic patterns with FILTER expressions form the bottom layer.
+by letting $R = \top$. The sets of triple patterns with FILTER expressions form the bottom layer.
 On top of the bottom layer there is a combination of OPT and FILTER.
 The layers cause that each occurrence of a FILTER-pattern in
 the top layer is top-level. The normal form is AND-free: all conjunctions are
@@ -195,7 +195,7 @@ When we then use CPTs to display this patterns using triple patterns we get the 
 \begin{figure}(1) \begin{tikzpicture}[sibling distance=10em,
 		every node/.style = {shape=rectangle, rounded corners,
 			draw, align=center,
-top color=white, bottom color=blue!20}]]
+	top color=white}]
 \node {$B_1$}
 child { node {$B_2$} 
 child { node {$B_3$} }};
@@ -204,7 +204,7 @@ child { node {$B_3$} }};
 (2) \begin{tikzpicture}[sibling distance=10em,
 		every node/.style = {shape=rectangle, rounded corners,
 			draw, align=center,
-top color=white, bottom color=blue!20}]]
+top color=white}]
 \node {$B_1$}
 child { node {$B_2$} }
 child { node {$B_3$} };
@@ -229,8 +229,7 @@ copied twice in every application of the equivalence.
 The next step is to look at the complexity of the evaluation problem for
 wwd-patterns and the extensions with union and projection. The goal is to show
 that in all three cases complexity doesn't change in comparison to wd-patterns.
-Consider first the formal evaluation problem for a given SPARQL fragment.
-$\mathcal{L}$:
+Consider first the formal evaluation problem for a given SPARQL fragment $\mathcal{L}$:
 \begin{framed}\noindent \textbf{EVAL($\mathcal{L}$)}\\
 	\textbf{INPUT:} Graph $G$, query $Q \in  \mathcal{L}$ and a mapping $\mu$.\\
 	\textbf{QUESTION:} Is $\mu$ in $\ll Q \rr_G$.
@@ -241,20 +240,24 @@ For the fragment of general queries extended with projection (i.e., $\s$)
 it was shown that $EVAL(\s)$) is PSPACE-complete~\cite{letelier2013static}.
 Considering now the fragment of wd-patterns, we know that the evaluation problem
 is coNP-complete~\cite{letelier2013static} using the following algorithm:
-Given a wd-Pattern $P$ in OPT-normal form, a graph $G$ and a mapping $\mu$.
-\begin{enumerate}
-	\item Look for a subtree $T_s$ of $T(P)$ including the root of $T(P)$ where the
+\begin{algorithm}
+	\caption{co-NP algorithm for EVAL in the well designed fragment}
+	INPUT: A wd-Pattern $P$ in OPT-normal form, a graph $G$ and a mapping
+	$\mu$.\\
+	Look for a subtree $T_s$ of $T(P)$ including the root of $T(P)$ where the
 		variables of the triples in $T_s$ are equal to the variables in $dom(\mu)$. 
 		When we now use the mapping $\mu$ on all the triples, the triples must
 		be in the graph $G$. This is doable in polynomial time. If such a $T_s$
 		exists, $T_s$ witnesses	that $\mu$ is at least part of a solution in
-		$G$.
-	\item The second step is to check if the subtree $T_s$ is maximal. If we can
+		$G$.\\
+		Check if the subtree $T_s$ is maximal. If we can
 		extend $T_s$ with a node in $T(P)\backslash T_s$ and the mapping $\mu$ maps
-		all the triples into $G$, the subtree $T_s$ was not maximal. There are
-		linearly many nodes to check and each check can be performed in $coNP$.
-		Resulting in an overall runtime of $coNP$.
-\end{enumerate}
+		all the triples into $G$, the subtree $T_s$ was not maximal. 
+\end{algorithm}
+
+There are linearly many nodes to check and each check can be performed in coNP.
+Resulting in an overall runtime of coNP.
+
 Similar to this algorithm, an algorithm for wwd-patterns exists. 
 We first define the potential partial solutions. 
 We know from the previous section that we can transform any wwd-pattern $P$ to a
@@ -369,11 +372,12 @@ wdd-patterns is calles $\s_{wdd}$.
 	$\Sigma^P_2$-complete.
 \end{corollary}
 \begin{proofidea}
-	The coNP-algorithm for $\u_{wwd}$ is easy to see, as we just apply the
-	algorithm for  \textbf{EVAL($P_{wwd}$)} for every part of the top level UNION. And
+	The coNP-algorithm for $\u_{wwd}$  applies the
+	algorithm for \textbf{EVAL($P_{wwd}$)} for every part of the top level UNION. And
 	if the mapping $\mu$ is the solution for any of the patterns we return
 	true. Hardness follows by the coNP-completeness of \textbf{EVAL($P_{wwd}$)}.
-	It is a well known results that \textbf{EVAL($\s_{wd}$)} is $\Sigma^P_2$-complete,
+	It is a well known results that \textbf{EVAL($\s_{wd}$)} is
+	$\Sigma^P_2$-complete~\cite{letelier2013static},
 	thus $\Sigma^P_2$-hardness of \textbf{EVAL($\s_{wdd}$)} follows. 
 	For the $\Sigma^P_2$-membership of \textbf{EVAL($\s_{wdd}$)} apply the following algorithm:
 	Guess the values of the existential variables and then call a coNP-oracle
@@ -381,8 +385,13 @@ wdd-patterns is calles $\s_{wdd}$.
 \end{proofidea}
 
 \section{Expressivity of wwd-Patterns and their Extensions}
+In \cite{kaminski_bwd} Kaminski et al. established that one has a greater set
+of tools available if one uses weakly-well designed SPARQL instead of
+well-designed SPARQL. Even though this fact may seem to be of obvious nature it
+must be proven mathematically. This characteristic of a SPARQL fragment (or
+language) is called expressive power.
 
-\begin{definition}[Expressive power of languages]
+\begin{definition}[Expressive power of languages~\cite{kaminski_bwd}]
 	A language $\l_1$ has the same expressive power as language $\l_2$, denoted by
 	$\l_1 \sim \l_2$, if for every query $Q_1 \in \l_1$ there is a query $Q_2 \in
 	\l_2$ such that $Q_1 \equiv Q_2$ and for every query $Q_2 \in \l_2$ there is a
@@ -396,15 +405,18 @@ The goal for this section is to show the following results:
 	\item $\u_{wd} < \u_{wwd} < \u$
 	\item $\s_{wwd} \sim \s$
 \end{enumerate}
-\begin{definition}
+To prove the first item on the list we need the definition of ``weakly
+monotone''. This characteristic was already used by Arenas and Perez in~\cite{arenas2011querying}
+to prove that $P_{wd} < P$. They showed that unlike $P$ the fragment $P_{wd}$ is
+weakly monotone and hence $P_{wd} < P$.
+\begin{definition}[~\cite{kaminski_bwd}]
 	A query $Q$ is weakly monotone if $\ll Q \rr_{G_1} \sqsubseteq \ll Q
 	\rr_{G_2}$ for any two graphs $G_1$ and $G_2$ with $G_1 \subseteq G_2$.
 	A fragment $\l$ is called weakly monotone if it contains only weakly
 	monotone queries.
 \end{definition}
 
-Arenas and Perez showed in~\cite{arenas2011querying} that unlike $P$ the fragment
-$P_{wd}$ is weakly monotone and hence $P_{wd} < P$.
+Now we are ready to establish our desired result.
 
 \begin{theorem}[\cite{kaminski_bwd}]
 	It holds that $P_{wd} < P_{wwd}$.

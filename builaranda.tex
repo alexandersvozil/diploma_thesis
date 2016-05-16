@@ -1,11 +1,11 @@
 This section is a summary of ~\cite[p. 4-7]{BuilAranda20131}. In order to get a
 deeper understanding of the SERVICE operator it is mandatory to understand which
 problems occur when evaluating the SERVICE-operator.
-A direct implementation of the SERVICE-operator based of the semantics is not
-feasible in practice because we would need to evaluate, given, for example $(\mbox{SERVICE }  x \
+A direct implementation of the SERVICE-operator based of the semantics is
+infeasible in practice. Assume we would need to evaluate, given, for example $(\mbox{SERVICE }  x \
 P_1)$ where $P_1$ is any SPARQL graph pattern, $P_1$ over every 
 possible SPARQL endpoint. This is obviously impossible. To ensure that $P_1$
-only gets evaluated over a finite set of IRIs, $x$ needs to be bound to exactly
+only gets evaluated over a finite set of URIs, $x$ needs to be limited to exactly
 those. In the W3C standard only indications are provided on how to evaluate the
 service operator~\cite{w3standardservice} when the location is a variable and
 not an URI. In~\cite{BuilAranda20131} the authors deal with this issue by
@@ -76,10 +76,9 @@ a dataset and a graph pattern.
 mentioned in $P$.
 \end{definition}
 
-Boundedness makes sure, given a graph pattern $P$ and a variable $x \in var(P)$
-that whatever the solutions may be, $x$ is always in the domain of each
-and every solution and the image is either in the domain of the dataset $P$ gets
-evaluated over, it is a graph name or it is in the domain of the pattern.
+Boundedness of a variable $x$ in a graph pattern $P$ makes sure that the
+variable is always in the domain of every solution $\mu$ and the image $\mu(x)$ is either in the 
+domain of the dataset $P$ gets evaluated over, it is a graph name or it is in the domain of the pattern.
 
 \begin{definition}[Boundedness,\cite{BuilAranda20131}]
 Let $P$ be a graph pattern and $x \in var(P)$. Then $x$ is bound in $P$ if the
@@ -91,7 +90,7 @@ and every $\mu \in \ll P \rr^{DS}_G:$\\
 
 Resulting from this definition a very natural way seems to arise to ensure that
 a graph pattern $P$ can be evaluated in practice: 
-We will now define a na[\"i]ve way to make sure we can evaluate a pattern:
+We will now define a na\"ive way to make sure we can evaluate a pattern:
 Assuming we want to evaluate a sub-pattern $(\mbox{SERVICE } x \ P_1)$ of $P$
 we require $x$ to be bound in $P$. We can then define the problem for deciding if a variable
 is bound in a graph pattern $P$:
@@ -114,11 +113,11 @@ It is a well known result that $\textbf{SPARQL SAT}$ is undecidable~\cite{angles
 \end{theorem}
 \begin{proof}
 By providing a reduction from the \textbf{SPARQL SAT} problem to the
-\textbf{VARIABLE BOUND IN PATTERN} Problem we will be able to show the previous theorem.
+\textbf{VARIABLE BOUND IN PATTERN} Problem we will be able to prove the theorem.
 Let $P$ be a graph pattern, i.e., an arbitrary instance of \textbf{SPARQL SAT} and
 $x,y,z$ variables not mentioned in $P$. Then define the graph pattern $Q$,
 i.e. the instance of \textbf{VARIABLE BOUND IN GRAPH} pattern as follows: $Q =
-((x,y,z) \UNION  P)$ and choose $x$ to be the special variable.
+((x,y,z) \UNION  P)$ and choose $x$ to be the potentially bound variable.
 It remains to show that $x$ is bound in $Q$  if and only if $P$ is not
 satisfiable.\\
 $(\Rightarrow)$:\\
@@ -145,21 +144,21 @@ Let $P$ be a graph pattern. Then the set of strongly bound variables in $P$,
 denoted by $SB(P)$, is recursively defined as follows.
 
 \begin{itemize}
-\item if $P =t$, where $t$ is a triple pattern, then $SB(P) = var(t)$;
+\item if $P =t$, where $t$ is a triple pattern, then $SB(P) = vars(t)$;
 \item if $P = (P_1 \ AND \ P_2)$, then $SB(P) = SB(P_1) \cup SB(P_2)$ 
 \item if $P = (P_1  \ UNION \ P_2)$, then $SB(P) = SB(P_1) \cap SB(P_2)$ 
 \item if $P = (P_1 \ OPT \ P_2)$, then $SB(P) = SB(P_1)$ 
-\item if $P = (GRAPH \ c \ P_1)$, with $c \in U\cup V$, 
+\item if $P = (GRAPH \ u \ P_1)$, with $u \in U\cup V$, 
 then\\
 \begin{align*}
 	SB(P) = 
 \begin{cases} 
-    \emptyset & \mbox{$c \in U$} \\
-    SB(P_1) \cup c &\mbox{$c \in V$} 
+    \emptyset & \mbox{$u \in U$} \\
+    SB(P_1) \cup u &\mbox{$u \in V$} 
 \end{cases}
 \end{align*}
 
-\item if $P = (SERVICE \ c \ P_1)$, with $c \in U \cup V$, then $SB(P) = \emptyset$.
+\item if $P = (SERVICE \ u \ P_1)$, with $u \in U \cup V$, then $SB(P) = \emptyset$.
 \end{itemize}
 \end{definition}
 
@@ -243,12 +242,12 @@ problem is undecidable because it uses boundedness in it.
 By providing a reduction from the \textbf{SPARQL SAT} problem to the  
 \textbf{SERVICE BOUND} problem we will be able to show undecidability.
 Let $P$ be a graph pattern, i.e., an arbitrary instance of \textbf{SPARQL SAT} and
-$x,y,z,u,v,w$ variables not mentioned in $P$.
+$x,y,z,x',y',z'$ variables not mentioned in $P$.
 Also assume that $P$ does not mention the operator SERVICE which is not required
 to make the SPARQL satisfiability problem undecidable.
 Then define the graph pattern $Q$, i.e., the instance of \textbf{SERVICE BOUND} as: 
 \begin{align*}
-	Q = (((x,y,z) \UNION  P) \AND (\mbox{SERVICE } x \ (u, v, w))).
+	Q = (((x,y,z) \UNION  P) \AND (\mbox{SERVICE } x \ (x', y', z'))).
 \end{align*}
 
 \noindent It remains to show that $Q$ is service-bound if and only if $P$ is not
@@ -258,7 +257,7 @@ satisfiable.
 $(\Leftarrow)$ \quad If $P$ is not satisfiable, then $Q$ is equivalent to the
 pattern: 
 \begin{align*}
-	Q' = ((x,y,z)) \AND (\mbox{SERVICE} \ x \ (u, v, w)).
+	Q' = ((x,y,z)) \AND (\mbox{SERVICE} \ x \ (x', y', z')).
 \end{align*} 
 But $Q'$ is service bound because $x$ is bound in $Q'$: Assume an
 arbitrary dataset $DS$, let $G$ be in $DS$. Then 
@@ -311,36 +310,37 @@ but the proposed algorithm returns that it is not.
 	every $\mu \in \ll P \rr^{DS}_G$ we have that $y \in dom(\mu)$ and
 	$\mu(y) \in (dom(DS))$: Assume we have a $\mu \in \ll P \rr^{DS}_G$. Then $x
 	\in dom(\mu)$ by semantics of OPT. Assume w.l.o.g. $\mu(x) = c$. Then
-	$(c,a, b) \in G$. But then the mapping $\{ x \mapsto c , y\mapsto b \} \in
-	\mu \in \ll P \rr^{DS}_G$.
+	$(c,a, b) \in G$. But then the mapping $\{ x \mapsto c , y\mapsto b \}
+	\in \ll P \rr^{DS}_G$.
 	The set of strongly bound variables contains
 	only $x$, i.e., $SB = \{ x \}$ by Definition~\ref{def:strongboundedness}.
 \end{example}
 
 Example~\ref{bbutnotsbound} shows that there patterns 
-which are bound but not strongly bound.
-Consider now service safeness, boundness and the following pattern:
-\begin{align*}
-	P = (((x,a, b) \ OPT \ (x, a, y)) \  AND \ (SERVICE \ y \  (a,b,w)))
-\end{align*}
-Pattern $P$ is service-bound but not service-safe. It is obviously possible to
-evaluate $P$. Looking at these examples and noticing that $P$ is contained in
-the query 
-\begin{align*}
-	Q = ((x,a, y) \  AND \ (SERVICE \ y \ (a,b,w)))
-\end{align*} which is obviously service-safe, one could propose that for every
-service-bound query, there is a service-safe query where the service-bound query
-is contained in the service-safe query and also the other way round. For our
-examples this would mean $P \equiv Q$, where $P$ is service-bound but not
-service-safe and $Q$ is service-bound and service-safe.
+which are bound but not strongly bound. Inpired by Example~\ref{bbutnotsbound}
+we can establish the following result.
+%Consider now service safeness, boundness and the following pattern:
+%\begin{align*}
+%	P = (((x,a, b) \ OPT \ (x, a, y)) \  AND \ (SERVICE \ y \  (a,b,w)))
+%\end{align*}
+%Pattern $P$ is service-bound but not service-safe. It is obviously possible to
+%evaluate $P$. Looking at these examples and noticing that $P$ is contained in
+%the query 
+%\begin{align*}
+%	Q = ((x,a, y) \  AND \ (SERVICE \ y \ (a,b,w)))
+%\end{align*} which is obviously service-safe, one could propose that for every
+%service-bound query, there is a service-safe query where the service-bound query
+%is contained in the service-safe query and also the other way round. For our
+%examples this would mean $P \equiv Q$, where $P$ is service-bound but not
+%service-safe and $Q$ is service-bound and service-safe.
 
 \begin{theorem}\label{ezprop}
-	The problem of verifying, given a graph pattern $P$ in a fragment
+	The problem of verifying, given a graph pattern $P$ in a SPARQL fragment
 	$\mathbf{P}$ and a variable $x \in
 	var(P)$, whether $x$ is bound in $P$ is as hard as deciding $(P_1 \AND 
 	P_2)
 	\equiv (P_1 \OPT P_2)$ for every subpattern $(P_1 \OPT  P_2)$ of $P$ in the
-	given fragment $\mathbf{P}$.
+	given SPARQL fragment $\mathbf{P}$.
 \end{theorem}
 \begin{proof}
 	It is very easy to decide strong boundedness and Proposition~\ref{sbinb}
@@ -349,35 +349,54 @@ service-safe and $Q$ is service-bound and service-safe.
 	variables which are bound, even those which are only bound but not strongly
 	bound.
 	Assume $x$ is bound in $P$ and $x \notin SB(P)$.
-	There must thus be a subpattern $Q$ where $x$ gets lost in the recursive
-	approach.
+	There must thus be a subpattern $Q$ where $x \in vars(Q)$ but $x \notin
+	SB(Q)$. We will thus go through every step of the recursive approach of
+	Definition~\ref{def:strongboundedness} to find the culprit subpattern.
 	\begin{itemize}
-		\item If $Q$ is a triple $t$ then $SB(Q) = var(t)$ and thus $x \in SB(Q)$.
-		\item If $Q$ is $(P_1 \AND   P_2)$ then $SB(Q) = SB(P_1) \cup SB(P_2)$
-			and $x \in SB(Q)$ because $SB(Q) = SB(P_1) \cup SB(P_2)$.
-		\item If Q is $(P_1 \UNION  P_2)$ then $SB(P) = SB(P_1) \cap SB(P_2)$ thus
-			w.l.o.g. $x$ can get lost if $x \in SB(P_1)$ but $x \notin
-			SB(P_2)$. But this cannot cause conflicts because then we could
-			easily construct a DS with a graph $G$ in it s.t. $\mu \in \ll P_2
-			\rr^{DS}_G$, but then $\mu$ does not contain $x$ so we are done
-			because $(P_1  \UNION  P_2)$ cannot cause $Q$ to be bound but not
-			strongly bound.
+		\item If $Q$ is a triple $t$ then $SB(Q) = var(t)$ and by assumption
+			that $x \in vars(Q)$ we get that $x \in SB(Q)$. 
+
+		\item If $Q$ is $(P_1 \AND P_2)$ then $SB(Q) = SB(P_1) \cup SB(P_2)$. By
+			assumption we know that $x \in vars(Q)$. By semantics of $\cup$ we
+			get that $Q$ can never lead to the loss of any variables.
+			
+		\item If Q is $(P_1 \UNION  P_2)$ then $SB(P) = SB(P_1) \cap SB(P_2)$.
+			By assumption we have that $x \in vars(P_1 \UNION P_2)$.
+			Assume $x$ gets lost in $Q$. 
+			We have a case distinction:
+			\begin{enumerate}
+				\item $x \in SB(P_1)$ and $x \in SB(P_2)$. We instantly have a
+					contradiction by semantics of $\cap$. 
+
+				\item Assume w.l.o.g. that $x \in SB(P_1)$ but $x \notin SB(P_2)$. 
+					This contradict the fact that $x$ is bounded in $P$:
+					We could construct a dataset $DS$ with a graph $G$ in it s.t. there
+					is solution $\mu \in \ll P_2
+					\rr^{DS}_G$. By assumption we would then have that $\mu$ does not
+					contain $x$ in its domain. 
+			\end{enumerate}
+
 		\item If $Q$ is $(P_1 \OPT  P_2)$ we have by definition of SB that $SB(P) = SB(P_1)$
 			So a variable $x$ gets lost if it is in $SB(P_2)$, but not in
 			$SB(P_1)$. When we have the case that $x$ is bound in $Q$ but not
 			strongly bound in $Q$ we must thus have $(P_1 \AND  P_2) \equiv
 			(P_1 \OPT  P_2)$ for every DS, Graph and $\mu \in \ll Q
 			\rr^{DS}_G$.
-			Note that deciding $(P_1 \AND P_2) \equiv
-			(P_1 \OPT  P_2)$ is undecidable for general SPARQL patterns and causes deciding
-			boundedness to be undecidable. Furthermore it is the key to explain
-			the difference between strongly boundedness and boundedness.
-		\item If $Q$ is $(\mbox{GRAPH } c \ P_1)$ it is obvious that no variables get lost
+		\item If $Q$ is $(\mbox{GRAPH } u \ P_1)$ it is obvious that no variables get lost
 			in $SB(Q)$.
-		\item if $P = (\mbox{SERVICE }  c \ P_1)$ is is also obvious that no variables are
-			lost in the procedure.
+		\item If $Q = (\mbox{SERVICE }  u \ P_1)$ is is obvious that no variables are
+			lost.
 	\end{itemize}
+	To modify our pattern $P$ in such a way, that $SB(P)$ collects all the
+	variables which are bound we would need to replace all occurrences of  $(P_1
+	\OPT P_2)$ with $(P_1 \AND P_2$ iff $(P_1 \AND  P_2) \equiv	(P_1 \OPT  P_2)$
+	holds.
 \end{proof}
+
+Note that deciding $(P_1 \AND P_2) \equiv
+(P_1 \OPT  P_2)$ is undecidable for general SPARQL patterns and is the reason
+why deciding \textbf{BOUND IN PATTERN} is undecidable. Furthermore it is the key to explain
+the difference between strongly boundedness and boundedness.
 
 \begin{corollary}
 	The problem of verifying, given a graph pattern $P$ in a fragment
@@ -389,7 +408,7 @@ service-safe and $Q$ is service-bound and service-safe.
 
 \begin{proof}
 	It is obvious that checking the boundedness in the ancestor of a service
-	node causes the undecidability. Thus we use the result in Lemma~\ref{ezprop} to
+	node causes the undecidability. Thus we use the result in Theorem~\ref{ezprop} to
 	show that deciding whether a variable $x$ is bound in this ancestor is as
 	hard as deciding $(P_1 \AND P_2)
 	\equiv (P_1 \OPT  P_2)$ for every subpattern $(P_1 \OPT P_2)$ of $P$, where
