@@ -2,7 +2,7 @@ We need a different but equivalent definitions of WDPTs in this section. The
 main structural difference to Definition~\ref{def:pt} is that the nodes in the
 tree are labelled with a set
 of relational atoms over a schema instead of a set of triples. Also the semantic
-evaluation of WDPTs use the notion of conjunctive queries.
+evaluation of WDPTs uses the notion of conjunctive queries.
 
 \begin{definition}[WDPTs~\cite{barcelo2015efficient}]\label{def:wdpt}
 	A WDPT over a relational schema $\sigma$ is a tuple $(T, \lambda, \overline{x})$
@@ -34,13 +34,13 @@ evaluation of WDPTs use the notion of conjunctive queries.
 	$T'$. 
 \end{definition}
 
-The main idea of the semantics of a WDPT is to look at each subtree $T'$ of
+The main idea of this equivalent but different semantics of a wdPT is to look at each subtree $T'$ of
 $T$ rooted in $r$. As mentioned above, each of them describes a pattern, i.e.,
 the conjunctive query CQ $q_T'$. A mapping $h$ satisfies $(T,\lambda)$ over
 a database $D$ if $h$ satisfies the pattern defined by a subtree $T'$ and there
 is no subtree $T''$ which is bigger than $T'$ and $h$ can be extended to satisfy
 $T''$.
-\begin{definition}[Semantics of WDPTs~\cite{barcelo2015efficient}]
+\begin{definition}[Semantics of wdPTs~\cite{barcelo2015efficient}]
 	Let $p=(T,\lambda,\overline{x})$ be a WDPT and $D$ a database over $\sigma$.
 
 	\begin{enumerate}
@@ -86,7 +86,7 @@ that cannot be expressed as CQs, which we will discuss in the following example:
 
 To capture the UNION operator the definition of well designed pattern trees
 need to be modified.  
-\begin{definition}[Unions of WDPTs]
+\begin{definition}[Unions of wdPTs or well-designed pattern Forests (wdPF)]
 	A Union of WDPTs is an expression $\phi$ of the form $\bigcup_{1\leq i \leq n} p_i$, 
 	where each $p_i$ is a WDPT over $\sigma$.
 	We denote $\varphi(D)$ as the evaluation of $\phi$ over database $D$.
@@ -102,9 +102,10 @@ only using AND and triple patterns to a conjunctive query. Then we propose a
 polynomial time translation from a graph pattern $P \in P_{wdgs}$ to $Q \in P_{wd}$. For this
 translation we need to construct a special database and a wdpt depending on the
 original query. After we established the translation we prove the equivalence of $P$ and $Q$ in
-Theorem~\ref{biglemma}. The last two sections deal with the problems
-\textbf{EVAL}($P_{wdgs}$), \textbf{CONTAINMENT}($P_{wdgs}$),
-\textbf{EQUIVALENCE}($P_{wdgs}$) and \textbf{SUBSUMPTION}($P_{wdgs}$).
+Theorem~\ref{biglemma}. The last section deals with the problem
+\textbf{EVAL}($P_{wdgs}$.
+%, \textbf{CONTAINMENT}($P_{wdgs}$),
+%\textbf{EQUIVALENCE}($P_{wdgs}$) and \textbf{SUBSUMPTION}($P_{wdgs}$).
 
 \section{Translations to well designed pattern forests}
 It is an easy observation that if we restrict SPARQL to the AND operator, we
@@ -127,7 +128,8 @@ We will show this in Example~\ref{exconjq}.
 	\rr_G^{DS}$.
 \end{example}
 Similar to Example~\ref{exconjq} we are going to transform the dataset and query 
-not into conjunctive queries but an extension of them: well designed pattern forests. We 
+not into conjunctive queries but an extension of them: well designed pattern
+trees. We 
 will define a polynomial time translation from a graph pattern $P \in P_{wdgs}$
 to a well designed pattern tree. This enables us to use well known algorithms 
 for which the computational complexity is known. 
@@ -331,12 +333,11 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 
 			\bigskip\noindent
 			Let $ds,g \in \V$.
-			Because $ds$ and $g$ are variables we have to show that 
+			Because $ds$ and $g$ are variables we have to show that \\
 			$\bigcup\limits_{g' \in names(ds'), ds'\in dom(ep)} \{ \mu \cup \{[ds\mapsto ds'] [g
 				\mapsto g']\} \mid \mu \in \ll P
 				\rr^{ep(ds')}_{graph(g',ep(ds'))},\mu 
 			\sim \{[ds \mapsto ds'][g \mapsto g']\}\} \subseteq Q(D)$. 
-
 			Let $ds'\in dom(ep), g' \in names(ep(ds'))$ be arbitrary, let $\mu \in \ll P
 			\rr^{ep(ds')}_{graph(g',ep(ds'))}$ where $\mu \sim \{[ds\mapsto ds'][g \mapsto
 			g'] \}$.
@@ -397,7 +398,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 
 			\bigskip\noindent
 			Let $ds \in \V$, $g \in \V$.
-			Because $ds,g$ are variables we have to show that 
+			Because $ds,g$ are variables we have to show that \\
 			$\bigcup\limits_{ds' \in dom(ep),g' \in names(ep(ds'))} 
 			\{ \mu \cup \{[g\mapsto g'][ds \mapsto ds'] \} \\ 
 				\mid \mu \in \ll P
@@ -521,7 +522,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 
 			\bigskip\noindent
 			$ds \in V, g \in \U$.
-			We want to show 
+			We want to show \\
 			$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup
 				[ds \mapsto ds'] \mid \mu \in \ll P\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim
 			[ds\mapsto ds'] \}  \supseteq Q(D)$.
@@ -686,7 +687,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 				\item Assume $\mu \in \big\{ \mu_1 \in  \ll P_1 \rr^{ep(ds')}_{graph(g,ds')} \mid 
 						\forall \mu_2 \in \ll P_2 \rr^{ep(ds')}_{graph(g,ds')}: 
 					\mu_1 \not\sim \mu_2 \big\}$. 
-					By induction hypothesis we have 
+					By induction hypothesis we have \\
 					$\bigcup\limits_{ds' \in dom(ep)} \{ \mu_1 \cup	[ds	\mapsto ds'] 
 						\mid \mu_1 \in \ll	P_1\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim
 					[ds\mapsto ds'] \}  = Q_1(D)$.
@@ -750,7 +751,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 
 				\item Assume $\mu \in \big\{ \mu_1 \in  \ll P_1 \rr^{DS}_{graph(g',DS)} \mid 
 					\forall \mu_2 \in \ll P_2 \rr^{DS}_{graph(g',DS)}: \mu_1 \not\sim \mu_2 \big\}$. 
-					By induction hypothesis we have 
+					By induction hypothesis we have \\
 					$\bigcup\limits_{g' \in names(DS)} 
 					\{ \mu_1 \cup [g \mapsto g'] \mid \mu_1 \in
 						\ll P_1\rr^{DS}_{graph(g',DS)}, \mu \sim
@@ -777,14 +778,15 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 			Let $ds'$ be an arbitrary URI in dom(ep), and $g'$ be an arbitrary
 			URI in $names(ep(d))$.
 			Let $\mu \in \ll P \rr^{ep(ds')}_{graph(g',ep(ds'))}$ be arbitrary.
-			By semantics of OPT we have that $\mu \in \ll P_1 \AND P_2 \rr^{ep(ds')}_{graph(g',ep(ds'))}$ or 
+			By semantics of OPT we have that $\mu \in \ll P_1 \AND P_2
+			\rr^{ep(ds')}_{graph(g',ep(ds'))}$ or \\
 			$\mu \in \big\{ \mu_1 \in  \ll P_1 \rr^{ep(ds')}_{graph(g',ep(ds'))} \mid \forall \mu_2 \in \ll P_2
 				\rr^{ep(ds')}_{graph(g',ep(ds'))}:
 			\mu_1 \not\sim \mu_2 \big\}$. 
 			We thus proceed by case distinction:
 			\begin{enumerate}
 				\item Assume $\mu \in \ll P_1 \AND P_2 \rr^{ep(ds')}_{graph(g',ep(ds'))}$. 
-					By induction hypothesis we thus have 
+					By induction hypothesis we thus have \\
 					$\bigcup\limits_{ds'\in dom(ep),g' \in names(ep(d))} \{ \mu \cup \{[ds \mapsto
 						ds'][g \mapsto g']\} \mid \mu \in
 						\ll P_i\rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu_i \sim
@@ -946,21 +948,21 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 	Case distinction:
 	\begin{enumerate}
 		\item $\sigma \in Q_{T_1}(D)$: 
-			we can then use the induction hypothesis  
+			we can then use the induction hypothesis\\  
 			$\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(d))} \{ \mu \cup \{[ds
 				\mapsto ds'] [g	\mapsto g']\} \mid \mu
 				\in \ll P_1 \rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu \sim \{[ds
 			\mapsto ds'] [g \mapsto g']\} \}  =	Q_1(D) $. 
 
 			Thus $\mu \in \ll P_1 \rr^{ep(ds')}_{graph(g',ep(ds'))}$ 
-			and we also have $\{\mu \not\sim \mu_2 \mid \forall \mu_2 \in
+			and we also have\\ $\{\mu \not\sim \mu_2 \mid \forall \mu_2 \in
 			\ll P_2 \rr^{ep(ds')}_{graph(g',ep(ds'))} \}$ because of our assumption.
 			Thus $\mu \in \ll P \rr_{graph(g',ep(ds'))}^{ep(ds')}$ and $\mu \sim
 			\{[ds' \mapsto ds],[g'\mapsto g']\}$ by induction hypothesis.
 
 		\item If $\sigma \in Q_{T}(D)$  we can use the induction hypothesis twice:\\
 			$\bigcup\limits_{ds' \in dom(ep),g' \in names(ep(ds'))} \{ \mu_i \cup\{[ds
-					\mapsto ds'] [g \mapsto g'\}  \mid \mu_i
+					\mapsto ds'] [g \mapsto g'\}  \mid \\ \mu_i
 					\in \ll P_i \rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu_i \sim \{[ds
 				\mapsto ds'] [g \mapsto g']\}\}  = Q_i(D)$ for $i=1,2$.\\
 				Let $\mu = \sigma \backslash \{[ds \mapsto ds'] [g \mapsto g']\}$.
@@ -1002,7 +1004,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 				$Q(D) = \{\}$ because we added $LOC(u,ds)$ to the root of our
 				query Q.
 			\item $u \in V$:
-				Then $\mu \in S_1$ where $S_1 =  \bigg\{\mu_1 \cup [ u \rightarrow s ] \mid
+				Then $\mu \in S_1$ where\\ $S_1 =  \bigg\{\mu_1 \cup [ u \rightarrow s ] \mid
 					s \in names(DS), \mu_1 \in \ll P_1
 					\rr^{DS}_{graph(s,DS)}, [ u \rightarrow s ] \sim
 				\mu_1 \bigg\}$. 
@@ -1062,7 +1064,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 
 			\bigskip\noindent
 			$ds \in \U, g \in \V:$ \\ Let $DS = ep(ds)$.
-			We need to show 
+			We need to show\\
 			$\bigcup\limits_{g' \in names(DS)} \{ \mu \cup [g\mapsto g'] \mid \mu \in
 				\ll P \rr^{DS}_{graph(g',DS)}, \mu \sim
 			[g\mapsto g'] \}  \subseteq Q(D) $.
@@ -1373,7 +1375,7 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 
 			\bigskip\noindent
 			Let $ds \in \V,g \in \U$.
-			We want to show  
+			We want to show\\ 
 			$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
 			\ll P\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim  [ds\mapsto ds'] \}  
 			\subseteq Q(D)$.
@@ -1724,7 +1726,7 @@ The next step is to show that our well designed pattern tree that we received
 from our $trans$ function is a pattern tree, as it was defined by Definition~\ref{def:wdpt}.
 
 \begin{lemma}
-	Let $ds \in dom(ep)$, $g \in names(ep(ds))$ and $P$ be a SPARQL pattern.
+	Let $ds \in dom(ep)$, $g \in names(ep(ds))$ and $P \in P_{wdgs}$ be a SPARQL pattern.
 	Then $F = trans(P,ds,g)$ is a well-designed pattern tree. 
 \end{lemma}
 
@@ -1742,11 +1744,11 @@ from our $trans$ function is a pattern tree, as it was defined by Definition~\re
 			It connects the roots of $T_1$ and $T_2$, call them $r_1,r_2$ with
 			an edge $(r_1,r_2)$ making $r_1$ the new root.  
 
-		\item For every variable $y$ that appears
-			in $T$, the tree of the wdPT, the set of nodes of $T$ where $y$ is mentioned is connected.
-			It is important to remember that we assumed that our inputpattern $P$ is 
-			in OPT normal form and well-designed.
-			The induction will be over the structure of the subpatterns $P'$ of $P$.
+		\item For every variable $x$ that appears
+			in $T$, the tree of the wdPT, the set of nodes of $T$ where $x$ is mentioned is connected.
+			It is important to remember that we assumed that our inputpattern $P
+			\in P_{wdgs}$ and is well-designed.
+			The induction will be over the structure of the subpatterns $\hat{P}$ of $P$.
 			\begin{enumerate}
 			
 				\item Basecase: If $\hat{P}$ is a triple pattern we only return one node, so there can't be any
@@ -1754,14 +1756,14 @@ from our $trans$ function is a pattern tree, as it was defined by Definition~\re
 
 				\item Induction Step: If $\hat{P}$ is $(P_1 \AND  P_2)$ there can 
 					also never be a violation of the
-					property because we assumed that $P$ is in OPT normal form and thus OPT never
+					property because we assumed that $P$ is in $P_{wdgs}$ and thus OPT never
 					occurs in the scope of AND. We thus also only return a single node making a
 					violation impossible.
 
 				\item Induction Step: If $\hat{P}$ is $(P_1 \OPT  P_2)$:
 					By induction hypothesis $Q_1 = trans(P_1,ds,g)$ and $Q_2 =
-					trans(P_2,ds,g)$ fulfill the property and $P$ 
-					is a well designed SPARQL pattern in OPT normal form by assumption. 
+					trans(P_2,ds,g)$ fulfill the property and $P \in P_{wdgs}$ 
+					and is a well designed SPARQL pattern by assumption. 
 
 					Assume that making $T_2$ a child of the root of $T_1$ 
 					results in a wdPT $Q$ which does not fulfill the well designedness property.
@@ -1788,15 +1790,16 @@ from our $trans$ function is a pattern tree, as it was defined by Definition~\re
 					%that $Q$ fulfills the property. 
 
 				\item Induction Step: If $\hat{P}$ is $(\mbox{GRAPH }  u \ P_1)$:
-					We know that $Q = trans(P_1,ds,u)$ and by induction hypothesis,
-					we know that $Q = (T, \lambda,x)$ fulfills the property. Let
+					We know that $trans(P_1,ds,u) = (T, \lambda,x)$ 
+					is part of the endresult $Q$ and by induction hypothesis,
+					we know that $(T, \lambda,x)$ fulfills the property. Let
 					$r_1$ be the root of $T$. $trans(\cdot)$ adds the conjunct
 					$LOC(u,ds)$ and $LOC(g,ds)$ to $r_1$. W.l.o.g. assume $u$,$g$
 					and $ds$ are variables. For every of those three variables it
 					remains to prove that the property holds.
 					Let $x \in \{u,g,ds\}$ and assume that our resulting wdPT $Q$ is
 					not fulfilling the property. There must thus be a node $n_1$ in $Q$ which
-					doesn't contain $x$ other than the root and a node $n_2$ for which $n_1$ is a parent 
+					doesn't contain $x$ and a node $n_2$ for which $n_1$ is a parent 
 					which again contains $x$ creating the conflict.
 					By the definition of the function $trans(\cdot)$ we know that
 					there must have been a subpattern $(P' OPT P'')$ and both $n_1,n_2$ must
@@ -1811,15 +1814,14 @@ from our $trans$ function is a pattern tree, as it was defined by Definition~\re
 					\begin{enumerate}
 						\item Let $x=u$. Because we assumed $\hat{P}=
 							(\mbox{GRAPH } u \ P_1)$ we know that
-							$P$ is not well designed because $P_1$ contains the
+							$P$ is not well-designed because $P_1$ contains the
 							subpattern $(P' \OPT P'')$.
 						\item Let $x = g$. This means that we are inside a graph
 							pattern $(\mbox{GRAPH } g \ P^\sim)$ and thus $P$ is
 							not well designed because $P_1$ contains the
 							subpattern $(P' \OPT P'')$.
 						\item Let $x = ds$. This means that we are inside a
-							SERVICE
-							pattern $(\mbox{SERVICE } g \ P^\sim)$ and thus $P$ is
+							SERVICE	pattern\\ $(\mbox{SERVICE } g \ P^\sim)$ and thus $P$ is
 							not well designed because $P_1$ contains the
 							subpattern $(P' \OPT P'')$.
 					\end{enumerate}
@@ -1894,15 +1896,15 @@ $\ll P \rr^{DS}_def = Q(D)$.
 	$\ll P \rr^{DS}_G = Q(D)$ follows.
 \end{proof}
 
-For the static analysis we dont have $DS$ as input, so we want to
-generalize the theorem in the following way:
-\begin{theorem}\label{biglemma}
-	Let $P$ be a graph pattern in $P_{wdgs}$, 
-	$DS$ be an arbitrary dataset in $img(ep)$.
-	Let $x \in \V$. Then $Q = trans(P,x,def)$ be the wdPT and 
-	$D = \bigcup\limits_{c \in dom(ep)} data(c)$. 
-	Then $\ll P \rr^{DS}_G = Q(D)$.
-\end{theorem}
+%For the static analysis we dont have $DS$ as input, so we want to
+%generalize the theorem in the following way:
+%\begin{theorem}\label{biglemma}
+%	Let $P$ be a graph pattern in $P_{wdgs}$, 
+%	$DS$ be an arbitrary dataset in $img(ep)$.
+%	Let $x \in \V$. Then $Q = trans(P,x,def)$ be the wdPT and 
+%	$D = \bigcup\limits_{c \in dom(ep)} data(c)$. 
+%	Then $\ll P \rr^{DS}_G = Q(D)$.
+%\end{theorem}
 
 \section{The complexity of EVAL($\l$) where $\l \in \{P,\u,\s\}$ }
 
@@ -1935,120 +1937,120 @@ Again hardness of the problem follows immediately from the hardness of
 \textbf{EVAL($\s_{wd}$)}.
 \end{proof}
 
-\section{Static Analysis}
-\begin{theorem}
-	The problems \textbf{EQUIVALENCE}($\l$), \textbf{CONTAINMENT}($\l$)  
-	are $NP$-complete for $\l = P_{wdgs}$ and $\Pi^p_2$-complete $\l =
-	\u_{wdgs}$ when we assume the function $ep(\cdot)$ as additional input.
-\end{theorem}
-\begin{proof}
-	Hardness for each of these problems follows immediately from the fact that
-	that they are already NP-complete for the language
-	$P_{wd}$~\cite{letelier2012static}.
-	%and $\Pi^{P}_2$ for the language $\U_{wd}$~\cite{pichler2014containment}.\\
-	For the membership, we propose the following algorithm:
-	Let $P_1,P_2$ be two arbitrary patterns where $P_1,P_2 \in P_{wdgs}$ or
-	$P_1,P_2 \in \u_{wdgs}$ holds.
-	Let $x \in \V$ and use our polynomial time transformation function twice to obtain two wdpts: 
-	$Q_i = trans(P_i,x,def)$ for $i\in \{1,2\}$. 
-	Using the NP-algorithm proposed in~\cite{letelier2012static} for $\l =
-	P_{wdgs}$ we can decide whether $Q_1 \subseteq Q_2$:
-%	or the
-%	$\Pi^P_2$ algorithm proposed in~\cite{pichler2014containment} when $\l =
-%	\u_{wdgs}$.
-	\begin{enumerate}
-		\item $Q_1 \subseteq Q_2$:
-			Let $ds \in dom(ep)$ be arbitrary, i.e., 
-			an arbitrary URI of a dataset and $DS = ep(ds)$. 
-			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
-			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
-			Let $\mu$ be an arbitrary mapping in $\ll P_1 \rr^{DS}_{def}$. Because
-			of Theorem~\ref{biglemma} we can conclude that $\mu \in Q_1(D)$.
-			Because of our assumption we get that $\mu \in Q_2(D)$. Because
-			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \in \ll P_2
-			\rr^{DS}_{def}$.
-
-		\item $Q_1 \not\subseteq Q_2$: 
-			Let $ds \in dom(ep)$ be arbitrary, i.e., an arbitrary URI of a dataset 
-			and $DS = ep(ds)$.
-			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
-			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
-			By assumption there is a $\mu \in
-			Q_1(D)$ such that $\mu \notin Q_2(D)$. Because
-			of Theorem~\ref{biglemma} and $\mu \in Q_1(D)$ we can conclude that $\mu \in \ll P_1
-			\rr^{DS}_{def}$.
-			Because of our assumption we get that $\mu \notin Q_2(D)$. Because
-			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \notin \ll P_2
-			\rr^{DS}_{def}$.
-	\end{enumerate}
-\end{proof}
-%der proof geht nicht weil wenn man oben die variable reinhaut kriegt man kein
-%nicht \ll P \rr^DS_G = Q(D) sondern was anderes.
-To generalize this result which means removing the $ep(\cdot)$ function from the
-input, we observed that a problem occurred in the step where we transformed the
-SERVICE function into a wdpt. 
-In detail, this is the case when we have a query of the form $(\mbox{SERVICE }
-a \
-P_1)$, where $a \in \U \backslash dom(ep)$. In this case our transformation
-function $trans(\cdot)$ directly accesses the function $ep(\cdot)$ and checks if $a \in
-ep(\cdot)$ and produces a result directly depending on the outcome of this
-function. When transforming the GRAPH operator into a wdPT we don't run into the
-same problem. Assume we want to transform $(\mbox{GRAPH} \ a \ P_1)$ with $trans(\cdot)$
-and our current dataset is $ds$.
-Then $trans(\cdot)$ produces the same output regardless of the outcome of $a \in
-dom(names(ds))$.
-\begin{theorem}
-	The problem \textbf{CONTAINMENT}($P_{wdgs}$)  
-	is NP-hard and in $\Sigma^P_2$.
-\end{theorem}
-\begin{proof}
-	NP-Hardness for the problem follows immediately from the fact that
-	that they are already NP-complete for the language
-	$P_{wd}$~\cite{letelier2012static}.
-	%and $\Pi^{P}_2$ for the language $\U_{wd}$~\cite{pichler2014containment}.\\
-
-	For the $\Sigma^P_2$ membership  of \textbf{CONTAINMENT}($P_{wdgs}$), we propose the following algorithm:
-	Let $P_1,P_2$ be two arbitrary patterns where $P_1,P_2 \in P_{wdgs}$ holds.
-	Scan the queries $P_1,P_2$ for every occurrence of $(\mbox{SERVICE} \ a \ P_1)$ where $a \in
-	\U$. Put each destination URI of a SERVICE subpattern in $P_i$ into the set $O_i$ for $i\in
-	\{1,2\}$.
-	Let $O = O_1 \cup O_2$ so we have all the distinct occurences of destination
-	URIs in both queries. Assume $|O| = n$. 
-	Notice that we have exactly $2^n$ possibilities to construct $dom(ep)$ that would
-	influence our translation function $trans(\cdot)$ because this is the
-	number of subsets of the set $O$.
-	Let this family of domains be described as $Doms$.
-	Let $x \in \V$ and guess a domain $D_i\in Doms$. Then let 
-	$Q_i = trans(P_i,x,def,D_i)$ for $i\in \{1,2\}$. 
-	Using the NP-algorithm proposed in~\cite{letelier2012static} 
-	we can decide whether $Q_1 \subseteq Q_2$:
-	\begin{enumerate}
-		\item $Q_1 \subseteq Q_2$:
-			Let $ep$ have the domain $D_i$ and assume it else to be arbitrary.
-			Let $ds \in dom(ep)$ be arbitrary, i.e., an arbitrary
-			URI of a dataset and $DS = ep(ds)$. 
-			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
-			obviously in polynomial time if $dom(ep)$ is assumed to be finite. 
-			Let $\mu$ be an arbitrary mapping in $\ll P_1 \rr^{DS}_{def}$. Because
-			of Theorem~\ref{biglemma} we can conclude that $\mu \in Q_1(D)$.
-			Because of our assumption we get that $\mu \in Q_2(D)$. Because
-			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \in \ll P_2
-			\rr^{DS}_{def}$.
-		\item $Q_1 \not\subseteq Q_2$: 
-			Let $ep$ have the domain $D_i$ and assume it else to be arbitrary.
-			Let $ds \in dom(ep)$ be arbitrary, i.e., an arbitrary URI of a dataset 
-			and $DS = ep(ds)$.
-			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
-			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
-			By assumption there is a $\mu \in
-			Q_1(D)$ such that $\mu \notin Q_2(D)$. Because
-			of Theorem~\ref{biglemma} and $\mu \in Q_1(D)$ we can conclude that $\mu \in \ll P_1
-			\rr^{DS}_{def}$.
-			Because of our assumption we get that $\mu \notin Q_2(D)$. Because
-			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \notin \ll P_2
-			\rr^{DS}_{def}$.
-	\end{enumerate}
-\end{proof}
+%\section{Static Analysis}
+%\begin{theorem}
+%	The problems \textbf{EQUIVALENCE}($\l$), \textbf{CONTAINMENT}($\l$)  
+%	are $NP$-complete for $\l = P_{wdgs}$ and $\Pi^p_2$-complete $\l =
+%	\u_{wdgs}$ when we assume the function $ep(\cdot)$ as additional input.
+%\end{theorem}
+%\begin{proof}
+%	Hardness for each of these problems follows immediately from the fact that
+%	that they are already NP-complete for the language
+%	$P_{wd}$~\cite{letelier2012static}.
+%	%and $\Pi^{P}_2$ for the language $\U_{wd}$~\cite{pichler2014containment}.\\
+%	For the membership, we propose the following algorithm:
+%	Let $P_1,P_2$ be two arbitrary patterns where $P_1,P_2 \in P_{wdgs}$ or
+%	$P_1,P_2 \in \u_{wdgs}$ holds.
+%	Let $x \in \V$ and use our polynomial time transformation function twice to obtain two wdpts: 
+%	$Q_i = trans(P_i,x,def)$ for $i\in \{1,2\}$. 
+%	Using the NP-algorithm proposed in~\cite{letelier2012static} for $\l =
+%	P_{wdgs}$ we can decide whether $Q_1 \subseteq Q_2$:
+%%	or the
+%%	$\Pi^P_2$ algorithm proposed in~\cite{pichler2014containment} when $\l =
+%%	\u_{wdgs}$.
+%	\begin{enumerate}
+%		\item $Q_1 \subseteq Q_2$:
+%			Let $ds \in dom(ep)$ be arbitrary, i.e., 
+%			an arbitrary URI of a dataset and $DS = ep(ds)$. 
+%			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
+%			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
+%			Let $\mu$ be an arbitrary mapping in $\ll P_1 \rr^{DS}_{def}$. Because
+%			of Theorem~\ref{biglemma} we can conclude that $\mu \in Q_1(D)$.
+%			Because of our assumption we get that $\mu \in Q_2(D)$. Because
+%			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \in \ll P_2
+%			\rr^{DS}_{def}$.
+%
+%		\item $Q_1 \not\subseteq Q_2$: 
+%			Let $ds \in dom(ep)$ be arbitrary, i.e., an arbitrary URI of a dataset 
+%			and $DS = ep(ds)$.
+%			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
+%			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
+%			By assumption there is a $\mu \in
+%			Q_1(D)$ such that $\mu \notin Q_2(D)$. Because
+%			of Theorem~\ref{biglemma} and $\mu \in Q_1(D)$ we can conclude that $\mu \in \ll P_1
+%			\rr^{DS}_{def}$.
+%			Because of our assumption we get that $\mu \notin Q_2(D)$. Because
+%			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \notin \ll P_2
+%			\rr^{DS}_{def}$.
+%	\end{enumerate}
+%\end{proof}
+%%der proof geht nicht weil wenn man oben die variable reinhaut kriegt man kein
+%%nicht \ll P \rr^DS_G = Q(D) sondern was anderes.
+%To generalize this result which means removing the $ep(\cdot)$ function from the
+%input, we observed that a problem occurred in the step where we transformed the
+%SERVICE function into a wdpt. 
+%In detail, this is the case when we have a query of the form $(\mbox{SERVICE }
+%a \
+%P_1)$, where $a \in \U \backslash dom(ep)$. In this case our transformation
+%function $trans(\cdot)$ directly accesses the function $ep(\cdot)$ and checks if $a \in
+%ep(\cdot)$ and produces a result directly depending on the outcome of this
+%function. When transforming the GRAPH operator into a wdPT we don't run into the
+%same problem. Assume we want to transform $(\mbox{GRAPH} \ a \ P_1)$ with $trans(\cdot)$
+%and our current dataset is $ds$.
+%Then $trans(\cdot)$ produces the same output regardless of the outcome of $a \in
+%dom(names(ds))$.
+%\begin{theorem}
+%	The problem \textbf{CONTAINMENT}($P_{wdgs}$)  
+%	is NP-hard and in $\Sigma^P_2$.
+%\end{theorem}
+%\begin{proof}
+%	NP-Hardness for the problem follows immediately from the fact that
+%	that they are already NP-complete for the language
+%	$P_{wd}$~\cite{letelier2012static}.
+%	%and $\Pi^{P}_2$ for the language $\U_{wd}$~\cite{pichler2014containment}.\\
+%
+%	For the $\Sigma^P_2$ membership  of \textbf{CONTAINMENT}($P_{wdgs}$), we propose the following algorithm:
+%	Let $P_1,P_2$ be two arbitrary patterns where $P_1,P_2 \in P_{wdgs}$ holds.
+%	Scan the queries $P_1,P_2$ for every occurrence of $(\mbox{SERVICE} \ a \ P_1)$ where $a \in
+%	\U$. Put each destination URI of a SERVICE subpattern in $P_i$ into the set $O_i$ for $i\in
+%	\{1,2\}$.
+%	Let $O = O_1 \cup O_2$ so we have all the distinct occurences of destination
+%	URIs in both queries. Assume $|O| = n$. 
+%	Notice that we have exactly $2^n$ possibilities to construct $dom(ep)$ that would
+%	influence our translation function $trans(\cdot)$ because this is the
+%	number of subsets of the set $O$.
+%	Let this family of domains be described as $Doms$.
+%	Let $x \in \V$ and guess a domain $D_i\in Doms$. Then let 
+%	$Q_i = trans(P_i,x,def,D_i)$ for $i\in \{1,2\}$. 
+%	Using the NP-algorithm proposed in~\cite{letelier2012static} 
+%	we can decide whether $Q_1 \subseteq Q_2$:
+%	\begin{enumerate}
+%		\item $Q_1 \subseteq Q_2$:
+%			Let $ep$ have the domain $D_i$ and assume it else to be arbitrary.
+%			Let $ds \in dom(ep)$ be arbitrary, i.e., an arbitrary
+%			URI of a dataset and $DS = ep(ds)$. 
+%			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
+%			obviously in polynomial time if $dom(ep)$ is assumed to be finite. 
+%			Let $\mu$ be an arbitrary mapping in $\ll P_1 \rr^{DS}_{def}$. Because
+%			of Theorem~\ref{biglemma} we can conclude that $\mu \in Q_1(D)$.
+%			Because of our assumption we get that $\mu \in Q_2(D)$. Because
+%			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \in \ll P_2
+%			\rr^{DS}_{def}$.
+%		\item $Q_1 \not\subseteq Q_2$: 
+%			Let $ep$ have the domain $D_i$ and assume it else to be arbitrary.
+%			Let $ds \in dom(ep)$ be arbitrary, i.e., an arbitrary URI of a dataset 
+%			and $DS = ep(ds)$.
+%			Let $D =\bigcup\limits_{c\in dom(ep)} data(ep(c))$. The function data is also
+%			obviously in polynomial time if $dom(ep)$ is assumed to be finite.
+%			By assumption there is a $\mu \in
+%			Q_1(D)$ such that $\mu \notin Q_2(D)$. Because
+%			of Theorem~\ref{biglemma} and $\mu \in Q_1(D)$ we can conclude that $\mu \in \ll P_1
+%			\rr^{DS}_{def}$.
+%			Because of our assumption we get that $\mu \notin Q_2(D)$. Because
+%			again $Q_2(D) = \ll P_2 \rr^{DS}_{def}$ we get that $\mu \notin \ll P_2
+%			\rr^{DS}_{def}$.
+%	\end{enumerate}
+%\end{proof}
 %Through Lemma~\ref{biglemma} we get that SPARQL evaluation with the GRAPH and
 %the SERVICE operator are the
 %same as without the $GRAPH$ and $SERVICE$ patterns.

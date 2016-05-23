@@ -103,7 +103,7 @@
 \setaddress{Wasnergasse 13}
 \setregnumber{1026213}
 \setdate{27}{4}{2016}
-\settitle{\thesistitle}{Complexity of SPARQL} % Sets English and German version of the title (both can be English or German).
+\settitle{\thesistitle}{Complexity of well-designed SPARQL} % Sets English and German version of the title (both can be English or German).
 %\setsubtitle{Optional Subtitle of the Thesis}{Optionaler Untertitel der Arbeit} % Sets English and German version of the subtitle (both can be English or German).
 
 % Select the thesis type: bachelor / master / doctor / phd-school.
@@ -171,7 +171,8 @@
 	for his guidance, support and patience but also for opening up this topic for me.
 	I would also like to thank him for introducing me to his team at the
 	database institute; in particular,  Dr. Sebastian Skritek and Dipl.-Ing. Markus Kr{\"o}ll. I would like to
-	thank them all for letting me participate in their discourse. In particular I would like to thank
+	thank them all for letting me participate in their discourse and their
+	valuable input. In particular I would like to thank
 	Dr. Sebastian Skritek as he spent a great amount of time discussing and
 	improving the proofs in the thesis with me. 
 
@@ -189,21 +190,50 @@
 \end{kurzfassung}
 
 \begin{abstract}
-	SPARQL Protocol and RDF Query Language (SPARQL) is a standardized way to
-	query the growing amount of Resource Description Framework (RDF) data in the web. SPARQL has a special 
-	toolkit fitting the needs of querying RDF data in the semantic web. This toolkit is
-	powerful and needs to be analyzed complexity wise not only because the
-	results themselves are interesting but also to optimize and check if the
-	tools SPARQL provides are feasible for practical use. A 
-	fragment of SPARQL which is convenient for practical use called
-	well-designed SPARQL is introduced. Well-designed SPARQL will be enhanced with the
-	GRAPH and SERVICE operators which are used to query several databases from the
-	web in only one query. Evaluating the SERVICE operator in practice elicits
-	difficulties which will be adressed. Well-designed SPARQL is too
-	restrictive for practical use and can be extended to weakly-well designed SPARQL. 
-	Weakly well-designed SPARQL relaxes some constraints of well-designed SPARQL achieving an even
-	more powerful language without increasing the complexity of well-designed
-	SPARQL.
+	SPARQL Protocol and RDF Query Language (SPARQL) presents a standardized way to
+	query the growing amount of Resource Description Framework (RDF) data in the
+	internet.  
+	With the introduction of SPARQL 1.1 the SERVICE operator was introduced. The
+	SERVICE operator is used to query several databases in the internet in only
+	a sinqle query. A similar feature of SPARQL 1.0 is the GRAPH operator which
+	allows to query multiple local databases in only one query. Both the introduction of
+	the SERVICE and the GRAPH operator pose new problems in the 
+	complexity analysis of SPARQL, as the two operators have not yet been analyzed.
+	Using the SERVICE operator in practice elicits difficulties which
+	were solved by defining boundedness and strong boundedness. Even though
+	we know this solution exists, the subtle difference between
+	boundedness and strong boundedness is not yet explored.
+	Because the evaluation of general SPARQL patterns is
+	PSPACE-complete we restrict ourselves to well-designed SPARQL, where the
+	evaluation problem is coNP-complete.
+	Extending the well-designed fragment of SPARQL with the SERVICE and
+	GRAPH operators yields a new SPARQL fragment
+	which allows a reasonable complexity analysis as general SPARQL patterns
+	would cloud the complexity of the SERVICE and GRAPH operators. 
+	We will show that the evaluation problem in this fragment is
+	coNP-complete. After explaining the notions of boundedness and strong
+	boundedness we will unveil the difference between them. Building upon well-designed SPARQL we will
+	also discuss weakly well-designed SPARQL which renders a powerful
+	fragment by relaxing constraints of well-designed SPARQL.
+%	SPARQL has a special 
+%	toolkit fitting the needs of querying RDF data in the semantic web. This toolkit is
+%	powerful and needs to be analyzed complexity wise not only because the
+%	associated mathematical proofs are interesting but also to optimize query
+%	evaluation and to check if the
+%	tools SPARQL provides are feasible for its practical use; that is, querying RDF data.
+	%\noindent
+	%A fragment of SPARQL which is convenient for complexity analysis called
+	%well-designed SPARQL is introduced. Well-designed SPARQL will be enhanced with the
+	%GRAPH and SERVICE operators which are used to query several databases from the
+	%web in only a single query. The difficulties the SERVICE operator elicits in practice 
+	%are adressed and discussed. 
+	
+%	\noindent Sometimes well-designed SPARQL is too
+%	restrictive for practical use, and can be extended to weakly well-designed
+%	SPARQL without aggravating the complexity of well-designed SPARQL. 
+%	By relaxing constraints of well-designed SPARQL, weakly well-designed SPARQL 
+%	renders a powerful fragment of SPARQL which comprises nearly all of the SPARQL
+%	queries used in common practical setups.
 \end{abstract}
 
 % Select the language of the thesis, e.g., english or naustrian.
@@ -234,7 +264,29 @@
 \input{beyondwelldesigned.tex}
 
 \chapter{Conclusion}
+We introduced the syntax and semantics of SPARQL and RDF inspired
+by~\cite{pichler2014containment,perez2009semantics,BuilAranda20131} and discussed
+the semantics of the SERVICE and GRAPH operator which we found
+in~\cite{BuilAranda20131}. In Chapter 3 we introduced well-designed SPARQL which
+is the basis for our the complexity analysis throughout the paper. Also in Chapter 3, we summarized the fine-grained complexity analysis
+Pichler and Skritek did in~\cite{pichler2014containment}. Further we analysed the
+complexity of the evaluation problem of well-designed  SPARQL with the GRAPH and
+SERVICE operator. Chapter 5 explains the difficulties the SERVICE operator can elicit in
+practice and we summarized the solutions brought forth
+by~\cite{BuilAranda20131}. Furthermore we discussed the difference of boundedness and
+strong boundedness in Section 5.2. Finally in Chapter 6 we augmented well-designed
+SPARQL to weakly well-designed SPARQL which was proposed by Kaminski et
+al.~\cite{kaminski_bwd}. Weakly well-designed did not only allow a more powerful
+SPARQL language (e.g. top level FILTER expressions) than well-designed SPARQL but also comprises most of the SPARQL
+queries encountered in practice.
 
+\section{Future Work}
+There is still work to do on the theoretical side:
+Most importantly we did not do a static analysis of the well-designed fragment of SPARQL
+which allows the GRAPH and SERVICE operator. The problems \textbf{CONTAINMENT},
+\textbf{SUBSUMPTION} and \textbf{EQUIVALENCE} still need to be analyzed in this
+fragment. One could use our translation described in Section 4.1 as a foundation
+for this work, even though one would likely need to modify it for this purpose.
 \backmatter
 
 % Use an optional list of figures.
