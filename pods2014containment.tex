@@ -1,6 +1,6 @@
 We will start out the section with defining the fundament for our complexity
 analysis: Well-designed SPARQL. Then we will analyze the results of~\cite{pichler2014containment}, in three seperate
-chapters namely decidable containment, undecidable containment and equivalence.
+sections namely decidable containment, undecidable containment and equivalence.
 
 \section{Introduction to well-designed SPARQL}
 Well-designed SPARQL is a good fundamental basis for complexity analysis because
@@ -27,10 +27,11 @@ can be transformed into OPT normal form in polynomial time.
 Graph Patterns in OPT normal form can be displayed in a natural tree representation, 
 formalized by so-called well-designed pattern trees. But before defining the
 well-designed pattern trees we need some basic notation about pattern trees.
+
 \begin{definition}[Pattern Tree]\label{def:pt}
 	A pattern tree (PT) $T$ is a pair $(T,P)$ where  $T= (V,E,r)$ is a rooted,
 	unordered tree and $P = (P_n)_{n \in V}$ is a labelling of the nodes in $V$,
-	s.t. $P_n$ is a non-empty set of triple patterns for every $n \in V$.  
+	so that $P_n$ is a non-empty set of triple patterns for every $n \in V$.  
 \end{definition}
 
 In Example~\ref{ex:pt} we can see how a pattern in OPT normal form is
@@ -41,12 +42,14 @@ transformed into a pattern tree.
 		P = \big(\big( (x,name,y) \AND (x,email,z) \big) \OPT (x,web,x') \big)\\
 		\OPT \big((x,phone,x'') \OPT (x,fax,x''')\big)
 	\end{align*} and the corresponding pattern tree:\\
+	\begin{center}
 	\begin{tikzpicture}[sibling distance=10em]
 			\node {\{$(x,name,y),(x, email, z)$\}}
 			child { node {$\{(x,web,x')\}$} }
 			child { node {$\{(x,phone,x'')\}$}
 		child { node {$\{(x,fax,x''')\}$}}};
 		\end{tikzpicture}
+	\end{center}
 \end{example}
 
 We will now define further details of a pattern tree and after that
@@ -58,7 +61,7 @@ We call the pattern tree $T' = ((V',E',r'), (P_n)_{n \in V'})$ a subtree of $T$
 if $(V',E',r')$ is a subtree of $T$. 
 
 An extension of $\hat{T}'$ of a subtree
-$T'$ of $T$ is a subtree $\hat{T}'$ of $T$, s.t. $T'$ is in turn a subtree of
+$T'$ of $T$ is a subtree $\hat{T}'$ of $T$, so that $T'$ is in turn a subtree of
 $\hat{T}'$. A subtree or extension is proper if some node of the bigger tree is
 missing in the smaller tree.
 
@@ -76,8 +79,10 @@ $newvars(n) = vars(n) \backslash vars(branch(\hat{n}))$.
 A node $n$ is a child
 of a PT $T$ if $n\notin V(T)$ and $n$ is the child of some node $n' \in V(T)$.
 \end{definition}
-After thoroughly describing special details of pattern trees, we are now ready
+
+After thoroughly describing notions of pattern trees we will use later on, we are now ready
 to look at the definition of well-designed pattern trees(wdPTs).
+
 \begin{definition}[Well-designed pattern tree
 	(wdPT)~\cite{pichler2014containment}]
 	A well-designed pattern tree (wdPT) is a pattern tree $T = (T,P)$ where for
@@ -85,16 +90,27 @@ to look at the definition of well-designed pattern trees(wdPTs).
 	induce a connected subgraph of $T$.
 \end{definition}
 We can observe that the pattern tree in Example~\ref{ex:pt} is well-designed.
-
+The restriction of pattern trees to to well-designed pattern trees has two
+important effects~\cite{pichler2014containment}: 
+\begin{enumerate}
+	\item The natural translation from a wdPT yields a well-designed graph pattern.
+	\item Every PT derived from a well-designed graph pattern in OPT normal form
+		yields a wdPT. 
+\end{enumerate}
+We can now in polynomial time transform a wdPT into an equivalent well-designed
+pattern and vice versa.
 There are two important properties of wdPTs that need to be mentioned. 
-\begin{proposition}[\cite{letelier2012static,pichler2014containment}]
-The first property says that we can transform every wdPT we will discuss into NR
+The first property says that we can transform every wdPT into NR
 normal form. The second property says that there is a unique node in a wdPT where a
 variable occurs first.
+
+\begin{proposition}[\cite{letelier2012static,pichler2014containment}]
 	\begin{enumerate}	
-		\item Every wdPT $T$ can be transformed efficiently into NR normal form, 
-			if $newvars(n) \neq	\emptyset$ for every $n \in V(T)$. From now on we
-			assume w.l.o.g. that all wdPTs are in NR normal form.
+		\item[]
+		\item Let $T$ be a wdPT. If $newvars(n) \neq	\emptyset$ for every $n
+			\in V(T)$ we say that $T$ is in NR normal form.  
+			Every wdPT $\mathit{T}$ can be transformed efficiently into NR
+			normal form. From now on we assume w.l.o.g. that all wdPTs are in NR normal form.
 
 		\item For every variable $x \in vars (T)$, there is a unique node $n \in
 			V(T)$, s.t. $x \in newvars(n)$ and all other nodes $n' \in V(T)$
@@ -102,25 +118,54 @@ variable occurs first.
 	\end{enumerate}
 \end{proposition}
 
-
 We denote the results of evaluating a wdPT $T$ over some RDF graph $G$ by $\ll T
-\rr_G$. The set $\ll T \rr_G$ of solutions can be defined via a translation to
-graph patterns. We will do something similar in our alternate Definition of
-wdPTs~\ref{def:wdpt}. Lemma~\ref{lemma:altsemwdpt} allows us to use a direct
-characterization in terms of maximal subtrees of a wdPT $T$ assuming it is in NR
-normal form.
+\rr_G$. %The set $\ll T \rr_G$ of solutions can be defined via a translation to
+%graph patterns. 
+%We will do something similar in our alternate Definition of
+%wdPTs~\ref{def:wdpt}. Lemma~\ref{lemma:altsemwdpt} allows us to use a direct
+%characterization in terms of maximal subtrees of a wdPT $T$ assuming it is in NR
+%normal form.
+
+
+Lemma~\ref{lemma:altsemwdpt} describes a characterization which decides whether
+a mapping $\mu \in \ll T\rr_G$ in terms of maximal subtrees of a wdPT $T$.  
 
 \begin{lemma}[Semantics of pattern trees~\cite{letelier2012static}]\label{lemma:altsemwdpt}
-	Let $T$ be a wdPT in NR normal form and $G$ an RDF graph. then $\mu \in
+	Let $T$ be a wdPT in NR normal form and $G$ an RDF graph. Then $\mu \in
 	\ll T\rr_G$ iff there exists a subtree $T'$ of $T$, s.t. 
 	\begin{enumerate}
 		\item  $dom(\mu) = vars(T')$, and
-		\item $T'$ is the maximal subtree of $T$, s.t. $\mu \sqsubset \ll
+		\item $T'$ is the maximal subtree of $T$, s.t. $\mu \sqsubseteq \ll
 			pat(T') \rr_G$.
 	\end{enumerate}
 \end{lemma}
 
-Projection is interpretet as a top level operator on top of a graph pattern.
+We can transform this characterization into Algorithm~\ref{conpevalwd}.
+The evaluation problem of well-designed SPARQL can be shown to be coNP-complete using
+Algorithm~\ref{conpevalwd}. 
+\begin{algorithm}
+	\caption{co-NP algorithm for EVAL in the well designed
+	fragment~\cite{letelier2012static}}
+	\label{conpevalwd}
+	INPUT: A well-designed pattern $P$ in OPT-normal form, a graph $G$ and a mapping
+	$\mu$.\\
+	Transform the well-designed pattern $P$ into a wdPT $T$ in NR normal form. This is doable in
+	polynomial time. \\
+	Look for a subtree $T'$ of $T$ including the root of $T$ where the
+	variables of the triples in $T'$ are equal to the variables in $dom(\mu)$. 
+	When we now use the mapping $\mu$ on all the triples, the triples must
+	be in the graph $G$. This is doable in polynomial time. If such a $T'$
+	exists, $T'$ witnesses that $\mu$ is at least part of a solution in
+	$G$.\\
+	Check if the subtree $T'$ is maximal. If we can
+	extend $T'$ with a child of $T'$ so that the mapping $\mu$ maps
+	all the triples into $G$, the subtree $T'$ was not maximal. 
+	There are linearly many nodes to check and each check can be performed in coNP.
+	This results in an overall runtime of coNP.
+	If it is maximal $\mu \in \ll T \rr_G$ holds.
+\end{algorithm}
+
+Projection is interpreted as a top level operator on top of a graph pattern.
 \begin{definition}[Projection of a mapping]
 For a mapping $\mu$ and a set $X$ of variables we denote $\mu_{|X}$ as the
 projection of $\mu$ to the variables in $X$, call it $\mu'$. $dom(\mu'):=X \cap
@@ -235,7 +280,7 @@ $P_2$.
 
 
 \noindent After reading the definitions of containment, equivalence and
-subsumption the following complexity theoretical problems arise:\\
+subsumption the following computational problems arise:\\
 \begin{framed}\noindent \textbf{CONTAINMENT[$S_1,S_2$]}\\
 	\textbf{INPUT:} Graph pattern $P_1$ from wd-SPARQL$[S_1]$,
 		 graph pattern $P_2$ from wd-SPARQL$[S_2]$\\
@@ -297,7 +342,7 @@ The results are best represented by Table~\ref{conttable} and Table~\ref{equivta
 
 \section{Decidable Containment}\label{section:decidablecontainment}
 
-First the decidable cases of Table~\ref{conttable} are proven, i.e., $S_1$ is an arbitrary subsetset of
+First the decidable cases of Table~\ref{conttable} are proven, i.e., $S_1$ is an arbitrary subset of
 $\{\cup,\pi\}$ and $S_2$ doesn't contain $\pi$. 
 In order to minimize the number of proofs a well known strategy is applied: When membership of a
 general case is shown, the more specific case is implied and when showing
@@ -632,7 +677,6 @@ extends all the relevent subtrees of $F_2$, i.e. a relevant subtree is a tree $T
 Condition (2b) checks for the existence of a homomorphism $h_b$ that maps
 $pat(\hat{T'_1})$ into the patterns of the renamed proper extension $pat(F_2)
 \cup pat(T_1')$.
-
 \end{proofidea}
 
 The characterization in Theorem~\ref{projwd3} yields a more or less
@@ -733,7 +777,8 @@ P_2$ but $P_1 \sqsubseteq P_2$ and $P_2 \sqsubseteq P_1$.
 	wd-SPARQL[$\{\cup\}$], s.t. $P_1 \sqsubseteq P_2$ and $P_2 \sqsubseteq P_1$
 	hold but $P_1 \not\equiv P_2$.
 \end{proposition}
-\begin{proofidea}
+
+\begin{proof}
 	It is an easy observation that we need two counterexamples to prove the
 	proposition. 
 	\begin{enumerate}	
@@ -745,10 +790,9 @@ P_2$ but $P_1 \sqsubseteq P_2$ and $P_2 \sqsubseteq P_1$.
 			the semantics of the OPT operator. $P_2 \sqsubseteq P_1$ Also holds because again the
 			semantics of the OPT operator are projected into $P_2$. But $P_1 \sqsubseteq P_2$ does
 			obviously not hold since $P_2$ always has mappings which are solely created by
-			$t_1$.
-		\item 
-			Now for the second counterexample where  $P_1 \in$
+			$t_1$.		\item Now for the second counterexample where  $P_1 \in$
 			wd-SPARQL[$\emptyset$] and  $P_2 \in$ wd-SPARQL[$\{\pi\}$]. 
+
 			\begin{align*}
 				\mbox{Let } P_1 = (x_1,a,x_2) \OPT ((x_3,a,x_2) \AND (x_3,a,x_3)),\\
 			P_2 = ((x_1,a,x_2) \AND (y_1,a,Y_2)) \OPT ((x_3,a,x_2) \AND
@@ -756,7 +800,6 @@ P_2$ but $P_1 \sqsubseteq P_2$ and $P_2 \sqsubseteq P_1$.
 			\AND (y_3,a,y_2) \AND (y_3,a,y_3))\\
 			\mbox{ and } X = \{x_1,x_2,x_3\}.
 			\end{align*}
-			
 			It remains to show that $P_1 \sqsubseteq (P_2,X)$ and $(P_2,X)
 			\sqsubseteq P_1$ but $P_1 \not\equiv (P_2,X)$.
 		    Towards this goal we observe that the triple patterns in $P_1$ are
@@ -774,11 +817,9 @@ P_2$ but $P_1 \sqsubseteq P_2$ and $P_2 \sqsubseteq P_1$.
 			because of the mapping $\lambda = \mu \cup \{ y_1 \mapsto 2,
 			y_2\mapsto 3 \} \in \ll T_2 \rr_G$ which cannot be extended to the
 			child node of $r_2$. However $\mu \notin \ll T_1\rr_G$ since $\mu$
-			can be extended to the child node of $r_1$ by adding $[x_3 \mapsto
-		1]$.
-			
+			can be extended to the child node of $r_1$ by adding $[x_3 \mapsto 1]$.\qedhere
 	\end{enumerate}
-\end{proofidea}
+\end{proof}
 
 \section{Undecidable Containment}
 We can see in Table~\ref{conttable} that
@@ -1066,8 +1107,8 @@ Following up we have the hardness result of\\
 The same construction as in Theorem~\ref{cemptycup} can be used to prove the
 desired result: The same reduction from \textbf{3-QSAT$_{\forall,2}$} is used.
 Remembering that in this construction a wdPT $T_1$ and a wdPF $F_2$ such that
-$\phi$ is valid iff.  $T_1 \subseteq F_2$ holds is constructed.
-One can not only show $T_1 \subseteq F_2$ but also $T_1 \supseteq F_2$ (iff. $\phi$ is
+$\phi$ is valid iff  $T_1 \subseteq F_2$ holds is constructed.
+One can not only show $T_1 \subseteq F_2$ but also $T_1 \supseteq F_2$ (iff $\phi$ is
 valid of course). This
 argumentation yields the desired result.
 \end{proofidea}

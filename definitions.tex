@@ -64,7 +64,7 @@ We will focus on ground RDF graphs which means that we assume them to be compose
 RDF is the database and SPARQL will be our query language. To use SPARQL we need
 to define the SPARQL syntax and semantics.
 
-\begin{definition}[SPARQL SYNTAX~\cite{pichler2014containment,
+\begin{definition}[SPARQL Syntax~\cite{pichler2014containment,
 	BuilAranda20131,perez2006semantics}]
 	Again $\U$ is an infinite set of URIs. 
 	$\V$ is an infinite set of variables with $\U \cap \V = \emptyset$. 
@@ -92,9 +92,9 @@ to define the SPARQL syntax and semantics.
 If $P$ is a graph pattern, $vars(P)$ denotes the set of variables occuring in $P$.
 \end{definition}
 
-We proceed in defining the semantics of SPARQL. 
+We proceed by defining the semantics of SPARQL. 
 
-\begin{definition}[SPARQL Semantics~\cite{pichler2014containment,
+\begin{definition}[SPARQL Semantics~\cite{
 	BuilAranda20131,perez2006semantics}]\label{def:sparqlsem}
 	A mapping is a function $\mu: A \rightarrow  \U$ for some $A \subset \V$. 
 	For a triple pattern $t$ with $vars(t) \subseteq dom(\mu)$, we write $\mu(t)$ to 
@@ -121,7 +121,7 @@ We proceed in defining the semantics of SPARQL.
 	$names(DS) = \{g_1,g_2,\dots,g_k\}$.
 	We also assume a partial function $ep: \U \rightarrow DS$, such that for every $c \in
 	\U$, if $ep(c)$ is defined, then $ep(c) = DS_c$, i.e., the dataset associated with
-	the endpoint accessible via the URI c.
+	the endpoint accessible via the URI $c$.
 	$\mu_\emptyset$ denotes the mapping with empty domain. This means it is
 	compatible with any other mapping.
 	The evaluation of graph patterns over an RDF Graph $G$, where $(g_1,G) \in
@@ -129,43 +129,40 @@ We proceed in defining the semantics of SPARQL.
 	function  $\llbracket \cdot \rrbracket_G^{DS}$, which, given a SPARQL graph pattern
 	returns a set of mappings.
 	For a graph pattern $P$, it is defined recursively:\\
-	\scalebox{0.64}{
-		\vbox{
-			\begin{enumerate}
-				\item $\ll t \rr_G^{DS} = \{ \mu \ | \ dom(\mu) = vars(t) \mbox{ and } \mu(t)
-					\in G \}$ for a triple pattern $t$.
-				\item $\ll P_1 \ \mbox{AND} \ P_2 \rr_G^{DS} = \{ \mu_1 \cup \mu_2  \ | \ \mu_1 \in \ll P_1
-					\rr_G^{DS},  \ \mu_2 \in \ll P_2 \rr_G^{DS} \mbox{ and } \mu_1 \sim \mu_2 \}$.
-				\item $\ll P_1 \ \mbox{OPT} \ P_2 \rr_G^{DS} = \ll P_1 \ \mbox{AND} \ P_2 \rr_G^{DS}
-					\cup \{ \mu_1 \in \ll P_1
-					\rr_G^{DS} \ | \ \forall \mu_2 \in \ll P_2 \rr_G^{DS}: \mu_1 \not\sim \mu_2\}$.
-				\item $\ll P_1 \ \mbox{UNION} \ P_2 \rr_G^{DS} = \ll P_1 \rr_G^{DS} \cup \ll P_2
-					\rr_G^{DS}$.
-				\item  $\ll \mbox{GRAPH } u \ P_1 \rr_G^{DS}  = 
-					\begin{cases} 
-						\ll P_1\rr_{graph(u,DS)}^{DS} &\mbox{if } u \in names(DS)\\	
-						\{ \}						  & \mbox{if } u \in \U \backslash names(DS)\\
-						\bigg\{\mu \cup [u \rightarrow s] \mid s \in names(DS), \mu
-							\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [u \rightarrow s] \sim \mu
-						\bigg\}						  & \mbox{if } u \in \V
-						\end{cases}
-						$\\ 
-						for $u \in \U \cup \V$.
+	\begin{enumerate}
+		\item $\ll t \rr_G^{DS} = \{ \mu \ | \ dom(\mu) = vars(t) \mbox{ and } \mu(t)
+			\in G \}$ for a triple pattern $t$.
+		\item $\ll P_1 \ \mbox{AND} \ P_2 \rr_G^{DS} = \{ \mu_1 \cup \mu_2  \ | \ \mu_1 \in \ll P_1
+			\rr_G^{DS},  \ \mu_2 \in \ll P_2 \rr_G^{DS} \mbox{ and } \mu_1 \sim \mu_2 \}$.
+		\item $\ll P_1 \ \mbox{OPT} \ P_2 \rr_G^{DS} = \ll P_1 \ \mbox{AND} \ P_2 \rr_G^{DS}
+			\cup \{ \mu_1 \in \ll P_1
+			\rr_G^{DS} \ | \ \forall \mu_2 \in \ll P_2 \rr_G^{DS}: \mu_1 \not\sim \mu_2\}$.
+		\item $\ll P_1 \ \mbox{UNION} \ P_2 \rr_G^{DS} = \ll P_1 \rr_G^{DS} \cup \ll P_2
+			\rr_G^{DS}$.
+		\item  $\ll \mbox{GRAPH } u \ P_1 \rr_G^{DS}  = 
+			\begin{cases} 
+				\ll P_1\rr_{graph(u,DS)}^{DS} &\mbox{if } u \in names(DS)\\	
+				\{ \}						  & \mbox{if } u \in \U \backslash names(DS)\\
+				*					  & \mbox{if } u \in \V
+				\end{cases}\\
+				*=\{\mu \cup [u \rightarrow s] \mid s \in names(DS), \mu
+					\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [u \rightarrow s] \sim \mu
+				\}	$\\ 
+				for $u \in \U \cup \V$.
 
-					\item $\ll \mbox{SERVICE } u \ P_1 \rr_G^{DS}  = 
-						\begin{cases} 
-							\ll P_1\rr_{graph(def,ep(u))}^{ep(u)} &\mbox{if } u \in dom(ep)\\	
-							\{ \mu_\emptyset\} & \mbox{if } u \in \U \backslash dom(ep)\\
-							\bigg\{\mu \cup [u \rightarrow s ] \mid s \in dom(ep), \mu
-								\in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))} \land [u \rightarrow s ] \sim \mu
-							\bigg\}			   & \mbox{if } u \in \V
-							\end{cases}$\\ 
-							for $u \in \U \cup \V$.
+			\item $\ll \mbox{SERVICE } u \ P_1 \rr_G^{DS}  = 
+				\begin{cases} 
+					\ll P_1\rr_{graph(def,ep(u))}^{ep(u)} &\mbox{if } u \in dom(ep)\\	
+					\{ \mu_\emptyset\} & \mbox{if } u \in \U \backslash dom(ep)\\
+					*'=	   & \mbox{if } u \in \V
+					\end{cases}$\\
+					$*'=\{\mu \cup [u \rightarrow s ] \mid s \in dom(ep), \mu
+						\in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))} \land [u \rightarrow s ] \sim \mu
+					\}$\\ 
+					for $u \in \U \cup \V$.
 				\item $\ll (P' \FILTER R) \rr_G = \{ \mu \mid \mu \in \ll P'
 					\rr_G \mbox{ and } \mu \models R \}$,
-					\end{enumerate}
-				}
-			}\\
+			\end{enumerate}
 		where $\mu$ satisfies a filter constraint $R$, denoted $\mu \models R$,
 		if one of the following holds:
 		\begin{enumerate}
@@ -187,7 +184,7 @@ We proceed in defining the semantics of SPARQL.
 
 		We often use the term ``destination'' of a subquery containing the SERVICE or
 		GRAPH operator in the top level.
-		The destination refers to the URI or variable inbetween the graph
+		The destination refers to the URI or variable in between the graph
 		pattern and the GRAPH or SERVICE operator.
 
 		\begin{definition}[Destination of a SERVICE- or GRAPH-operator]
@@ -208,17 +205,17 @@ We proceed in defining the semantics of SPARQL.
 				R::= &\quad(R \OPT R) \mid (\mbox{GRAPH } u \ R) \mid (\mbox{SERVICE } u \ R) \mid B  \\
 				B::= &\quad(u,v,w)
 			\end{align*}
-			where	$u,v,w \in \U \cup \V$. In the first layer we seperate the pattern
+			where	$u,v,w \in \U \cup \V$. In the first layer we separate the pattern
 			into an AND-part and an OPT-part. In the AND- and OPT-part we can use
 			SERVICE and GRAPH freely.
 		\end{definition}
 
-		\section{Thoughts on the Semantics of the SERVICE and GRAPH Operator}
+		\section{The Semantics of the SERVICE and GRAPH Operator}
 		We were introduced to the GRAPH and
 		SERVICE operators by \cite{BuilAranda20131} where Buil-Aranda et al.
 		describe the syntax and semantics of the SERVICE operator and how an efficient query
 		evaluation system can be implemented. 
-		Conversely to the semantic definition of the GRAPH operator in~\ref{def:sparqlsem}, they provided the
+		Conversely to the semantic definition of the GRAPH operator in Definition~\ref{def:sparqlsem}, they provided the
 		following definition for GRAPH (note the difference in the second case):	
 
 		\scalebox{0.68}{
@@ -235,8 +232,8 @@ We proceed in defining the semantics of SPARQL.
 				}
 			}
 
-			We tried to propose an algorithm for evaluating CONTAINMENT[$S_1$,$S_2$] in the
-			fragment $P_{wdgs}$ and we saw some unintuitive features regarding the semantics of the
+			Trying to propose an algorithm for evaluating CONTAINMENT[$S_1$,$S_2$] in the
+			fragment $P_{wdgs}$ and unveils some unintuitive features regarding the semantics of the
 			GRAPH operator. Consider the following example:
 			\begin{example}
 				$DS=\{(def,G_0), (a,G_1) \}$ where $G_0 = \{
@@ -280,12 +277,8 @@ We proceed in defining the semantics of SPARQL.
 			$DS=\{(def,G), (a,G_1)\}$. Note that the URI $c$ does not occur in the dataset.
 			But this means that $\ll Q_1 \rr^{DS}_G = \{x \rightarrow a\}$ and  $\ll Q_2
 			\rr^{DS}_G = \{y \rightarrow a\}$.			
-			In \cite{BuilAranda20131} the authors
-			state that the GRAPH-Operator was introduced formally
-			in \cite{perez2009semantics} but we were not able to find the definition
-			in it.
-			Instead we tried to look into the W3C-recommendation\cite{w3standard} 
-			where we found the following definition:
+			In the W3C-recommendation\cite{w3standard} 
+			the following definition can be found:
 
 			\begin{algorithm}
 				\caption{W3C-recommendation on evaluating the GRAPH operator}
@@ -308,7 +301,7 @@ We proceed in defining the semantics of SPARQL.
 			in our original definition of SPARQL semantics. 
 			
 			However remembering the definition of the SERVICE
-			operator~\ref{def:sparqlsem}, we emphasize
+			operator in Definition~\ref{def:sparqlsem}, we emphasize
 			that the second case of the SERVICE-operator (if $c \in \U \backslash
 			dom(ep)$ return $\mu_\emptyset$) is intended and correct. It makes
 			sure that if a SPARQL endpoint is temporarily unavailable the query

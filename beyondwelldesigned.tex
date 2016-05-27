@@ -238,27 +238,9 @@ The fragment of general SPARQL graph patterns is denoted with $\u$ and it is a
 well known result that $EVAL(\u)$ is PSPACE-complete~\cite{perez2009semantics}.
 For the fragment of general queries extended with projection (i.e., $\s$)
 it was shown that $EVAL(\s)$) is PSPACE-complete~\cite{letelier2013static}.
-Considering now the fragment of wd-patterns, we know that the evaluation problem
-is coNP-complete~\cite{letelier2013static} using the following algorithm:
-\begin{algorithm}
-	\caption{co-NP algorithm for EVAL in the well designed fragment}
-	INPUT: A wd-Pattern $P$ in OPT-normal form, a graph $G$ and a mapping
-	$\mu$.\\
-	Look for a subtree $T_s$ of $T(P)$ including the root of $T(P)$ where the
-		variables of the triples in $T_s$ are equal to the variables in $dom(\mu)$. 
-		When we now use the mapping $\mu$ on all the triples, the triples must
-		be in the graph $G$. This is doable in polynomial time. If such a $T_s$
-		exists, $T_s$ witnesses	that $\mu$ is at least part of a solution in
-		$G$.\\
-		Check if the subtree $T_s$ is maximal. If we can
-		extend $T_s$ with a node in $T(P)\backslash T_s$ and the mapping $\mu$ maps
-		all the triples into $G$, the subtree $T_s$ was not maximal. 
-\end{algorithm}
 
-There are linearly many nodes to check and each check can be performed in coNP.
-Resulting in an overall runtime of coNP.
 
-Similar to this algorithm, an algorithm for wwd-patterns exists. 
+Similar to Algorithm~\ref{conpevalwd}, an algorithm for wwd-patterns exists. 
 We first define the potential partial solutions. 
 We know from the previous section that we can transform any wwd-pattern $P$ to a
 pattern in OF-normal form. This pattern $P'$ in OF-normal corresponds to some

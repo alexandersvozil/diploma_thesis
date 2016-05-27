@@ -1,11 +1,11 @@
-We need a different but equivalent definitions of WDPTs in this section. The
+We will introduce an equivalent definition of wdPTs in this section. The
 main structural difference to Definition~\ref{def:pt} is that the nodes in the
-tree are labelled with a set
-of relational atoms over a schema instead of a set of triples. Also the semantic
-evaluation of WDPTs uses the notion of conjunctive queries.
+tree are labelled with a set of relational atoms over a schema instead of a set of triples. This different but
+equivalent definition will be used to prove complexity results for the fragment
+$P_{wdgs}$. 
 
-\begin{definition}[WDPTs~\cite{barcelo2015efficient}]\label{def:wdpt}
-	A WDPT over a relational schema $\sigma$ is a tuple $(T, \lambda, \overline{x})$
+\begin{definition}[wdPTs~\cite{barcelo2015efficient}]\label{def:wdpt}
+	A wdPT over a relational schema $\sigma$ is a tuple $(T, \lambda, \overline{x})$
 	such that the following holds:
 	\begin{enumerate}
 		\item $T$ is tree rooted in a distinguished node $r$, the root and $\lambda$
@@ -13,17 +13,17 @@ evaluation of WDPTs uses the notion of conjunctive queries.
 		\item For every variable $y$ that appears in $T$, the set of nodes of $T$ where
 			$y$ is mentioned is connected.
 		\item We have that $\overline{x}$ is a tuple of distinct variables occurring in
-			$T$. They are the free variables of the WDPT.
+			$T$. They are the free variables of the wdPT.
 	\end{enumerate}
 \end{definition}
 
 \begin{definition}
-	A WDPT $(T,\lambda, \overline{x})$ is called projection-free if $\overline{x}$
+	A wdPT $(T,\lambda, \overline{x})$ is called projection-free if $\overline{x}$
 	contains all variables mentioned in $T$.
 \end{definition}
 
 \begin{definition}\label{wdptq}
-	Assume $p = (T,\lambda,\overline{x})$ is a WDPT over $\sigma$. We write $r$ to
+	Assume $p = (T,\lambda,\overline{x})$ is a wdPT over $\sigma$. We write $r$ to
 	denote the root of $T$. Given a subtree $T'$ of $T$ rooted in $r$ we define
 	$q_{T'}$ to be the CQ $Y \leftarrow R_1(\overline{v_1}), \dots,
 	R_m(\overline{v}_m)$, where the $R_i(\overline{v_i})$'s are the reational atoms
@@ -41,7 +41,7 @@ a database $D$ if $h$ satisfies the pattern defined by a subtree $T'$ and there
 is no subtree $T''$ which is bigger than $T'$ and $h$ can be extended to satisfy
 $T''$.
 \begin{definition}[Semantics of wdPTs~\cite{barcelo2015efficient}]
-	Let $p=(T,\lambda,\overline{x})$ be a WDPT and $D$ a database over $\sigma$.
+	Let $p=(T,\lambda,\overline{x})$ be a wdPT and $D$ a database over $\sigma$.
 
 	\begin{enumerate}
 		\item A homomorphism from $p$ to $D$ is a partial mapping $h: X \rightarrow U$,
@@ -51,18 +51,18 @@ $T''$.
 		\item The homomorphism $h$ is maximal if there is no homomorphism $h'$ from $p$
 			to $D$ such that $h \sqsubset h'$.
 	\end{enumerate}
-	The evaluation of WDPT $p = (T,\lambda,\overline{x})$ over $D$ denoted $p(D)$,
+	The evaluation of wdPT $p = (T,\lambda,\overline{x})$ over $D$ denoted $p(D)$,
 	corresponds to all mappings of the form $h_{\overline{x}}$, such that $h$ is a
 	maximal homomorphism from $p$ to $D$.
 \end{definition}
 
-It is important to notice that WDPTs properly extend CQs.
+It is important to notice that wdPTs properly extend CQs.
 Given a CQ $q(x)$ of the form $X \leftarrow R_1(v_1),\dots,R_m(v_m)$
-it is easy to see that $q(x)$ is equivalent to the WDPT $p = (T,\lambda,x)$,
+it is easy to see that $q(x)$ is equivalent to the wdPT $p = (T,\lambda,x)$,
 where $T$ consists of a single node $r$ and $\lambda(r) =
 \{R_1(v_1),\dots,R_m(v_m)\}$. In other words, $q(D) = p(D)$ for each database
-$D$. Further on we will not distinguish between a CQ and the single node WDPT
-that represents it. WDPTs can on the other hand represent interesting properties
+$D$. Further on we will not distinguish between a CQ and the single node wdPT
+that represents it. wdPTs can on the other hand represent interesting properties
 that cannot be expressed as CQs, which we will discuss in the following example:
 \begin{example}
 	$Q =  \bigg(((x,recorded\_by,y) \ AND \ (x,published, ``after\_2010'')) \ \\ OPT \ (x,
@@ -84,14 +84,14 @@ that cannot be expressed as CQs, which we will discuss in the following example:
 	``2'', z' \rightarrow ``miami'' \}$ 
 \end{example}
 
-To capture the UNION operator the definition of well designed pattern trees
+To capture the UNION operator the definition of well-designed pattern trees
 need to be modified.  
 \begin{definition}[Unions of wdPTs or well-designed pattern Forests (wdPF)]
-	A Union of WDPTs is an expression $\phi$ of the form $\bigcup_{1\leq i \leq n} p_i$, 
-	where each $p_i$ is a WDPT over $\sigma$.
+	A Union of wdPTs is an expression $\phi$ of the form $\bigcup_{1\leq i \leq n} p_i$, 
+	where each $p_i$ is a wdPT over $\sigma$.
 	We denote $\varphi(D)$ as the evaluation of $\phi$ over database $D$.
 	It corresponds to the set $\bigcup_{1\leq i \leq n}p_i(D)$.
-	Unions of WDPTs are also called Well-designed pattern
+	Unions of wdPTs are also called well-designed pattern
 	forests(WDPF).
 \end{definition}
 
@@ -100,14 +100,14 @@ need to be modified.
 First we are going to show an easy example of how to translate a graph pattern
 only using AND and triple patterns to a conjunctive query. Then we propose a
 polynomial time translation from a graph pattern $P \in P_{wdgs}$ to $Q \in P_{wd}$. For this
-translation we need to construct a special database and a wdpt depending on the
+translation we need to construct a special database and a wdPT depending on the
 original query. After we established the translation we prove the equivalence of $P$ and $Q$ in
 Theorem~\ref{biglemma}. The last section deals with the problem
 \textbf{EVAL}($P_{wdgs}$.
 %, \textbf{CONTAINMENT}($P_{wdgs}$),
 %\textbf{EQUIVALENCE}($P_{wdgs}$) and \textbf{SUBSUMPTION}($P_{wdgs}$).
 
-\section{Translations to well designed pattern forests}
+\section{Translations to well-designed pattern forests}
 It is an easy observation that if we restrict SPARQL to the AND operator, we
 simply get conjunctive queries without existentially quantified variables.
 We will show this in Example~\ref{exconjq}. 
@@ -128,10 +128,10 @@ We will show this in Example~\ref{exconjq}.
 	\rr_G^{DS}$.
 \end{example}
 Similar to Example~\ref{exconjq} we are going to transform the dataset and query 
-not into conjunctive queries but an extension of them: well designed pattern
+not into conjunctive queries but an extension of them: well-designed pattern
 trees. We 
 will define a polynomial time translation from a graph pattern $P \in P_{wdgs}$
-to a well designed pattern tree. This enables us to use well known algorithms 
+to a well-designed pattern tree. This enables us to use well known algorithms 
 for which the computational complexity is known. 
 
 \subsection{Creating the database}
@@ -160,20 +160,20 @@ For our dataset this would mean, assuming
 	LOC &= \{ (u_{DS},def),(u_{DS},u_1),\dots (u_{DS},u_n) \}&.
 \end{align*}
 
-\subsection{Transforming the pattern to a wdpt}
+\subsection{Transforming the pattern to a wdPT}
 We proceed in defining the function \textit{trans} which will in polynomial time 
-transform a graph pattern in $P_{wdgs}$ to a well designed pattern tree with the same meaning without the
-SERVICE and GRAPH operators. Lemma~\ref{smalllemma} concludes that the outputpattern and the
-inputpattern are equivalent.
+transform a graph pattern in $P_{wdgs}$ into a well-designed pattern tree with the same meaning without the
+SERVICE and GRAPH operators. Lemma~\ref{smalllemma} concludes that the output pattern and the
+input pattern are equivalent.
 
 \bigskip\noindent
 The transformation function $trans: P \times \U\cup\{\V\} \times \U \cup \{def \}\cup\{\V\}
 \mapsto Q$ takes  three parameters as input: 
 $P$ is a graph pattern in OPT normal form which allows the usage of AND, OPT, GRAPH, SERVICE and
 UNION, $\U\cup\V$ is the infinite
-set of uris with the infinite set of variables and $\U\cup\{def\}\cup \V$ is the infinite set of
-uris containing the $def$ identifier conjoined with the infinite set of
-variables. The output $Q$ is a well designed pattern tree. 
+set of URIs with the infinite set of variables and $\U\cup\{def\}\cup \V$ is the infinite set of
+URIs containing the $def$ identifier conjoined with the infinite set of
+variables. The output $Q$ is a well-designed pattern tree. 
 
 \bigskip
 \noindent
@@ -231,7 +231,7 @@ arbitrary.
 \end{enumerate}
 Observe that the function is well-defined since only patterns $P_{wdgs}$ are
 considered: This allows us to argue over conjunctive queries for the case $P$ is $P_1
-\AND P_2$ as the AND-operator may not occur in a scope of an OPT-operator in the fragment
+\AND P_2$ as the AND-operator may not occur in the scope of an OPT-operator in the fragment
 $P_{wdgs}$. \\
 Towards our goal to show that for all datasets $DS$ identified by URI
 $ds$ and graph patterns $P$ the following property holds: 
@@ -239,8 +239,11 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 \rr^{DS}_{graph(def,DS)}$, where $D=\bigcup\limits_{c \in dom(ep)} data(ep(c))$, we prove Lemma~\ref{smalllemma} first.
 
 \begin{lemma}\label{smalllemma}
-	Let $P$ be a graph pattern in OPT normal form containing the SERVICE and GRAPH operator
-	and $D = \bigcup\limits_{c \in dom(ep)} data(ep(c))$.
+	Let $P \in P_{wdgs}$, $DS$ a dataset so that $ep(ds) = DS$ and $G$ a graph in
+	the dataset $DS$ so that $(g,G) \in DS$. 
+	Let $D = \bigcup\limits_{c \in dom(ep)} data(ep(c))$.
+	Let $Q = trans(P,g,ds)$.
+	Then 
 	\begin{align*}
 		Q(D) = \begin{dcases*}
 			\ll P \rr^{ep(ds)}_{graph(g,ep(ds))} 
@@ -260,1478 +263,76 @@ Let $Q = trans(P,def,ds)$. Then $Q(D) = \ll P
 			& if $g \in \V,ds \in \V$\\
 		\end{dcases*}
 	\end{align*}
-%	\begin{eumerate}
-%		\ite Let $ds \in \U$, $g \in \V \cup \U \cup \{def\}$ and $Q = trans(P,ds,g).$ Then 	
-%		\ite if $g \in \U:$
-%			begin{align*}
-%			\ll P \rr^{ep(ds)}_{graph(g,ep(ds))} = Q(D)  
-%			end{align*}
-
-%		\item if $g \in \V$:\\
-%		\begin{align*}
-%				\bigcup\limits_{g' \in names(ep(ds))}\{ \mu \cup [g \mapsto g'] \mid \mu \in
-%					\ll P\rr ^{ep(ds)}_{graph(g',ep(ds))} , \mu \sim
-%				[g\mapsto g'] \}\\ = Q(D)
-%			\end{align*}
-%		\item Let $ds\in \V$, $g\in \V\cup \U\cup \{def\}$ and $Q = trans(P,ds,g).$ Then 	
-%		\item if $g \in \U$:\\
-%			\begin{align*}
-%				\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
-%					\ll P\rr^{ep(ds')}_{graph(g,ep(ds))}, \mu \sim
-%				[ds\mapsto ds'] \}\\  = Q(D)
-%			\end{align*}
-%
-%		\item if $g \in \V$: \\
-%			\begin{align*}
-%				\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(ds'))} \big\{ \mu \cup
-%					\{[ds\mapsto ds'],[g \mapsto g']\} \mid\\ \mu \in
-%					\ll P\rr^{ep(ds')}_{graph(g',ep(ds'))}, 
-%					\mu \sim
-%				\{[ds\mapsto ds'], [g \mapsto g']\}\big\} = Q(D)  
-%			\end{align*}
-%	\end{enumerate}
+	holds.
 \end{lemma}
-
-
-\begin{proof}
-	We proceed to prove the statement using structural induction on $P$.
-	\noindent 
-	\begin{enumerate}
-		\item  For the base case we assume that $P=(u,v,w)$ is a triple pattern:\\
-			By construction we have that $Q: vars(ds,g,u,v,w) \leftarrow
-			T(ds,g,u,v,w)$.\\
-			$\subseteq:$\\
-
-			Let $ds,g \in \U$. Let $DS = ep(ds)$ and $G = graph(g,DS)$.
-			Let $\mu \in \ll P \rr^{DS}_{G}$ be arbitrary. 
-			Then $dom(\mu) = vars(P)$ and $\mu(P) \in G$ by SPARQL semantics. 
-			Because we have $\mu(P) \in G$ and our database $D$ contains by
-			construction $T(ds,g,\mu(x),\mu(y),\mu(z))$ we have that $\mu \in Q(D)$.
-
-			\bigskip\noindent
-			Let $ds \in \V$ and $g \in \U$. 
-			Because $ds$ is a variable we have to show that 
-			$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in \ll P
-			\rr^{ep(ds')}_{graph(g,ep(ds'))},\mu \sim [ds \mapsto ds']\} \subseteq Q(D)$. 
-			Let $ds' \in dom(ep)$ be arbitrary, let $\mu \in \ll P
-			\rr^{ep(ds')}_{graph(g,ep(ds'))}$ where $\mu \sim [ds \mapsto ds']$.
-			Because we have $\mu(P) \in graph(g,ep(ds'))$ by SPARQL semantics and our database
-			$D$ contains by construction\\ $T(ds',g,\mu(x),\mu(y),\mu(z))$ we have that
-			$\mu \cup [ds \rightarrow ds'] \in Q(D)$. 
-
-			\bigskip\noindent
-			Let $ds \in \U$ and $g \in \V$. Let $DS = ep(ds)$. 
-			Because $g$ is a variable we have to show that 
-			$\bigcup\limits_{g' \in names(ep(ds))} \{ \mu \cup [g \mapsto g'] \mid \mu \in \ll P
-			\rr^{DS}_{graph(g',DS)},\mu \sim [g \mapsto g']\} \subseteq Q(D)$.
-			Let $g' \in names(DS)$ be arbitrary, let $\mu \in \ll P
-			\rr^{DS}_{graph(g',DS)}$ where $\mu \sim [g \mapsto g']$.
-			Because we have $\mu(P) \in graph(g',DS)$ by SPARQL semantics and our database
-			$D$ contains by construction\\ 
-			$T(ds,g',\mu(x),\mu(y),\mu(z))$ we have that $\mu \cup [g
-			\rightarrow g'] \in Q(D)$. 
-
-			\bigskip\noindent
-			Let $ds,g \in \V$.
-			Because $ds$ and $g$ are variables we have to show that \\
-			$\bigcup\limits_{g' \in names(ds'), ds'\in dom(ep)} \{ \mu \cup \{[ds\mapsto ds'] [g
-				\mapsto g']\} \mid \mu \in \ll P
-				\rr^{ep(ds')}_{graph(g',ep(ds'))},\mu 
-			\sim \{[ds \mapsto ds'][g \mapsto g']\}\} \subseteq Q(D)$. 
-			Let $ds'\in dom(ep), g' \in names(ep(ds'))$ be arbitrary, let $\mu \in \ll P
-			\rr^{ep(ds')}_{graph(g',ep(ds'))}$ where $\mu \sim \{[ds\mapsto ds'][g \mapsto
-			g'] \}$.
-			Because we have $\mu(P) \in graph(g',ep(ds'))$ by SPARQL semantics and our database
-			$D$ contains by construction\\ $T(ds',g',\mu(x),\mu(y),\mu(z))$ we have that
-			$\mu \cup \{[g \rightarrow g'][ds \rightarrow ds'] \}\in Q(D)$. 
-			This can be done because $\mu 
-			\sim \{[ds \rightarrow ds'][g \rightarrow g']\}$ was assumed. 
-
-			\bigskip\noindent$\supseteq:$\\
-			Let $ds,g \in \U$. Let $DS = ep(ds)$ and $G = graph(g,DS)$.
-			Let $\mu \in Q(D)$ be arbitrary.
-			We thus have a mapping $\mu$ from the variables in $vars(P)$ to constants s.t.
-			$T(ds,g,\mu(u),\mu(v),\mu(w)) \in D$. 
-			But by construction of $D$ this means that
-			$(\mu(u),\mu(v),\mu(w)) \in G$ 
-			and obviously $dom(\mu) = vars(P)$ thus $\mu \in \ll P
-			\rr^{DS}_{G}$. 
-
-			\bigskip\noindent
-			Let $ds \in \V$, $g \in \U$.
-			Because $ds$ is a variable we have to show that 
-			$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in \ll P
-			\rr^{ep(ds')}_{graph(g,ep(ds'))},\mu \sim [ds \mapsto ds']\} \supseteq Q(D)$.
-			Let $\sigma \in Q(D)$ be arbitrary.
-			We thus have a mapping $\sigma$ from the 
-			variables in $vars(ds,g,u,v,w)$ to constants s.t.\\
-			$T(\sigma(ds),g,\sigma(u),\sigma(v),\sigma(w)))
-			\in D$. Because $\sigma \in Q(D)$ and $ds \in \V$, we have
-			$\sigma(ds) = ds'$, s.t. by construction $ds' \in dom(ep)$. 
-			Let $\mu = \sigma\backslash[ds\mapsto ds']$. 
-			By construction this means that
-			$(\mu(u),\mu(v),\mu(w)) \in graph(g,ep(ds'))$ and obviously
-			$dom(\mu) = vars(P)$. Thus $\mu \in \ll
-			P\rr^{ep(ds')}_{graph(g,ep(ds'))}$ holds. 
-			It remains to show that
-			$\mu \sim [ds \mapsto ds']$
-			but this is obvious because $\sigma$ contains $[ds \mapsto ds']$ and $\mu = \sigma
-			\backslash [ds \mapsto ds']$. 
-
-			\bigskip\noindent
-			Let $ds \in \U$, $g \in \V$. Let $DS = ep(ds)$.
-			Because $g$ is a variable we have to show that 
-			$\bigcup\limits_{g' \in names(ep(a))} \{ \mu \cup [g \mapsto g'] \mid \mu \in \ll P
-			\rr^{DS}_{graph(g,DS)},\mu \sim [g \mapsto g']\} \supseteq Q(D)$.
-			Let $\sigma \in Q(D)$ be arbitrary.
-			We thus have a mapping $\sigma$ from the variables in
-			$vars(ds,g,u,v,w)$ to constants s.t.\\
-			$T(ds,\sigma(g),\sigma(u),\sigma(v),\sigma(w))) \in D$.
-			Because $\sigma \in Q(D)$ and $g \in \V$, we have
-			$\sigma(g) = g'$, s.t. by construction $g' \in names(ds)$. Let $\mu =
-			\sigma\backslash[g\mapsto g']$ be a mapping. By construction 
-			this means that	$(\mu(u),\mu(v),\mu(w) \in graph(g',DS)$ 
-			and obviously $dom(\mu) = vars(P)$. Thus $\mu \in \ll P
-			\rr^{DS}_{graph(g',DS)}$ holds. It remains to show that $\mu \sim [g \mapsto g']$
-			but this is obvious because $\sigma$ contains $[g \mapsto g']$ and $\mu = \sigma
-			\backslash [g \mapsto g']$.
-
-			\bigskip\noindent
-			Let $ds \in \V$, $g \in \V$.
-			Because $ds,g$ are variables we have to show that \\
-			$\bigcup\limits_{ds' \in dom(ep),g' \in names(ep(ds'))} 
-			\{ \mu \cup \{[g\mapsto g'][ds \mapsto ds'] \} \\ 
-				\mid \mu \in \ll P
-			\rr^{ep(ds')}_{graph(g',ep(ds'))},
-			\mu \sim \{[ds \mapsto ds'], [g \mapsto g']\}\} \supseteq Q(D)$.
-			Let $\sigma \in Q(D)$ be arbitrary.
-			We thus have a mapping $\sigma$ from the variables in $vars(ds,g,u,v,w)$ to constants s.t.
-			$T(\sigma(ds),\sigma(g),\sigma(u),\sigma(v),\sigma(w)) \in D$.
-			Because $\sigma \in Q(D)$ and $g \in \V, ds \in \V$, we have
-			$\sigma(g) = g', \sigma(ds) = ds'$, s.t. by construction $g' \in
-			names(ds)$ and $ds \in dom(ep)$. Let $\mu =
-			\sigma\backslash\{[g\mapsto g'],
-			[ds\mapsto ds']\}$. By construction
-			this means that 	$\mu(u),\mu(v),\mu(w) \in graph(g',ep(ds'))$ 
-			and obviously $dom(\mu) = vars(P)$. Thus $\mu \in \ll P
-			\rr^{ep(ds')}_{graph(g',ep(ds'))}$ holds. It remains to show that $\mu \sim \{[ds \mapsto
-			ds'],[g \mapsto g']\}$
-			but this is obvious because $\sigma \supseteq \{[ds \mapsto d'],[g \mapsto
-			g']\}$  and $\mu = \sigma \backslash \{[ds \mapsto ds'],[g \mapsto
-			g']\}$.
-
-
-			%%%%%AND%%%%
-		\item Consider the case where $P$ is a graph pattern $(P_1 \AND P_2)$. \\
-			By construction we have $Q = O_1 \cup O_2 \leftarrow q_1, q_2$. \\
-			$\subseteq:$\\
-			$ds,g \in \U$: Let $DS = ep(ds)$ and $G = graph(g,DS)$.
-			Let $\mu \in \ll P \rr^{DS}_{G}$ be arbitrary. 
-			By induction hypothesis we know that
-			$\ll P_1 \rr^{DS}_{G} = Q_1(D)$  and
-			$\ll P_2 \rr^{DS}_{G} = Q_2(D)$ hold.
-			By semantics of SPARQL and $\mu \in \ll P \rr^{DS}_{G}$ we know that 
-			$\mu \in \{\mu_1 \cup \mu_2 \mid \mu_1 \in \ll P_1 \rr^{DS}_{G}, \mu_2 \in \ll
-			P_2 \rr^{DS}_{G} \mbox{ and }  \mu_1 \sim \mu_2\}$. 
-			That means that there is a $\mu_1 \in \ll P_1 \rr_{G}^{DS}$ 
-			and a $\mu_2 \in \ll P_2 \rr^{DS}_{G}$ such that $\mu = \mu_1 \cup \mu_2$.
-			By induction hypothesis $\mu_1 \in Q_1(D)$ and $\mu_2 \in Q_2(D)$ hold.
-			Because $\mu_1 \sim \mu_2$ holds we know that $\mu \in Q(D)$ holds. 
-
-			\bigskip\noindent
-			$ds \in \V$, $g \in \U$:
-			Let $ds'$ be an arbitrary URI in $dom(ep)$.
-			Let $\mu \in \ll P \rr^{ep(ds)}_{graph(g,ep(ds))}$ be arbitrary. 
-			By induction hypothesis we know that
-			$\bigcup\limits_{ds' \in dom(ep)} \{\mu_i \cup [ds \mapsto ds' ] \mid 
-				\mu_i \in \ll P_i \rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim [ds
-			\mapsto ds']\}  = Q_i(D)$
-			for $i = 1,2$.
-			By semantics of SPARQL and 
-			$\mu \in \ll P \rr^{ep(ds')}_{graph(g,ep(ds'))}$ we know that 
-			$\mu \in \{\mu_1 \cup \mu_2 \mid \mu_1 \in \ll P_1 \rr^{ep(ds')}_{graph(g,ep(ds')}, 
-				\mu_2 \in \ll P_2 \rr^{ep(ds')}_{graph(g,ds')}\\ 
-			\mbox{ and }  \mu_1 \sim \mu_2\}$. 
-			That means that there is a $\mu_1 \in \ll P_1 \rr_{graph(g,ep(ds'))}^{ep(ds')}$ 
-			and a $\mu_2 \in \ll P_2 \rr^{ep(ds')}_{graph(g,ep(ds'))}$ such that $\mu = \mu_1 \cup \mu_2$.
-			Let  $\mu_1'= \mu_1\cup[ds\mapsto ds'] $ and $\mu_2' = \mu_2\cup[ds\mapsto
-			d']$.By induction hypothesis we have a $\mu_1' \in Q_1(D)$ and a $\mu_2' \in
-			Q_2(D)$.
-			Because $\mu_1 \sim \mu_2$ and $\mu_1 \sim [ds\mapsto ds']$ and $\mu_2 \sim [ds
-			\mapsto ds']$ we have $\mu \cup [ds\mapsto ds'] \in Q(D)$.
-
-			\bigskip\noindent
-			$ds \in \U$, $g \in \V$: Let $DS = ep(ds)$.
-			Let $g'$ be an arbitrary URI in $names(ep(a))$.
-			Let $\mu \in \ll P \rr^{ep(ds)}_{graph(g',ds)}$ be arbitrary. 
-			By induction hypothesis we know that
-			$\bigcup\limits_{g' \in names(DS)}\{\mu_i \cup [g \mapsto g' ] \mid 
-				\mu_i \in \ll P_i \rr^{DS}_{graph(g',DS)}, \mu \sim [g
-			\mapsto g']\} = Q_i(D)$ for  $i = 1,2$.
-			By semantics of SPARQL and $\mu \in \ll P \rr^{DS}_{graph(g',DS)}$ we know that 
-			$\mu \in \{\mu_1 \cup \mu_2 \mid \mu_1 \in \ll P_1 \rr^{DS}_{graph(g',DS)}, \mu_2 \in \ll
-			P_2 \rr^{DS}_{graph(g',DS)}\\ \mbox{ and }  \mu_1 \sim \mu_2\}$. 
-			That means that there is a $\mu_1 \in \ll P_1 \rr_{graph(g',DS)}^{DS}$ 
-			and a $\mu_2 \in \ll P_2 \rr^{DS}_{graph(g',DS)}$ such that $\mu = \mu_1 \cup \mu_2$.
-			 Let $\mu_1' =  \mu_1\cup[g\mapsto g']$ and $\mu_2' = \mu_2\cup[g\mapsto g']$.
-			 By induction hypothesis we have a $\mu_1' \in Q_1(D)$ and a $\mu_2' \in
-			Q_2(D)$.
-			Because $\mu_1 \sim \mu_2$ and $\mu_1 \sim [g\mapsto g']$ and $\mu_2 \sim [g
-			\mapsto g']$ we have $\mu \cup [g\mapsto g'] \in Q(D)$.
-
-			\bigskip\noindent
-			$ds,g \in \V$:
-			Let $ds'$ be an arbitrary URI in $dom(ep)$.
-			Let $g'$ be an arbitrary URI in $names(ep(d))$.
-			Let $\mu \in \ll P \rr^{ep(ds')}_{graph(g',ep(ds'))}$ be arbitrary. 
-			By induction hypothesis we know that
-			$\bigcup\limits\limits_{ds'\in dom(ep),g' \in names(ep(ds'))}\{\mu_i \cup \{[g \mapsto g'
-				],[ds \mapsto ds']\} \mid 
-				\mu_i \in \ll P_i \rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu
-			\sim \{[g \mapsto g'], [ds\mapsto ds']\}\} \subseteq Q_i(D)$
-			for $i = 1,2$.
-			By semantics of SPARQL and $\mu \in \ll P \rr^{ep(ds')}_{graph(g',ep(ds'))}$ we know that 
-			$\mu \in \{\mu_1 \cup \mu_2 \mid \mu_1 \in \ll P_1
-				\rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu_2 \in \ll
-			P_2 \rr^{ep(ds')}_{graph(g',ep(ds'))}\\ \mbox{ and }  \mu_1 \sim \mu_2\}$. 
-			That means that there is a $\mu_1 \in \ll P_1 \rr_{graph(g',ep(ds'))}^{ep(ds')}$ 
-			and a $\mu_2 \in \ll P_2 \rr^{ep(ds')}_{graph(g',ep(ds')}$ such that 
-			$\mu = \mu_1 \cup \mu_2$.
-			 Let $\mu_1' = \mu_1\cup\{[ds\mapsto ds'],[g\mapsto g']\}$ and
-			$\mu_2' = \mu_2\cup\{[g\mapsto g'],[ds\mapsto ds']\}$.
-			By induction hypothesis we have a $\mu_1' \in Q_1(D)$ and a $\mu_2' \in
-			Q_2(D)$.
-			Because $\mu_1 \sim \mu_2$ and $\mu_1 \sim \{[ds \mapsto ds'],[g\mapsto g']\}$ and
-			$\mu_2 \sim\{[ds \mapsto ds'], [g
-			\mapsto g']\}$ we have $\mu \cup \{[g\mapsto g'], [ds \mapsto ds']\} \in Q(D)$.
-
-			\bigskip
-			\noindent$\supseteq:$\\
-			%$trans(P_1,ds,g)=Q_1= O_1 \leftarrow q_1$ and $trans(P_2,ds,g)=Q_2=
-			%O_2 \leftarrow q_2$. By construction: $Q: O_1 \cup O_2 \leftarrow
-			%q_1,q_2$.
-			$ds,g \in \U$.
-			Let $\mu \in Q(D)$ be arbitrary. Let $DS = ep(ds)$ and $G = graph(g,ep(ds))$.
-			By induction hypothesis we know that $\ll P_1 \rr^{DS}_{G} = Q_1(D)$ and
-			$\ll P_2 \rr^{DS}_{G} = Q_2(D)$ hold. 
-			Thus there must be some $\mu_1 \in Q_1(D)$, $\mu_2 \in Q_2(D)$ 
-			where $\mu= \mu_1 \cup \mu_2$ holds by construction of $Q$.
-			But thus $\mu_1 \in \ll P_1 \rr^{DS}_{G}$ and $\mu_2 \in \ll
-			P_2\rr^{DS}_{G}$ by induction hypothesis. 
-			By semantics of AND we know that $\mu \in \ll P \rr^{DS}_{G}$.
-
-			\bigskip\noindent
-			$ds \in V, g \in \U$.
-			We want to show \\
-			$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup
-				[ds \mapsto ds'] \mid \mu \in \ll P\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim
-			[ds\mapsto ds'] \}  \supseteq Q(D)$.
-			Let $\mu \in Q(D)$ be arbitrary.
-			By induction hypothesis we know that  
-			$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
-				\ll P_i\rr^{ep(ds)}_{graph(g',ep(ds))}, \mu \sim
-			[ds\mapsto ds'] \}  = Q_i(D) $ for $i\in \{1,2\}$.
-			Thus there must be some $\mu_1 \in Q_1(D)$, $\mu_2 \in Q_2(D)$ 
-			where $\mu= \mu_1 \cup \mu_2$ holds by construction of $Q$.
-			By induction hypothesis we know that $\mu_i(ds) = ds'$ for some $ds'
-			\in dom(ep)$ for $i \in \{1,2\}$.
-			Again by i.h. $\mu_i\backslash\{[ds\mapsto ds'] \} \in \ll P_i
-			\rr^{ep(ds)}_{graph(g,ep(ds'))}$ for $i \in \{1,2\}$.
-			By semantics of AND we know that $\mu \backslash \{[ds\mapsto ds'] \} \in \ll P
-			\rr^{ep(ds')}_{graph(g,ep(ds'))}$ and by induction hypothesis we know that we have 
-			$\mu \sim \{[ds\mapsto ds'] \}$.
-
-			\bigskip\noindent
-			$ds \in \U, g \in \V$. Let $DS = ep(ds)$.
-			We want to show 
-			$\bigcup\limits_{g' \in names(DS)} \{ \mu \cup \{[g
-				\mapsto g']\} \mid \mu \in
-				\ll P\rr^{DS}_{graph(g',DS)}, \mu \sim
-			\{[g \mapsto g']\} \}  \supseteq Q(D) $.
-			Let $\mu \in Q(D)$ be arbitrary.
-			By induction hypothesis we know that  
-			$\bigcup\limits_{g' \in names(DS)} \{ \mu \cup \{[g
-				\mapsto g']\} \mid \mu \in
-				\ll P_i\rr^{DS}_{graph(g',DS)}, \mu \sim
-			\{[g \mapsto g']\} \}  = Q_i(D) $ for $i=1,2$.
-			Thus there must be some $\mu_1 \in Q_1(D)$, $\mu_2 \in Q_2(D)$ 
-			where $\mu= \mu_1 \cup \mu_2$ construction of $Q$.
-			By induction hypothesis we know that $\mu_i(g) = g'$ for some $g'
-			\in names(ds)$ for $i \in \{1,2\}$.
-			Again by i.h. $\mu_i\backslash\{ [g \mapsto g'] \} \in \ll P_i \rr^{DS}_{graph(g',DS)}$
-			$i \in \{1,2\}$ by induction hypothesis. 
-			By semantics of AND  we know that $\mu \backslash \{[g \mapsto g'] \} \in \ll P
-			\rr^{DS}_{graph(g',DS)}$ and by induction hypothesis we know that we have 
-			$\mu \sim \{[g \mapsto g'] \}$.
-
-			\bigskip\noindent
-			$ds,g \in \V$.
-			We want to show 
-			$\bigcup\limits_{ds \in dom(ep),g' \in names(ep(ds'))} \{ \mu \cup \{[ds \mapsto ds'],[g
-				\mapsto g']\} \mid \mu \in
-				\ll P \rr^{ep(ds')}_{graph(g', ep(ds'))}, \mu \sim
-			\{[ds \mapsto ds'], [g \mapsto g']\} \}  \supseteq Q(D) $.
-			Let $\mu \in Q(D)$ be arbitrary.
-			By induction hypothesis we know that  
-			$\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(ds'))} 
-			\{ \mu \cup \{[ds \mapsto ds'], [g	\mapsto g']\} \mid\\
-				\mu \in	\ll P_i\rr^{ep(ds')}_{graph(g', ep(ds))}, \mu \sim
-			\{[ds\mapsto ds'],[g \mapsto g']\} \}  = Q_i(D) $ for $i=1,2$.
-			Thus there must be some $\mu_1 \in Q_1(D)$, $\mu_2 \in Q_2(D)$ 
-			where $\mu= \mu_1 \cup \mu_2$ holds by semantics of $\land$ and construction of $Q$.
-			By induction hypothesis we know that $\mu_i(ds) = ds'$ for some
-			$ds' \in dom(ep)$ and $\mu_i(g) = g'$ for some $g' \in names(ds')$ for $i \in \{1,2\}$.
-			By induction hypothesis $\mu_i\backslash\{[ds\mapsto ds'], [g \mapsto g'] \} \in \ll P_i
-			\rr^{ep(ds')}_{graph(g',ep(ds'))}$ for $i \in \{ 1,2 \}$.
-			By semantics of $AND$  we know that $\mu \backslash \{[ds\mapsto ds'], [g
-			\mapsto g'] \} \in \ll P
-			\rr^{ep(ds')}_{graph(g,ep(ds'))}$ and by induction hypothesis we know that we have 
-			$\mu \sim \{[ds\mapsto ds'], [g \mapsto g'] \}$.
-
-
-			%%%OPT
-
-		\item Consider the case where $P$ is a graph pattern $(P_1 \OPT	P_2)$. \\
-			By construction we have that $ Q_1 = trans(P_1,ds,g) =
-			(T_1,\lambda_1,x_1)$,\\ $Q_2 = trans(P_2,ds,g) = (T_2,\lambda_2,x_2)$ 
-			and $Q = trans(P,ds,g) = (T,\lambda,x)$ for which $T = T_1 \cup T_2
-			\cup (r_1,r_2)$ where $r_1,r_2$ are the roots of $T_1,T_2$
-			respectively, $\lambda = \lambda_1 \cup \lambda_2$ and $x = x_1 \cup
-			x_2$.
-
-			\bigskip\noindent
-			$\subseteq:$\\
-			Let $ds,g \in \U$:
-			Let $DS = ep(ds)$ and $G = graph(g,DS)$.
-			Let $\mu \in \ll P \rr^{DS}_{G}$ be arbitrary. 
-			By semantics of OPT we have that $\mu \in \ll P_1 \ AND \ P_2
-			\rr^{DS}_{G}$ or $\mu \in \big\{ \mu_1 \in \ll P_1 \rr^{DS}_{G} \mid \forall \mu_2 \in \ll P_2
-				\rr^{DS}_{G}:
-			\mu_1 \not\sim \mu_2 \big\}$. 
-			We thus proceed by case distinction:
-			\begin{enumerate}
-				\item Assume $\mu \in \ll P_1 \ AND \ P_2 \rr^{DS}_{G}$. By induction
-					hypothesis and semantics of AND, we thus have some $\mu_1
-					\in Q_1(D)$ and some $\mu_2 \in Q_2(D)$ so that $\mu = \mu_1
-					\cup \mu_2$. Because $\mu_i \in Q_i(D)$ we have by semantics
-					of wdpts (recall Definition~\ref{wdptq}) that $\mu_i \in Q_{i,T'_i}$ so that $T'_i \subseteq
-					T_i$ for $i\in\{1,2\}$.
-					Let $T' = T'_1 \cup T'_2$.
-					Because we have $\mu = \mu_1 \cup \mu_2$ we know that $\mu
-					\in Q_T'$.
-					It remains to show that this homomorphism is maximal: assume there was a
-					bigger subtree $\hat{T}$ which would allow a mapping $\mu'
-					\sqsupset \mu$. Then the
-					node which was put additionally to $T$ must either be in
-					$T_1$ or $T_2$.
-					But then either $\mu_1$ or $\mu_2$ were not maximal defying the assumption
-					that $\mu_1 \in Q_1$ and $\mu_2 \in Q_2$.
-					Thus $\mu \in Q(D)$. 
-
-				\item Assume $\mu \in \big\{\mu_1 \in \ll P_1 \rr^{DS}_{G} \mid 
-					\forall \mu_2 \in \ll P_2 \rr^{DS}_{G}: \mu_1 \not\sim \mu_2
-				\big\}$. \\
-					Because of our assumption $\mu = \mu_1$ for some $\mu_1 \in \ll P_1
-					\rr^{DS}_{G}$. We know that $\mu_1 \in Q_1(D)$ by induction
-					hypothesis. Thus $\mu_1 \in Q_{1,T'_1}$ for some $T'_1
-					\subset T_1$ by
-					semantics of wdpts. $\mu \in Q_{T'_1}(D)$ follows.
-					It remains to show that there is no $\mu' \sqsupset \mu$.
-					Because of our assumption we know there is no mapping
-					$\mu_2 \in Q_2$ which would be compatible with $\mu$. Thus $\mu$ could
-					only be enlarged by a bigger mapping in $Q_1(D)$ but this defies the
-					assumption that $\mu_1 \in Q_1(D)$.
-			\end{enumerate}
-
-			\bigskip\noindent
-			Let $ds \in \V$ and $g \in \U$:
-			We want to show  
-			$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
-				\ll P\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim
-			[ds\mapsto ds'] \}  \subseteq Q(D) $.
-			Let $ds'$ be an arbitrary URI in $dom(ep)$. Let $\mu \in \ll P
-			\rr^{ep(ds')}_{graph(g,ds')}$ be arbitrary.
-			By semantics of OPT we have that $\mu \in \ll P_1 \mbox{ AND }  P_2
-			\rr^{ep(ds')}_{graph(g,ds')}$ or 
-			$\mu \in \big\{ \mu_1 \in \ll P_1 \rr^{ep(ds')}_{graph(g,ds')} \mid \forall \mu_2 \in \ll P_2
-			\rr^{ep(ds')}_{graph(g,ds')}: \mu_1 \not\sim \mu_2 \big\}$. 
-			We thus proceed by case distinction:
-			\begin{enumerate}
-				\item Assume $\mu \in \ll P_1 \AND  P_2 \rr^{ep(ds')}_{graph(g,ds')}$. 
-					By induction hypothesis we have 
-					$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
-						\ll P_i\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu_i \sim
-					[ds\mapsto ds'] \}  \subseteq Q_i(D) $ for $i \in \{1,2\}$.
-					By semantics of SPARQL and $\mu \in \ll P \rr^{ep(ds')}_{graph(g,ds')}$ we
-					know that $\mu \in \{\mu_1 \cup \mu_2 \mid \mu_1 \in \ll P_1
-						\rr^{ep(ds')}_{graph(g,ds')}, \mu_2 \in \ll P_2
-						\rr^{ep(ds')}_{graph(g,ds')}
-					\mbox{ and } \mu_1 \sim \mu_2 \}$. Thus there is a $\mu_1 \in \ll P_1
-					\rr^{ep(ds')}_{graph(g,ds')}$ and a $\mu_2 \in \ll P_2
-					\rr^{ep(ds')}_{graph(g,ds')}$ such that $\mu = \mu_1 \cup \mu_2$.
-					Let $\mu'_i = \mu_i \cup [ds \mapsto ds']$ for $i \in
-					\{1,2\}$.  Because $\mu_i \in Q_i(D)$  we have a
-					$T'_i \subseteq T_i$ such that $\mu'_i \in Q_{i,T'_i}(D)$ for $i\in \{1,2\}$.
-					Let $T' = T'_1 \cup T'_2$.
-					Because $\mu_1 \sim \mu_2$ and $\mu_1 \sim [ds \mapsto ds']$ 
-					and $\mu_2 \sim [ds \mapsto ds']$ we have $\mu \cup [ds
-					\mapsto ds'] \in Q_T'(D)$.
-					It remains to show that this homomorphism $\mu\cup [ds \mapsto ds']$ is maximal: 
-					assume there was a bigger subtree $\hat{T}$ which would allow a mapping 
-					$\mu' \sqsupset (\mu\cup [ds \mapsto ds'])$. Then the
-					node which was put additionally to $T$ must either be in $T_1$ or $T_2$.
-					But then either $\mu_1'$ or $\mu_2'$ were not maximal defying the assumption
-					that $\mu_1' \in Q_1(D)$ and $\mu_2' \in Q_2(D)$.
-					Thus $\mu \cup [ds \mapsto ds']\in Q(D)$. 
-
-				\item Assume $\mu \in \big\{ \mu_1 \in  \ll P_1 \rr^{ep(ds')}_{graph(g,ds')} \mid 
-						\forall \mu_2 \in \ll P_2 \rr^{ep(ds')}_{graph(g,ds')}: 
-					\mu_1 \not\sim \mu_2 \big\}$. 
-					By induction hypothesis we have \\
-					$\bigcup\limits_{ds' \in dom(ep)} \{ \mu_1 \cup	[ds	\mapsto ds'] 
-						\mid \mu_1 \in \ll	P_1\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim
-					[ds\mapsto ds'] \}  = Q_1(D)$.
-					Because $\mu_1 \in \ll P_1
-					\rr^{ep(ds')}_{graph(g,ds')}$ 
-					we have $\mu\cup [ds \mapsto ds'] \in Q_{T'_1}(D)$, where
-					$T'_1 \subseteq T_1$ by wdpt semantics.
-					It remains to show that there
-					is no $\mu' \sqsupset \mu$. But because we have $\{\mu_1 \not\sim \mu_2 \mid
-					\forall \mu_2 \in \ll P_2 \rr^{ep(ds')}_{graph(g,ds')} \}$, 
-					we know there is no mapping
-					of $\mu_2$ of $Q_2$ which would be compatible with $\mu$. Thus $\mu$ could
-					only be a bigger mapping $\mu' \in Q_1(D)$ but this defies the
-					assumption that $\mu_1 \in Q_1(D)$ and thus we are done.
-			\end{enumerate}
-
-			\bigskip\noindent
-			Let $ds\in \U$ and $g \in \V$: Let $DS = ep(ds)$.
-			We want to show 
-			$\bigcup\limits_{g' \in names(DS)}\{ \mu \cup [g \mapsto g'] \mid \mu \in
-				\ll P\rr^{DS}_{graph(g',DS)} , \mu \sim
-			[g\mapsto g'] \} \subseteq Q(D) $
-			Let $g'$ be an arbitrary graph in $names(DS)$. Let $\mu \in \ll P
-			\rr^{DS}_{graph(g',DS)}$ be arbitrary.
-			By semantics of OPT we have that $\mu \in \ll P_1 \AND  P_2
-			\rr^{DS}_{graph(g',DS)}$ or 
-			$\mu \in \big\{ \mu_1 \in  \ll P_1 \rr^{DS}_{graph(g',DS)} \mid \forall \mu_2 \in \ll P_2
-				\rr^{DS}_{graph(g',DS)}:
-			\mu_1 \not\sim \mu_2 \big\}$. 
-			We proceed by case distinction:
-			\begin{enumerate}
-				\item Assume $\mu \in \ll P_1 \ AND \ P_2 \rr^{DS}_{graph(g',DS)}$. 
-					By induction hypothesis we have 
-					$\bigcup\limits_{g' \in names(DS)} \{ \mu \cup [g \mapsto g'] \mid \mu \in
-						\ll P_i\rr^{DS}_{graph(g',DS)}, \mu_i \sim
-					[g\mapsto g'] \}  = Q_i(D) $ and $i = 1,2$.
-					By semantics of SPARQL and $\mu \in \ll P
-					\rr^{DS}_{graph(g',DS)}$ we
-					know that $\mu \in \{\mu_1 \cup \mu_2 \mid \mu_1 \in \ll P_1
-						\rr^{DS}_{graph(g',DS)}, \mu_2 \in \ll P_2
-						\rr^{DS}_{graph(g',DS)}
-					\mbox{ and } \mu_1 \sim \mu_2 \}$.
-					Thus there is a $\mu_1 \in \ll P_1
-					\rr^{ep(ds)}_{graph(g',ds)}$ and a $\mu_2 \in \ll P_2
-					\rr^{ep(ds)}_{graph(g',ds)}$ such that $\mu = \mu_1 \cup \mu_2$.
-					Let $\mu'_i = \mu_i \cup [g \mapsto g']$ for $i \in
-					\{1,2\}$.  Because $\mu_i \in Q_i(D)$  we have a
-					$T'_i \subseteq T_i$ such that $\mu'_i \in Q_{i,T'_i}(D)$ for $i\in \{1,2\}$.
-					Let $T' = T'_1 \cup T'_2$.
-					Because $\mu_1 \sim \mu_2$ and $\mu_1 \sim [g \mapsto g']$ 
-					and $\mu_2 \sim [g \mapsto g']$ we have $\mu \cup [g
-					\mapsto g'] \in Q_T'(D)$.
-					It remains to show that this homomorphism $\mu\cup [g
-					\mapsto g']$ is maximal: 
-					assume there was a bigger subtree $\hat{T}$ which would allow a mapping 
-					$\mu' \sqsupset (\mu\cup [g \mapsto g'])$. Then the
-					node which was put additionally to $T$ must either be in $T_1$ or $T_2$.
-					But then either $\mu_1'$ or $\mu_2'$ were not maximal defying the assumption
-					that $\mu_1' \in Q_1(D)$ and $\mu_2' \in Q_2(D)$.
-					Thus $\mu \cup [g \mapsto g']\in Q(D)$. 
-
-				\item Assume $\mu \in \big\{ \mu_1 \in  \ll P_1 \rr^{DS}_{graph(g',DS)} \mid 
-					\forall \mu_2 \in \ll P_2 \rr^{DS}_{graph(g',DS)}: \mu_1 \not\sim \mu_2 \big\}$. 
-					By induction hypothesis we have \\
-					$\bigcup\limits_{g' \in names(DS)} 
-					\{ \mu_1 \cup [g \mapsto g'] \mid \mu_1 \in
-						\ll P_1\rr^{DS}_{graph(g',DS)}, \mu \sim
-					[g\mapsto g'] \}  = Q_1(D)$.
-					Because $\mu_1 \in \ll P_1
-					\rr^{ep(ds)}_{graph(g',ds)}$ 
-					we have $\mu\cup [g \mapsto g'] \in Q_{T'_1}(D)$, where
-					$T'_1 \subseteq T_1$ by wdpt semantics.
-					It remains to show that there
-					is no $\mu' \sqsupset \mu$. But because we have $\{\mu_1 \not\sim \mu_2 \mid
-					\forall \mu_2 \in \ll P_2 \rr^{ep(ds)}_{graph(g',ds)} \}$, 
-					we know there is no mapping
-					of $\mu_2$ of $Q_2$ which would be compatible with $\mu$. Thus $\mu$ could
-					only be a bigger mapping $\mu' \in Q_1(D)$ but this defies the
-					assumption that $\mu_1 \in Q_1(D)$ and thus we are done.
-			\end{enumerate}
-
-			\bigskip\noindent
-			Let $ds,g \in \V$:
-			We want to show  $\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(d))} \{ \mu \cup
-			\{[ds \mapsto ds'],[g \mapsto g']\} \mid \mu \in
-			\ll P\rr^{ep(ds')}_{graph(g',ep(ds'))}, 
-			\mu \sim \{[ds\mapsto ds'], [g \mapsto g']\}\} \supseteq Q(D) $. 
-			Let $ds'$ be an arbitrary URI in dom(ep), and $g'$ be an arbitrary
-			URI in $names(ep(d))$.
-			Let $\mu \in \ll P \rr^{ep(ds')}_{graph(g',ep(ds'))}$ be arbitrary.
-			By semantics of OPT we have that $\mu \in \ll P_1 \AND P_2
-			\rr^{ep(ds')}_{graph(g',ep(ds'))}$ or \\
-			$\mu \in \big\{ \mu_1 \in  \ll P_1 \rr^{ep(ds')}_{graph(g',ep(ds'))} \mid \forall \mu_2 \in \ll P_2
-				\rr^{ep(ds')}_{graph(g',ep(ds'))}:
-			\mu_1 \not\sim \mu_2 \big\}$. 
-			We thus proceed by case distinction:
-			\begin{enumerate}
-				\item Assume $\mu \in \ll P_1 \AND P_2 \rr^{ep(ds')}_{graph(g',ep(ds'))}$. 
-					By induction hypothesis we thus have \\
-					$\bigcup\limits_{ds'\in dom(ep),g' \in names(ep(d))} \{ \mu \cup \{[ds \mapsto
-						ds'][g \mapsto g']\} \mid \mu \in
-						\ll P_i\rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu_i \sim
-					\{[g\mapsto g'], [ds \mapsto ds']\} \}  = Q_i(D) $ and $i = 1,2$.
-					By semantics of SPARQL and $\mu \in \ll P
-					\rr^{ep(ds')}_{graph(g',ep(ds'))}$ we
-					know that $\mu \in \{\mu_1 \cup \mu_2 \mid \mu_1 \in \ll P_1
-						\rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu_2 \in \ll P_2
-						\rr^{ep(ds')}_{graph(g',ep(ds'))}
-					\mbox{ and } \mu_1 \sim \mu_2 \}$. Thus there is a $\mu_1 \in \ll P_1
-					\rr^{ep(ds')}_{graph(g',ep(ds'))}$ and a $\mu_2 \in \ll P_2
-					\rr^{ep(ds')}_{graph(g',ep(ds'))}$ such that $\mu = \mu_1 \cup \mu_2$.
-					Let $\mu'_i = \mu_i \cup \{ [ds \mapsto ds'][g \mapsto g']\}$ for $i \in
-					\{1,2\}$.  Because $\mu_i \in Q_i(D)$  we have a
-					$T'_i \subseteq T_i$ such that $\mu'_i \in Q_{i,T'_i}(D)$ for $i\in \{1,2\}$.
-					Let $T' = T'_1 \cup T'_2$.
-					Because $\mu_1 \sim \mu_2$ and $\mu_i \sim \{[g \mapsto
-					g'],[ds \mapsto ds'] \}$ for
-					$i\in\{1,2\}$, we have $\mu \cup [g	\mapsto g'] \in Q_T'(D)$.
-					It remains to show that the mapping $\mu\cup \{[ds\mapsto
-					ds'], [g\mapsto g'] \}$ is maximal: 
-					assume there was a bigger subtree $\hat{T}$ which would allow a mapping 
-					$\mu' \sqsupset (\mu\cup \{[ds \mapsto ds'],[g \mapsto g']\})$. Then the
-					node which was put additionally to $T$ must either be in $T_1$ or $T_2$.
-					But then either $\mu_1'$ or $\mu_2'$ were not maximal defying the assumption
-					that $\mu_1' \in Q_1(D)$ and $\mu_2' \in Q_2(D)$.
-					Thus $\mu \cup \{[g \mapsto g'],[ds \mapsto ds']\} \in Q(D)$. 
-
-
-	\item Assume $\mu \in \big\{ \mu_1 \in  \ll P_1 \rr^{ep(ds')}_{graph(g',ep(ds'))} \mid 
-			\forall \mu_2 \in \ll P_2 \rr^{ep(ds')}_{graph(g',ep(ds'))}:
-		\mu_1 \not\sim \mu_2 \big\}$. By induction hypothesis we have 
-		$\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(ds'))} \{ \mu_1 \cup \{[ds' \mapsto
-			ds] [g \mapsto g'] \} \mid \mu_1 \in
-			\ll P_1\rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu \sim
-			\{[ds \mapsto ds'],[g\mapsto g']\}  = Q_1(D)$.
-			Because $\mu_1 \in \ll P_1
-			\rr^{ep(ds)}_{graph(g',ds)}$ 
-			we have $\mu\cup \{[ds \mapsto ds'],[g \mapsto g'] \}\in Q_{T'_1}(D)$, where
-			$T'_1 \subseteq T_1$ by wdpt semantics.
-			It remains to show that there
-			is no $\mu' \sqsupset \mu$. But because we have $\{\mu_1 \not\sim \mu_2 \mid
-			\forall \mu_2 \in \ll P_2 \rr^{ep(ds')}_{graph(g',ds')} \}$, 
-			we know there is no mapping
-			of $\mu_2$ of $Q_2$ which would be compatible with $\mu$. Thus $\mu$ could
-			only be a bigger mapping $\mu' \in Q_1(D)$ but this defies the
-			assumption that $\mu_1 \in Q_1(D)$ and thus we are done.
-	\end{enumerate}
-
-	\bigskip\noindent$\supseteq:$\\
-	Because of the construction of $Q$, a solution, call it $\mu$ must either
-	adhere $\mu \in Q_{T'}(D)$ for $T' \subseteq T$. We will further distinguish two
-	cases:
-	\begin{enumerate}
-		\item $\mu \in Q_{T'}(D)$ for some $T' \subseteq T_1$ 
-		\item  $\mu \in	Q_{T'}(D)$ for some $T' = T'_1 \cup T'_2$ where $T'_1 \subseteq T_1$ and
-	$T'_2 \subseteq T_2$.
-	\end{enumerate}
-
-	\bigskip\noindent
-	Let $ds,g \in \U$. Let $DS= ep(ds)$ and $G = graph(g,DS)$. 
-	Let $\mu \in Q(D)$ be arbitrary.
-	Case distinction:
-	\begin{enumerate}
-		\item $\mu \in Q_{T'_1}(D)$: Thus $\mu \in Q_1(D)$ and by i.h. $\mu \in \ll P_1 \rr^{DS}_{G}$ 
-			and then also $\{\mu \not\sim \mu_2 \mid \forall \mu_2 \in
-			\ll P_2 \rr^{DS}_{G} \}$ by assumption. Thus $\mu \in \ll P
-			\rr_{G}^{DS}$.
-		\item If $\mu \in Q_{T'}(D)$ we then have $\mu_{|vars(Q_1)} \in Q_1(D)$  (restricted to
-			the variables in $Q_1$) and $\mu_{|vars(Q_2)} \in Q_2(D)$(restricted to the variables
-			in $Q_2$). Thus by i.h. and semantics of AND we have $\mu \in \ll P_1 \ AND \ P_2 \rr^{DS}_{G}$
-			and $\mu \in \ll P \rr^{DS}_{G}$.
-	\end{enumerate}
-
-	%The case where we \sigma \in Q_1(D) maximal only because of value of ds is
-	%taken care of:
-	% because $\mu_1$ and $\mu_2$ need to both be compatible with assignment of
-	% the variable ds$
-	\bigskip\noindent
-	Let $ds \in \V, g \in \U$.
-	We want to prove  
-	$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid\\ \mu
-	\in \ll P \rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim [ds\mapsto ds'] \}
-	\supseteq Q(D) $.
-	Let $\sigma \in Q(D)$ be arbitrary.
-	Because $\sigma \in Q(D)$ and $ds \in V$ we have that $\sigma(ds) =
-	ds'$ for some $ds' \in dom(ep)$.
-	Case distinction:
-	\begin{enumerate}
-		\item $\sigma \in Q_{T'_1}(D)$: Because the assumption implies $\sigma
-			\in Q_1(D)$ we can then use the induction hypothesis  
-			$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu
-			\in \ll P_1 \rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim [ds\mapsto ds'] \}  =
-			Q_1(D) $. Let $\mu = \sigma \backslash [ds \mapsto ds']$. 
-			Thus $\mu \in \ll P_1 \rr^{ep(ds')}_{graph(g,ep(ds'))}$ 
-			and we also have $\{\mu \not\sim \mu_2 \mid \forall \mu_2 \in
-			\ll P_2 \rr^{ep(ds')}_{graph(g,ep(ds'))} \}$ because of our
-			assumption. Thus $\mu \in \ll P
-			\rr_{graph(g,ep(ds')}^{ep(ds')}$ and $\mu \sim [ds \mapsto ds']$ by
-			induction hypothesis.
-		\item If $\sigma \in Q_{T'}(D)$  we can use the induction hypothesis twice:\\
-			$\bigcup\limits_{ds' \in dom(ep)} \{ \mu_i \cup [ds \mapsto ds'] \mid \mu_i
-			\in \ll P_i \rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu_i \sim [ds\mapsto ds'] \}  =
-			Q_i(D)$ for $i=1,2$.\\
-			Let $\mu = \sigma \backslash [ds \mapsto ds']$.
-			Because $\sigma \in Q_{T'}(D)$ we have $\mu = \mu_1 \cup \mu_2$ for
-			some $\mu_{1|vars(Q_1)}\cup[ds \mapsto ds'] \in Q_1(D)$ (restricted to
-			the variables in $Q_1$) and $\mu_{2|vars(Q_2)}\cup [ds \mapsto ds'] \in Q_2(D)$ (restricted to
-			the variables in $Q_2$).
-			Thus $\mu \in \ll P_1 \AND P_2 \rr^{ep(ds')}_{graph(ds',g)}$
-			and $\mu \in \ll P \rr^{ep(ds')}_{graph(g,ds')}$. Also $\mu \sim [ds \mapsto
-			ds']$ holds by induction hypothesis.
-	\end{enumerate}
-
-	\bigskip\noindent
-	Let $ds \in \U, g \in \V$. Let $DS = ep(ds)$.
-	We want to prove  
-	$\bigcup\limits_{g' \in names(DS)} \{ \mu \cup [g \mapsto g'] \mid \mu
-	\in \ll P \rr^{DS}_{graph(g,DS)}, \mu \sim [b\mapsto g] \}  \supseteq Q(D) $.
-	Let $\sigma \in Q(D)$ be arbitrary.
-	Because $\sigma \in Q_{D}$ and $g \in V$ we have that $\sigma(g) =
-	g'$ for some $g' \in names(DS)$.
-	Case distinction:
-	\begin{enumerate}
-		\item $\sigma \in Q_{T_1}(D)$:  Because the assumption implies $\sigma
-			\in Q_1(D)$	we can then use the induction hypothesis  
-			$\bigcup\limits_{g \in names(DS)} \{ \mu \cup [g \mapsto g'] \mid \mu
-			\in \ll P_1 \rr^{DS}_{graph(g',DS)}, \mu \sim [g\mapsto g'] \}  =
-			Q_1(D) $. Let $\mu = \sigma \backslash [g \mapsto g']$. 
-			Thus $\mu \in \ll P_1 \rr^{DS}_{graph(g',DS)}$ 
-			and we also have $\{\mu \not\sim \mu_2 \mid \forall \mu_2 \in
-			\ll P_2 \rr^{DS}_{graph(g',DS)} \}$ because of our assumption.
-			Thus $\mu \in \ll P \rr_{graph(g',DS)}^{DS}$ and $\mu \sim [g
-			\mapsto g']$ by induction hypothesis.
-		\item If $\sigma \in Q_{T'}(D)$  we can use the induction hypothesis twice:\\
-			$\bigcup\limits_{g \in names(DS)} \{ \mu_i \cup [g \mapsto g'] \mid \mu_i
-			\in \ll P_i \rr^{ep(ds)}_{graph(g',ep(ds))}, \mu_i \sim [g\mapsto g'] \}  =
-			Q_i(D)$ for $i=1,2$.\\
-			Let $\mu = \sigma \backslash [g \mapsto g']$.
-			Because $\sigma \in Q_{T'}(D)$ we have $\mu = \mu_1 \cup \mu_2$ for
-			some $\mu_{1|vars(Q_1)}\cup[g \mapsto g'] \in Q_1(D)$ (restricted to
-			the variables in $Q_1$) and $\mu_{2|vars(Q_2)}\cup [g \mapsto g'] \in Q_2(D)$ (restricted to
-			the variables in $Q_2$).
-			Thus $\mu \in \ll P_1 \AND P_2 \rr^{ep(ds)}_{graph(ds,g')}$
-			and $\mu \in \ll P \rr^{ep(ds)}_{graph(g',ds)}$. Also $\mu \sim [g \mapsto
-			g']$ holds by induction	hypothesis.
-	\end{enumerate}
-
-	\bigskip\noindent
-	Let $ds,g \in \V$ We want to prove  
-	$\bigcup\limits_{g' \in names(ep(ds')), ds' \in dom(ep)} 
-	\{ \mu \cup \{[ds \mapsto ds'] [g \mapsto g']\} \mid \mu
-		\in \ll P \rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu \sim \{[ds \mapsto ds'] [g
-	\mapsto g']\} \}  \supseteq Q(D) $.
-	Let $\sigma \in Q(D)$ be arbitrary.
-	Because $\sigma \in Q_{D}$ and $ds,g \in V$ we have that $\sigma(g) =
-	g'$ and $\sigma(ds) = ds'$ for some $g' \in names(DS)$ and $ds' \in dom(ep)$.
-
-	Case distinction:
-	\begin{enumerate}
-		\item $\sigma \in Q_{T_1}(D)$: 
-			we can then use the induction hypothesis\\  
-			$\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(d))} \{ \mu \cup \{[ds
-				\mapsto ds'] [g	\mapsto g']\} \mid \mu
-				\in \ll P_1 \rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu \sim \{[ds
-			\mapsto ds'] [g \mapsto g']\} \}  =	Q_1(D) $. 
-
-			Thus $\mu \in \ll P_1 \rr^{ep(ds')}_{graph(g',ep(ds'))}$ 
-			and we also have\\ $\{\mu \not\sim \mu_2 \mid \forall \mu_2 \in
-			\ll P_2 \rr^{ep(ds')}_{graph(g',ep(ds'))} \}$ because of our assumption.
-			Thus $\mu \in \ll P \rr_{graph(g',ep(ds'))}^{ep(ds')}$ and $\mu \sim
-			\{[ds' \mapsto ds],[g'\mapsto g']\}$ by induction hypothesis.
-
-		\item If $\sigma \in Q_{T}(D)$  we can use the induction hypothesis twice:\\
-			$\bigcup\limits_{ds' \in dom(ep),g' \in names(ep(ds'))} \{ \mu_i \cup\{[ds
-					\mapsto ds'] [g \mapsto g'\}  \mid \\ \mu_i
-					\in \ll P_i \rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu_i \sim \{[ds
-				\mapsto ds'] [g \mapsto g']\}\}  = Q_i(D)$ for $i=1,2$.\\
-				Let $\mu = \sigma \backslash \{[ds \mapsto ds'] [g \mapsto g']\}$.
-				Because $\sigma \in Q_{T'}(D)$ we have $\mu = \mu_1 \cup \mu_2$ for
-				some $\mu_{1|vars(Q_1)}\cup\{[ds \mapsto ds'] [g \mapsto g']\}$(restricted to
-			the variables in $Q_1$) and 
-			$\mu_{1|vars(Q_1)}\{[ds \mapsto ds'] [g \mapsto g']\}$(restricted to
-			the variables in $Q_2$).
-				Thus $\mu \in \ll P_1 \ AND \ P_2 \rr^{ep(ds')}_{graph(g',ep(ds'))}$
-				and $\mu \in \ll P \rr^{ep(ds')}_{graph(g,ep(ds'))}$. Also $\mu \sim
-				\{[ds \mapsto ds'] [g \mapsto g']\}$ holds by induction
-				hypothesis.
-		\end{enumerate}
-
-	%%% GRAPH %%%%%%
-	\item Consider the case where $P$ is a graph pattern $(\mbox{GRAPH} \ u \ P_1)$. \\
-		Our outputquery is constructed as follows: Let $Q_1 = trans(P_1,u,g)$. 
-		Assuming $r_1$ is the root of $T_1$ and $\lambda(r_1) = q_1$ we define
-		\[ \lambda'(x) =\begin{dcases*} 
-				q_1, LOC(u,ds),LOC(g,ds)& if $x = r_1$\\
-				\lambda(x) & otherwise	\\
-			\end{dcases*}
-		\] and $trans(P,ds,g) = (T_1,\lambda',x_1)$.
-		
-		$\subseteq:$\\
-		$ds,g \in \U:$ \\
-		Let $DS = ep(ds)$ and $G = graph(g,DS)$.
-		Let $\mu \in \ll P \rr^{DS}_{G}$ be arbitrary.
-		Proceed by case distinction:
-		\begin{enumerate}
-			\item $u \in names(DS)$: We have $\mu \in \ll P_1
-				\rr^{DS}_{graph(u,DS)}$ by SPARQL semantics and assumption. By i.h. we have 
-				$Q_1(D) =  \ll P_1\rr^{DS}_{graph(u,DS)}$ and thus $\mu \in
-				Q_1(D)$. By
-				construction of our query $Q$ we see that $\mu \in Q(D)$.
-
-			\item $u \in \U \backslash names(DS)$:
-				Then $\ll P_1 \rr^{DS}_{graph(u,DS)} = \{\}$ by SPARQL semantics. But then
-				$Q(D) = \{\}$ because we added $LOC(u,ds)$ to the root of our
-				query Q.
-			\item $u \in V$:
-				Then $\mu \in S_1$ where\\ $S_1 =  \bigg\{\mu_1 \cup [ u \rightarrow s ] \mid
-					s \in names(DS), \mu_1 \in \ll P_1
-					\rr^{DS}_{graph(s,DS)}, [ u \rightarrow s ] \sim
-				\mu_1 \bigg\}$. 
-				By induction hypothesis we know that for $Q_1
-				= trans(P_1,ds,u)$ we have
-				$\bigcup\limits_{g'\in names(DS)} \{ \mu_1 \cup [u\mapsto g'] \mid
-					\mu_1 \in \ll P_1 \rr^{DS}_{graph(g',DS)}, \mu_1 \sim [u
-				\mapsto g']\} = Q_1(D)$. Because $\mu \in S_1$ there
-				is an $s \in names(DS)$ such  that there is a $\mu_1 \in \ll P_1
-				\rr^{DS}_{graph(s,DS)}$, $\mu = \mu_1 \cup [u \rightarrow
-				s]$ and  $\mu_1 \sim [u \mapsto s]$. By 
-				induction hypothesis we get that $\mu \in Q_1(D)$.
-				Looking at the construction of $Q$ we get $\mu \in Q(D)$.
-		\end{enumerate}
-
-		\bigskip\noindent
-		$ds \in \V, g \in \U:$ \\
-		We need to show 
-		$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
-			\ll P\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim
-		[ds\mapsto ds'] \}  \subseteq Q(D)$.
-		Let $ds' \in dom(ep)$ be arbitrary.
-		Let $\mu \in \ll P \rr^{ep(ds')}_{graph(g,ds')}$ where 
-		$\mu \sim [ds \mapsto ds']$ holds be arbitrary.
-		Proceed by case distinction:
-		\begin{enumerate}
-			\item $u \in names(ep(ds')):$ We have $\mu \in \ll P_1
-				\rr^{ep(ds')}_{graph(u,ep(ds'))}$ by SPARQL semantics. The
-				induction hypothesis $\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
-					\ll P_1 \rr^{ep(ds')}_{graph(u,ep(ds'))}, \mu \sim
-				[ds\mapsto ds'] \}  = Q_1(D)$ yields $\mu\cup [ds\mapsto ds'] \in Q_1(D)$. 
-				By construction of our query $Q$ we see that $\mu \cup [ds\mapsto ds'] \in Q(D)$.
-			\item $u \in \U \backslash names(ep(d))$:
-				Then $\ll P_1 \rr^{ep(ds')}_{graph(u,ep(ds'))} = \{\}$. But then
-				$Q(D) = \{\}$ because we added $LOC(u,ds)$ to the root of our
-				query Q.
-			\item $u \in V$:
-				then $\mu \in S_1$ where $S_1 =  \bigg\{\mu_1 \cup [ u \rightarrow s ] \mid
-					s \in names(ep(ds')),\\ \mu_1 \in \ll P_1
-					\rr^{ep(ds')}_{graph(s,ep(ds'))} \land [ u \rightarrow s ] \sim
-				\mu_1 \bigg\}$. 
-				By induction hypothesis we know that we receive a wdpt $Q_1
-				= trans(P_1,ds,u)$ for which \\
-				$\bigcup\limits_{g'\in names(ep(ds')),ds' \in dom(ep)} \{ \mu_1 \cup
-					\{[u\mapsto g'],[ds \mapsto ds']\} \mid\\
-					\mu_1 \in \ll P_1 \rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu_1 \sim
-					\{[u \mapsto g'], [ds \mapsto ds']\} = Q_1(D)$ holds. 
-					Because $\mu \in S_1$ there	is an $s \in names(ep(ds'))$ such
-					that there is a $\mu_1 \in \ll P_1
-					\rr^{ep(ds')}_{graph(s,ep(ds'))}$,
-					$\mu = \mu_1 \cup \{[u \rightarrow
-					s]\}$. We get that $\mu \in Q_1(D)$ by induction hypothesis.
-					Also we have that $\mu \cup [ds \rightarrow ds'] \in Q(D)$
-					because we conjunctively added $LOC(g,ds)$ to the root of $Q$ and we
-					assumed $\mu \sim [ds \sim ds']$ .
-			\end{enumerate}
-
-			\bigskip\noindent
-			$ds \in \U, g \in \V:$ \\ Let $DS = ep(ds)$.
-			We need to show\\
-			$\bigcup\limits_{g' \in names(DS)} \{ \mu \cup [g\mapsto g'] \mid \mu \in
-				\ll P \rr^{DS}_{graph(g',DS)}, \mu \sim
-			[g\mapsto g'] \}  \subseteq Q(D) $.
-			Let  $g' \in names(ep(ds))$ be arbitrary.
-			Let $\mu \in \ll P \rr^{DS}_{graph(g',DS)}$ where $\mu \sim [g
-			\mapsto g']$ holds be arbitrary.
-			Proceed by case distinction:
-			\begin{enumerate}
-				\item $u \in names(DS)$:
-					By SPARQL semantics we have that $\mu \in \ll P_1
-					\rr^{DS}_{graph(u,DS)}$.
-					We know that we receive a wdpt $Q_1	= trans(P_1,ds,u)$ 
-					for which by i.h.
-					$\ll P_1 \rr^{DS}_{graph(u,DS)} = Q_1(D)$ holds. Thus $\mu
-					\in Q_1(D)$.
-					Because of the construction of our query and especially the
-					conjunct $LOC(g,ds)$ in the root of $Q$ we have that 
-					$\mu \cup [g\mapsto g'] \in Q_1(D)$.
-
-				\item $u \in \U \backslash names(ep(ds))$:
-					then $\ll P_1 \rr^{DS}_{graph(u,DS)} = \{\}$. But then
-					$Q(D) = \{\}$ because we added $LOC(u,ds)$ to the root of
-					our query Q.
-				\item $u \in V$:
-					then $\mu \in S_1$ where $S_1 =  \bigg\{\mu_1 \cup [ u \rightarrow s ] \mid
-						s \in names(DS), \mu_1 \in \ll P_1
-						\rr^{DS}_{graph(s,DS)} \land [ u \rightarrow s ] \sim
-					\mu_1 \bigg\}$. 
-					By induction hypothesis we know that we receive a wdpt $Q_1
-					= trans(P_1,ds,u)$ for which\\ $\bigcup\limits_{g'\in names(DS)} 
-					\{ \mu_1 \cup \{[u\mapsto g']\} \mid 
-						\mu_1 \in \ll P_1 \rr^{DS}_{graph(g',DS)}, 
-					\mu_1 \sim \{[u \mapsto g']\}\} = Q_1(D)$ holds. Because $\mu \in S_1$ there
-					is an $s \in names(DS)$ such  that there is a $\mu_1 \in \ll P_1
-					\rr^{DS}_{graph(s,DS)}$, 
-					$\mu = \mu_1 \cup \{[u \rightarrow s]\}$. 
-					We get that $\mu \in Q_1(D)$ by induction hypothesis. 
-					We thus get that $\mu\cup[g\mapsto g'] \in Q(D)$ because we
-					conjunctively added $LOC(g,ds)$ to root of $Q$ and we
-					asssumed $\mu \sim [g\mapsto g']$.
-			\end{enumerate}
-
-			\bigskip\noindent
-			$ds,g \in \V:$ \\
-			We need to show 
-			$\bigcup\limits_{g' \in names(ep(ds')), ds' \in dom(ep)} \{ \mu \cup
-				\{[g \mapsto g'],[ds \mapsto ds']\} \mid \mu \in
-				\ll P\rr^{ep(ds')}_{graph(g',ep(ds'))}, \mu \sim
-			\{[ds \mapsto ds'][g\mapsto g']\} \}  \subseteq Q(D) $.
-			Let  $ds' \in dom(ep)$ and $g' \in names(ep(ds'))$ be arbitrary.
-			Let $\mu \in \ll P \rr^{ep(ds')}_{graph(g',ep(ds'))}$ where $\mu
-			\sim\{[ds\mapsto ds'], [g\mapsto g'] \}$ holds be arbitrary.
-			Proceed by case distinction:
-			\begin{enumerate}
-				\item $u \in names(ep(ds))$:\\
-					By SPARQL semantics we have $\mu \in \ll P_1
-					\rr^{DS}_graph(u,DS)$.
-					We know that we receive a wdpt $Q_1	= trans(P_1,ds',u)$ 
-					for which by i.h.
-					$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
-						\ll P_1\rr^{ep(ds')}_{graph(u,ep(ds'))}, \mu \sim
-					[ds\mapsto ds'] \}  = Q_1(D) $
-					holds. Thus $\mu \cup [ds \mapsto ds'] \in Q_1(D)$.
-					By construction of our query and especially the conjunct in the
-					root of $Q$, i.e., $LOC(g,ds)$ we have that $\mu \cup
-					\{[ds\mapsto ds'],[g \mapsto g']\} \in Q(D)$.
-
-				\item $u \in \U \backslash names(ep(ds'))$
-					then $\ll P_1 \rr^{ep(ds')}_{graph(u,ep(ds'))} = \{\}$. But then
-					$Q(D) = \{\}$ because we added $LOC(u,ds)$ to the root of
-					our query. 
-
-				\item $u \in V$:
-					then $\mu \in S_1$ where $S_1 =  \bigg\{\mu_1 \cup [ u \rightarrow s ]
-						\mid s \in names(ep(ds')),\\ \mu_1 \in \ll P_1
-						\rr^{ep(ds')}_{graph(s,ep(ds'))} \land [ u \rightarrow s ] \sim
-					\mu_1 \bigg\}$. 
-					By induction hypothesis we know that we receive a wdpt $Q_1
-					= trans(P_1,ds',u)$ for which \\
-					$\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(ds'))} \{ \mu
-						\cup \{[ds \mapsto ds'],[u \mapsto g']\} \mid \\ \mu \in
-						\ll P\rr^{ep(ds')}_{graph(g',ep(ds'))}, 
-					\mu \sim \{[ds\mapsto ds'], [g \mapsto g']\}\} = Q_1(D) $
-					holds. Because $\mu \in S_1$ there
-					is an $s \in names(ep(ds'))$ such  that there is a $\mu_1 \in \ll P_1
-					\rr^{ep(ds')}_{graph(s,ep(ds'))}$, $\mu = \mu_1 \cup \{[u \rightarrow
-					s]\}$ and  $\mu_1 \sim \{[u \mapsto s]\}$ by induction hypothesis. 
-					We thus get that $\mu\cup \{[g\mapsto g'],[ds \mapsto ds']\} \in Q(D)$ because we
-					conjunctively added $LOC(g,ds)$ to $Q$ and we assumed $\mu
-					\sim \{[g\mapsto g'],[ds \mapsto ds']\}$.
-			\end{enumerate}
-
-			\bigskip\noindent$\supseteq:$\\
-			$ds,g \in \U$\\
-			Let $\mu \in Q(D)$ be arbitrary.
-			\begin{enumerate}
-				\item $u$ is a constant: Because $\mu \in Q(D)$ a part of $\mu$
-					must also satisfy $Q_1(D)$ by construction of $Q$. %then $Q_1 = trans(P_1,ds,u)$ and 
-					We have by induction hypothesis that $Q_1(D) = \ll P_1
-					\rr^{ep(ds)}_{u}$. And thus by SPARQL semantics 
-					$\mu \in \ll P\rr^{ep(ds)}_{g}$ holds.
-				\item $u$ is a variable: By induction hypothesis
-					$\bigcup\limits_{g' \in names(ep(ds))} \{ \mu_1 \cup [u\mapsto
-						g'] \mid \mu_1 \in \ll P_1
-						\rr^{ep(ds)}_{graph(g',ep(ds))}, \mu_1 \sim [u
-					\mapsto g']\} = Q_1(D)$ holds. 
-					By the fact that $\mu \in Q(D)$ and both $g$ and $ds$ are
-					URIs we know that $\mu \in Q_1(D)$ by construction of $Q$. 
-					By induction hypothesis we have $\mu = \mu_1 \cup [u \mapsto g']$ for some $g' \in
-					names(ep(ds))$. We know that $\mu_1 \in \ll P_1
-					\rr^{ep(ds)}_{graph(g',ep(ds))}$  and $\mu_1 \sim
-					[u\mapsto g']$ by induction hypothesis.
-					But this means by semantics of the GRAPH operator that $\mu \in \ll P
-					\rr^{ep(ds)}_{graph(g,ep(ds))}$.
-			\end{enumerate}
-
-			\bigskip\noindent
-			$ds \in \V,g \in \U$\\
-			We want to show $\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds
-				\mapsto ds'] 
-				\mid \mu \in \ll P\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim
-			[ds\mapsto ds'] \}  \supseteq Q(D)$.
-
-			Let $\sigma \in Q(D)$ be arbitrary:
-			\begin{enumerate}
-				\item $u$ is a constant:
-				   %Because $\sigma \in Q(D)$ a part of $\sigma$ must also satisfy
-				   %$Q_1(D)$ by construction of $Q$.	
-					We have by induction hypothesis that 
-					$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
-						\ll P_1\rr^{ep(ds')}_{graph(u,ep(ds'))}, \mu \sim
-					[ds\mapsto ds'] \}  \supseteq Q_1(D)$. A part of
-					$\sigma$, call it $\mu$ must fulfill $Q_1$ because of the
-					construction of $Q$. Thus $\mu \in \ll P_1
-					\rr^{ep(ds')}_{graph(u,ep(ds'))}$  and by SPARQL semantics $\mu \in \ll P_1
-					\rr^{ep(ds')}_{graph(g,ep(ds'))}$ hold. 
-					Looking at the construction of $Q$ we see that 
-					$\sigma = \mu \cup [ds \mapsto ds']$ for some $ds' \in
-					dom(ep)$ thus $\mu \sim [ds \mapsto ds']$ .
-
-				\item $u$ is a variable: By induction hypothesis
-					$\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(ds'))} \{
-						\mu_1 \cup \{[ds \mapsto ds'],[u \mapsto g']\} \mid \mu_1 \in
-						\ll P_1\rr^{ep(ds)}_{graph(g',ep(ds))}, 
-						\mu_1 \sim
-					\{[ds \mapsto ds'], [u \mapsto g']\}\} = Q_1(D) $  
-					holds.  Some submapping of $\sigma$ must fulfill $Q_1(D)$ by
-					construction of $Q$ and $\sigma \in Q(D)$. Call it $\mu$.
-					%Also $\sigma(ds) = ds'$ for some $ds' \in dom(ep)$ by
-					%construction of $Q$ and $D$.
-					By the fact that $\mu \in Q_1(D)$ we thus know by induction
-					hypothesis that
-					$\mu = \mu_1 \cup \{[u \mapsto g'],[ds \mapsto ds']\}$
-					for some $g' \in names(ep(ds'))$ 
-					and some $ds' \in dom(ep)$. Also, we know that $\mu_1 \in \ll P_1
-					\rr^{ep(ds')}_{graph(g',ep(ds'))}$ and $\mu_1 \sim
-					[u\mapsto g']$.
-					But this means by semantics of the GRAPH operator that
-					$(\mu_1\cup[u\mapsto ds]) \in \ll P
-					\rr^{ep(ds')}_{graph(g,ep(ds'))}$.
-					Because $\mu \in Q_1(D)$ and $\mu = \mu_1
-					\cup \{ [ds \mapsto ds'],
-					[u \mapsto g'] \}$ implies
-					$(\mu_1\cup\{u \mapsto g'\}) \sim   [ds
-					\mapsto ds']$ we are done.  
-			\end{enumerate}
-
-			\bigskip\noindent
-			$ds \in \U,g \in \V$: Let $DS = ep(ds)$.
-			Let $\sigma(g) = f$.  By construction of $Q$ and $D$ we
-			get that $f \in names(ep(ds))$.
-
-			We want to show 
-			$\bigcup\limits_{f \in names(DS)}\{ \mu \cup [g \mapsto f] \mid \mu \in
-				\ll P\rr^{DS}_{graph(f,DS)} , \mu \sim
-			[g\mapsto f] \} \supseteq Q(D)$.
-			Let $\sigma \in Q(D)$ be arbitrary.
-			\begin{enumerate}
-				\item 					By induction hypothesis we know that 
-					$Q_1(D) = \ll P_1\rr^{DS}_{u}$. Looking at our mapping
-					$\sigma$ we know that there is a part of $\sigma$, call it $\mu$
-					for which $\mu \in Q_1(D)$ and thus $\mu \in \ll P_1
-					\rr^{DS}_{u}$ and  by SPARQL semantics $\mu \in \ll P_1
-					\rr^{DS}_{f}$ hold. 
-					We have $\mu \sim [g \mapsto f]$ for some 
-					$f \in names(DS)$ because of the
-					conjunct $LOC(g,ds)$ in the root of $Q$ and $\sigma = \mu \cup [g \mapsto f]$.
-				\item If $u$ is a variable then	consider $Q_1 = trans(P_1,ds,
-					u)$. By induction hypothesis
-					$\bigcup\limits_{g'\in names(DS)} \{ \mu_1 \cup [u\mapsto g'] \mid
-						\mu_1 \in \ll P_1 \rr^{DS}_{graph(g',DS)}, \mu_1 \sim [u
-					\mapsto g']\} = Q_1(D)$ holds. 
-					Some part of $\sigma$ must satisfy $Q_1$ by the construction of
-					$Q$ and $\sigma \in Q(D)$, call it $\mu$.
-					We first show that $\mu \in \ll P\rr^{DS}_{graph(f,DS)}$:
-					This means, we need to show that $\mu \in \ll P_1
-					\rr^{DS}_{graph(s,DS}$ for $s \in names(DS)$ and $[u \mapsto s]
-					\sim \mu$.
-					By our i.h. and $\mu \in Q_1(D)$ we know that
-					$\mu = \mu_1 \cup \{[u \mapsto s] \}$, for some $s \in
-					names(DS)$. We know again by i.h. that $\mu_1 \in \ll P_1
-					\rr^{DS}_{graph(s,DS)}$ and $\mu_1 \sim [u\mapsto s']$.
-					But this means by semantics of the GRAPH operator that $\mu_1
-					\cup [u \mapsto s] \in \ll P
-					\rr^{DS}_{graph(f,DS)}$ It remains to show that $\mu \sim
-					[g \mapsto f]$. Looking at the construction of the query we know
-					that $LOC(g,ds)$ must be fulfilled by $\sigma$. 
-					Thus $\mu \sim [g\mapsto f]$
-					because $\mu$ is a part of $\sigma$.
-			\end{enumerate}
-
-			\bigskip\noindent
-			$ds,g \in \V$:\\
-			We want to show 
-			$\bigcup\limits_{ds' \in dom(ep), f \in names(ep(ds'))} \{ \mu \cup
-				\{[ds \mapsto ds'],[g \mapsto f]\} \mid \mu \in
-				\ll P\rr^{ep(ds')}_{graph(g',ep(ds'))}, 
-				\mu \sim
-			\{[ds\mapsto ds'], [g \mapsto f]\}\} \supseteq Q(D) $
-			Let $\sigma \in Q(D)$ be arbitrary. Let $\sigma(ds) = ds'$ and
-			$\sigma(g) = f$. By the construction of $Q$ and $D$, $ds' \in
-			dom(ep)$ and $f \in names(ep(ds'))$.
-			\begin{enumerate}
-				\item $u$ is a constant: \\
-					By induction hypothesis we know that 
-					$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
-						\ll P_1 \rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim
-					[ds\mapsto ds'] \}  = Q_1(D) $. Looking at our mapping
-					$\sigma$ we know that there is a part of $\sigma$, call it $\mu$
-					for which $\mu \in Q_1(D)$ and thus
-					$\mu \backslash [ds\mapsto ds'] \in \ll P_1
-					\rr^{ep(ds')}_{u}$. By semantics of graph we have 
-					$\mu \backslash [ds\mapsto ds'] \in \ll P_1
-					\rr^{ep(ds')}_{f}$.
-					We have $\mu \backslash [ds \mapsto ds'] \sim [g \mapsto f]$ 
-					and $\mu \sim [ds \mapsto ds']$ because  $\mu \backslash [ds \mapsto
-					ds']\subseteq \sigma$, $\sigma \in Q(D)$ and 
-					because of the conjunct $LOC(g,ds)$ in the root of $Q$.
-				\item $u$ is a variable:
-					By induction hypothesis
-					$\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(ds'))} \{ \mu
-						\cup \{[ds \mapsto ds'],[u \mapsto g']\} \mid \mu \in
-						\ll P_1\rr^{ep(ds')}_{graph(g',ep(ds'))}, 
-						\mu \sim
-					\{[ds\mapsto ds'], [u \mapsto g']\}\} = Q_1(D) $  
-					holds. 
-					Some part of $\sigma$ must satisfy $Q_1$ by the construction of
-					$Q$ and $\sigma \in Q(D)$, call it $\mu$. Let $\mu(u) = g'$
-					for some $g' \in names(ds')$. Because $\mu \in
-					Q_1(D)$ we can use the induction hypothesis:
-					This means $\mu\backslash\{[ds \mapsto ds'],[u
-					\mapsto g']\} \in \ll
-					P_1\rr^{ep(ds')}_{graph(g',ep(ds'))}$. Obviously $\mu
-					\backslash\{[ds \mapsto ds']\} \sim [u \mapsto g']\}$.
-					From the semantics of the GRAPH operator we get 
-					$\mu\backslash\{[ds \mapsto ds']\} \in \ll
-					P_1\rr^{ep(ds')}_{graph(f,ep(ds'))}$.
-					It remains to show that $\mu \sim
-					[g \mapsto f]$ and $\mu \sim [ds \mapsto ds']$. Looking at
-					the construction of the query we know
-					that $LOC(g,ds)$ must be fulfilled by $\sigma$. 
-					Thus $\mu \sim [g\mapsto f]$
-					because $\mu$ is a part of $\sigma$ the same arguments
-					hold for $\mu \sim [ds \mapsto ds']$.
-			\end{enumerate}
-
-			%%% SERVICE %%%%%
-		\item Consider the case where $P$ is a graph 
-			pattern of the form $(\mbox{SERVICE} \ u \ P_1)$.
-			$trans$ checks if $u \in \U$ and $u \notin dom(ep)$. If this is the
-			case $Q: \{\} \rightarrow$. Otherwise we let $Q = trans(P_1,u,g)$
-			and add $LOC(u,ds)$ and $LOC(g,ds)$ to the root of $Q$.\\
-			$\subseteq:$\\
-			Let $ds,g \in U$. Let $DS = ep(ds)$ and $G = ep(g,DS)$.
-			Let $\mu \in \ll P \rr^{DS}_{G}$ be arbitrary.
-			\begin{enumerate}
-				\item  $u \in dom(ep)$:
-					that means that $\mu \in \ll P_1
-					\rr^{ep(u)}_{graph(def,ep(u))}$
-					but by i.h. we know that 
-					$\ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$ =
-					$Q_1(D)$.
-					By construction of $Q$ we have $\mu \in Q(D)$.
-				\item $u \in \U\backslash dom(ep)$:
-					Thus $\mu$ = $\mu_\emptyset$ which is the empty
-					mapping. This is the same mapping our query
-					$\{\} \leftarrow$ returns and we are
-					done.
-				\item $u \in \V$:
-					Thus $\mu \in \{ \mu_1 \cup [u \rightarrow s ] \mid
-						s \in dom(ep), \mu_1 \in \ll P_1
-						\rr^{ep(s)}_{graph(def,ep(s))} \land
-					[u \rightarrow s] \sim \mu_1 \}$ by semantics. 
-					Assume $\mu(u) = s$.
-					By induction hypothesis we know that 
-					$\bigcup\limits_{ds' \in dom(ep)} \{ \mu_1 \cup [u
-						\mapsto ds'] \mid \mu_1 \in
-						\ll P_1\rr^{ep(ds')}_{graph(def,ep(ds'))},
-					\mu_1 \sim [u\mapsto ds'] \}  =
-					Q_1(D) $. By semantics of SPARQL $\mu = \mu_1 \cup
-					[u \mapsto s]$ 
-					for $\mu_1 \in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))}$. 
-					By induction hypothesis we can conclude
-					$\mu \in Q_1(D)$.
-					By construction of $Q$ we have have $\mu = (\mu_1 \cup [u
-					\mapsto s])	\in Q(D)$. 
-			\end{enumerate}
-
-			\bigskip\noindent
-			Let $ds \in \V,g \in \U$.
-			We want to show\\ 
-			$\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds \mapsto ds'] \mid \mu \in
-			\ll P\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim  [ds\mapsto ds'] \}  
-			\subseteq Q(D)$.
-			Let $ds' \in dom(ep)$ be arbitrary.
-			Let $\mu \in \ll P \rr^{ep(ds')}_{graph(g,ds')}$ so that $\mu \sim
-			[ds\mapsto ds']$.
-			\begin{enumerate}
-				\item  $u \in dom(ep)$:
-					$\mu \in \ll P_1\rr^{ep(u)}_{graph(def,ep(u))}$ by semantics.
-					By i.h. we know that 
-					$\ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$ =
-					$Q_1(D)$. By construction of $q$ and especially the conjunct
-					$LOC(ds,g)$ in the root, we get $\mu\cup[ds \mapsto ds'] \in Q$.
-				\item $u \in I\backslash dom(ep)$:
-					By semantics $\mu$ = $\mu_\emptyset$ which is the empty
-					mapping. This is the same mapping our query
-					$\{\} \leftarrow$ returns and we are
-					done.
-				\item $u \in \V$:\\
-					By semantics $\mu \in \{ \mu_1 \cup [u \rightarrow s ] \mid
-						s \in dom(ep), \mu_1 \in \ll P_1
-						\rr^{ep(s)}_{graph(def,ep(s))} \land
-					[u \rightarrow s] \sim \mu_1 \}$. Assume $\mu(u) = s$.
-					By induction hypothesis we know that 
-					$\bigcup\limits_{ds' \in dom(ep)} \{ \mu_1 \cup [u
-						\mapsto ds'] \mid \mu_1 \in
-						\ll P_1\rr^{ep(ds')}_{graph(def,ep(ds'))},
-					\mu_1 \sim [u\mapsto ds'] \}  =
-					Q_1(D) $. By semantics of SPARQL $\mu = \mu_1 \cup
-					[u \mapsto s]$ for $\mu_1 \in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))}$.
-					By induction hypothesis we can conclude
-					$\mu \in Q_1(D)$.
-					By construction of $Q$ and especially the conjunct
-					$LOC(ds,g)$ in the root, we have 
-					$\mu \cup [ds\mapsto ds'] = (\mu_1 \cup [u
-					\mapsto s] \cup [ds \mapsto ds']) \in Q(D)$. 
-			\end{enumerate}
-
-			\bigskip\noindent
-			Let $ds \in \U,g \in \V$.
-			We want to show  $\bigcup\limits_{g' \in names(ep(ds))}\{ \mu \cup [g
-				\mapsto g'] \mid \mu \in \ll P\rr^{ep(ds)}_{graph(g',ep(ds))},
-			\mu \sim	[g\mapsto g'] \} \subseteq Q(D)$.
-			Let $g \in names(ep(ds))$ be arbitrary.
-			Let $\mu \in \ll P \rr^{ep(ds)}_{graph(g',ep(ds))}$ so that $\mu \sim
-			[g\mapsto g']$.
-
-			\begin{enumerate}
-				\item  $u \in dom(ep)$:
-					By semantics $\mu \in \ll P_1
-					\rr^{ep(u)}_{graph(def,ep(u))}$
-					and by i.h. we know that $\ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$ =	$Q_1(D)$.
-					By construction of $Q$ and especially the conjunct
-					$LOC(ds,g)$ in the root of $Q$ we have that $\mu\cup[g \mapsto g'] \in Q$.
-				\item $u \in \U\backslash dom(ep)$:
-					By semantics $\mu$ = $\mu_\emptyset$ which is the empty
-					mapping. This is the same mapping our query
-					$\{\} \leftarrow$ returns and we are
-					done.
-				\item $u \in \V$:
-					By semantics $\mu \in \{ \mu_1 \cup [u \rightarrow s ] \mid
-						s \in dom(ep), \mu_1 \in \ll P_1
-						\rr^{ep(s)}_{graph(def,ep(s))} \land
-					[u \rightarrow s] \sim \mu_1 \}$. Assume $\mu(u) = s$.
-					By induction hypothesis we know that 
-					$\bigcup\limits_{ds' \in dom(ep)} \{ \mu_1 \cup [u
-						\mapsto ds'] \mid \mu_1 \in
-						\ll P_1\rr^{ep(ds')}_{graph(def,ep(ds'))},
-					\mu_1 \sim [u\mapsto ds'] \} = Q_1(D) $.
-					By semantics of SPARQL $\mu = \mu_1 \cup
-					[u \mapsto s]$ for  $\mu_1 \in \ll
-					P_1\rr^{ep(s)}_{graph(def,ep(s))}$. 
-					By induction hypothesis we can conclude
-					$\mu \in Q_1(D)$.
-					By construction of $Q$ and especially the conjunct
-					$LOC(ds,g)$ we have $(\mu \cup [g \mapsto g']) = (\mu_1 \cup [u \mapsto s] 
-					\cup [g	\mapsto g']) \in Q(D)$. 
-			\end{enumerate}
-
-			\bigskip\noindent
-			Let $ds,g \in \V$.
-			We want to show  	
-			$\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(ds'))} \{ \mu \cup
-				\{[ds \mapsto ds'],[g \mapsto g']\} \mid \mu \in
-				\ll P\rr^{ep(ds')}_{graph(g',ep(ds'))}, 
-				\mu \sim
-			\{[ds \mapsto ds'], [g \mapsto g']\}\} = Q(D)$.
-			Let $ds' \in dom(ep)$ and $g' \in nameS(ep(ds'))$ be arbitrary.
-			Let $\mu \in \ll P \rr^{ep(ds')}_{graph(g,g')}$ so that $\mu \sim
-			[ds\mapsto ds']$.
-			\begin{enumerate}
-				\item  $u \in dom(ep)$:
-					By semantics $\mu \in \ll P_1
-					\rr^{ep(u)}_{graph(def,ep(u))}$
-					but by i.h. we know that 
-					$\ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$ =
-					$Q_1(D)$.
-					By construction of $Q$ and especially the conjunct
-					$LOC(ds,g$ in the root of $Q$ we
-					have that $\mu\cup \{[ds \mapsto ds'][g \mapsto g']\} \in Q$.
-				\item $u \in \U\backslash dom(ep)$:
-					By semantics $\mu$ = $\mu_\emptyset$ which is the empty
-					mapping. This is the same mapping our query
-					$\{\} \leftarrow$ returns and we are
-					done.
-				\item $u \in \V$:
-					
-					By semantics $\mu \in \{ \mu_1 \cup [u \rightarrow s ] \mid
-						s \in dom(ep), \mu_1 \in \ll P_1
-						\rr^{ep(s)}_{graph(def,ep(s))} \land
-					[u \rightarrow s] \sim \mu_1 \}$. Assume $\mu(u) = s$. We know that $s \in dom(ep)$.
-					By induction hypothesis we know that 
-					$\bigcup\limits_{ds' \in dom(ep)} \{ \mu_1 \cup [u
-						\mapsto ds'] \mid \mu_1 \in
-						\ll P_1\rr^{ep(ds')}_{graph(def,ep(ds'))},
-					\mu_1 \sim [u\mapsto ds'] \}  = Q_1(D) $. 
-					By semantics of SPARQL $\mu = \mu_1 \cup
-					[u \mapsto s]$ for $\mu_1 \in \ll P_1\rr^{ep(s)}_{graph(def,ep(s))}$. 
-					By induction hypothesis we can conclude
-					$\mu \in Q_1(D)$.
-					By construction of $Q$ and especially its conjunct in the
-					root $LOC(ds,g)$ we have 
-					$(\mu \cup \{[ds \mapsto ds'][g \mapsto g']\}) =
-					\mu_1 \cup \{[ds \mapsto ds'][g \mapsto g'], [u
-					\mapsto s]\} \in Q(D)$. 
-			\end{enumerate}
-
-
-
-			\bigskip\noindent$\supseteq:$\\
-			Let $ds,g \in \U$ and $\mu \in Q(D)$ be arbitrary.
-			\begin{enumerate}
-				\item Assume $u$ is an URI. 
-					By i.h. we know that 
-					$\ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$ =
-					$Q_1(D)$ and thus by construction of the query $Q$ and the
-					fact that $\mu \in Q(D)$, $\mu \in \ll P
-					\rr^{ep(ds)}_{graph(g,ep(ds))}$
-				\item Assume $u$ is a variable. By induction hypothesis we
-					know that  $\bigcup\limits_{ds' \in dom(ep)} \{ \mu_1 \cup [u
-						\mapsto ds'] \mid \mu_1 \in
-						\ll P_1\rr^{ep(ds')}_{graph(def,ep(ds'))},
-					\mu_1 \sim [u\mapsto ds'] \}  = Q_1(D) $.
-					%As $ Q = Q_1(D)  \land LOC(ds,g) \land  LOC(u,g)$ and the fact that
-					%$\mu \in Q(D)$ we can instantly see that $\mu \in \ll P
-					%\rr^{ep(ds)}_{graph(g,ep(ds))}$:
-					Assume w.l.o.g. $\mu(u) = s$.
-					$\mu_1 = \mu \backslash [u \mapsto s]$. By induction hypothesis we know
-					that $\mu_1 \in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))}$. By
-					construction of $Q$ especially the conjunct $LOC(u,g)$, $s \in dom(ep)$ 
-					and by our induction hypothesis $\mu_1 \sim	[u \mapsto s]$ holds.
-					By semantics $\mu \in \ll P \rr^{ds}_{graph(g,ep(ds))}$ follows.
-			\end{enumerate}
-
-			\bigskip\noindent
-			Let $ds \in \V, g \in \U$ and $\sigma \in Q(D)$ be arbitrary.
-			We need to show  $\bigcup\limits_{ds' \in dom(ep)} \{ \mu \cup [ds
-				\mapsto ds'] \mid \mu \in
-				\ll P\rr^{ep(ds')}_{graph(g,ep(ds'))}, \mu \sim
-			[ds \mapsto ds'] \}  \supseteq Q(D) $.
-			Assume that $\sigma(ds) = ds'$, because of the conjunct $LOC(ds,g)$
-			we have that $ds' \in dom(ep)$.
-			\begin{enumerate}
-				\item Assume $u$ is an URI. 
-					By i.h. we know that 
-					$\ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$ =
-					$Q_1(D)$. By the fact that $\sigma \in Q(D)$ and the
-					construction of $Q$ we can deduce that for a part of $\sigma$,
-					call it $\mu$, $\mu \in Q_1(D)$ holds. By i.h. we get
-					$\mu \in  \ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$.
-					From this we can deduce $\mu \in  \ll P_1
-					\rr^{ep(ds')}_{graph(g,ep(ds'))}$. Because $[ds \mapsto
-					ds'] \in \sigma$ and $\mu \subseteq \sigma$ we have $\mu
-					\sim [ ds \mapsto ds']$.
-
-					%and  because $Q = Q_1 \land LOC(ds,g) \land
-					%LOC(u,g)$ 
-					%we have $\sigma = \mu \cup [ ds \mapsto ds']$ for some $\mu \in Q_1 (D)$.
-					%It is by construction of our query thus obvious that
-					%$\mu \sim [ds \mapsto ds']$ 
-					%and $\mu \in \ll P \rr^{ep(ds')}_{graph(g,ep(ds')}$ 
-					%for some $ds'\in dom(ep)$ hold.
-				\item Assume $u$ is a variable. By induction hypothesis we
-					know that  $\bigcup\limits_{ds' \in dom(ep)} \{ \mu_1 \cup [u
-						\mapsto ds'] \mid \mu_1 \in
-						\ll P_1\rr^{ep(ds')}_{graph(def,ep(ds'))},
-					\mu_1 \sim [u\mapsto ds'] \}  = Q_1(D)$.
-					Let $\mu = \sigma \backslash [ds \mapsto ds']$. 
-					We can see that $\mu \in \ll P
-					\rr^{ep(ds')}_{graph(g,ep(ds'))}$ for some $ds' \in dom(ep)$:
-					Assume w.l.o.g. $\mu(u) = s$.
-					$\mu_1 = \mu \backslash [u \mapsto s]$. By induction hypothesis we know
-					that $\mu_1 \in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))}$. By our
-					construction $s \in dom(ep)$ and $\mu_1 \sim
-					[u \mapsto s]$ holds. It remains to show that $\mu \sim
-					[ds \mapsto ds']$
-					which follows from the construction of the query $Q$, i.e., the conjunct
-					$LOC(ds,g)$ in the root of $Q$ and the fact that $\sigma \in Q(D)$.
-			\end{enumerate}
-
-			\bigskip\noindent
-			Let $ds \in \U, g \in \V$ and $\sigma \in Q(D)$ be arbitrary.
-			We need to show 
-			$\bigcup\limits_{g' \in names(ep(ds))}\{ \mu \cup [g \mapsto g'] \mid \mu \in
-				\ll P\rr^{ep(ds)}_{graph(g',ep(ds))} , \mu \sim
-			[g\mapsto g'] \} \supseteq Q(D) $. 
-			Assume that $\sigma(g) = g'$, because of the conjunct $LOC(ds,g)$
-			we have that $g' \in names(ep(ds))$.
-			\begin{enumerate}
-				\item Assume $u$ is an URI. 
-					By i.h. we know that 
-					$\ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$ =
-					$Q_1(D)$. By the fact that $\sigma \in Q(D)$ and the
-					construction of $Q$ we can deduce that for a part of $\sigma$,
-					call it $\mu$, $\mu \in Q_1(D)$ holds. By i.h. we get
-					$\mu \in  \ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$.
-					From this we can deduce $\mu \in  \ll P_1
-					\rr^{ep(ds')}_{graph(g,ep(ds'))}$. Because $[g \mapsto
-					g'] \in \sigma$ and $\mu \subseteq \sigma$ we have $\mu
-					\sim [ g \mapsto g']$.
-					%By i.h. we know that 
-					%$\ll P_1 \rr^{ep(u)}_{graph(def,ep(u)}$ =
-					%$Q_1(D)$ and  because $Q = Q_1 \land LOC(ds,g) \land
-					%LOC(u,g)$ we have $\sigma = \mu \cup [ ds \mapsto ds']$ 
-					%for some $\mu \in Q_1 (D)$.
-					%It is by construction of our query obvious that $\mu
-					%\sim [g\mapsto g']$  
-					%and $\mu \in \ll P \rr^{ep(ds)}_{graph(g',ep(ds))}$ 
-					%for some $g' \in names(ep(ds))$ hold.
-
-				\item Assume $u$ is a variable. By induction hypothesis we
-					know that  $\bigcup\limits_{ds' \in dom(ep)} \{ \mu_1 \cup [u
-						\mapsto ds'] \mid \mu_1 \in
-						\ll P_1\rr^{ep(ds')}_{graph(def,ep(ds'))},
-					\mu_1 \sim [u\mapsto ds'] \}  = Q_1(D) $.
-					%We have by construction $ Q = Q_1(D)  \land LOC(ds,g) \land  LOC(u,g)$
-					%and by assumption 
-					%$\sigma \in Q(D)$. 
-					%Let $\sigma(g) = g'$ by the fact that
-					%$\sigma \in Q(D)$ and $Q =Q_1 \land LOC(ds,g) \land
-					%LOC(u,g)$ we have that $g \in names(ds))$. 
-					Let $\mu = \sigma \backslash [g
-					\mapsto g']$.
-					We can see that $\mu \in \ll P
-					\rr^{ep(ds)}_{graph(g',ep(ds))}$:
-					Assume w.l.o.g. $\mu(u) = s$.
-					$\mu_1 = \mu \backslash [u \mapsto s]$. By induction hypothesis we know
-					that $\mu_1 \in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))}$. By our
-					construction $s \in dom(ep)$ and by our induction hypothesis $\mu_1 \sim
-					[u \mapsto s]$ holds. It remains to show that $\mu \sim
-					[g \mapsto g']$
-					which follows from the construction of the query $Q$, i.e., the conjunct
-					$LOC(ds,g)$ and the fact that $\sigma \in Q(D)$.
-			\end{enumerate}
-
-			\bigskip\noindent
-			Let $ds,g \in \V$ and $\sigma \in Q(D)$ be arbitrary.
-			We need to show  \\
-			$\bigcup\limits_{ds' \in dom(ep), g' \in names(ep(d))} \{ \mu \cup
-				\{[ds \mapsto ds'],[g \mapsto g']\} \mid\\ \mu \in
-				\ll P\rr^{ep(ds')}_{graph(g',ep(ds'))}, 
-				\mu \sim
-			\{[ds\mapsto ds'], [g \mapsto g']\}\} \supseteq Q(D) $. 	
-			Assume that $\sigma(ds) = ds'$ and $\sigma(g) = g'$, because of the conjunct $LOC(ds,g)$
-			we have that $ds' \in dom(ep)$ and $g' \in names(ep(ds'))$.
-			\begin{enumerate}
-				\item Assume $u$ is an URI. 
-					By i.h. we know that 
-					$\ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$ =
-					$Q_1(D)$. By the fact that $\sigma \in Q(D)$ and the
-					construction of $Q$ we can deduce that for a part of $\sigma$,
-					call it $\mu$, $\mu \in Q_1(D)$ holds. By i.h. we get
-					$\mu \in  \ll P_1 \rr^{ep(u)}_{graph(def,ep(u))}$.
-					From this we can deduce $\mu \in  \ll P_1
-					\rr^{ep(ds')}_{graph(g,ep(ds'))}$. Because $\{[ds \mapsto
-					ds'],[g \mapsto g']\} \in \sigma$ and $\mu \subseteq \sigma$ we have $\mu
-					\sim \{[ ds \mapsto ds'], [g \mapsto g']\}$.
-					%By i.h. we know that 
-					%$\ll P_1 \rr^{ep(u)}_{graph(def,ep(u)}$ =
-					%$Q_1(D)$ and  because $Q = Q_1 \land LOC(ds,g) \land
-					%LOC(u,g)$ 
-					%we have $\sigma = \mu \cup [ ds \mapsto ds']$ for some $\mu \in Q_1 (D)$.
-					%It is by construction of our query obvious that $\mu
-					%\sim [g\mapsto g']$  
-					%and $\mu \in \ll P \rr^{ep(ds')}_{graph(g',ep(ds'))}$ 
-					%for some $ds' \in dom(ep)$ and $g' \in names(ep(ds'))$ hold.
-
-				\item Assume $u$ is a variable. By induction hypothesis we
-					know that  $\bigcup\limits_{ds' \in dom(ep)} \{ \mu_1 \cup [u
-						\mapsto ds'] \mid \mu_1 \in
-						\ll P_1\rr^{ep(ds')}_{graph(def,ep(ds'))},
-					\mu_1 \sim [u\mapsto ds'] \}  = Q_1(D) $.
-				%	We have by construction $ Q = Q_1(D)  \land LOC(ds,g) \land  LOC(u,g)$
-				%	and by assumption 
-				%	$\sigma \in Q(D)$.
-				%	
-				%	Let $\sigma(g) = g'$ and $\sigma(ds) = ds'$ by the fact that
-				%	$\sigma \in Q(D)$ and $Q =Q_1 \land LOC(ds,g) \land
-				%	LOC(u,g)$ we have that $ds' \in dom(ep)$ and $g \in names(ds'))$. 
-					Let $\mu = \sigma \backslash \{ [g
-				\mapsto g'][ds \mapsto ds']\}$.
-					We can see that $\mu \in \ll P
-					\rr^{ep(ds')}_{graph(g',ep(ds'))}$ for some $ds' \in
-					dom(ep)$ and $g' \in names(ep(ds'))$:
-					Assume w.l.o.g. $\mu(u) = s$.
-					$\mu_1 = \mu \backslash [u \mapsto s]$. By induction hypothesis we know
-					that $\mu_1 \in \ll P_1 \rr^{ep(s)}_{graph(def,ep(s))}$. By our
-					construction $s \in dom(ep)$ and by our induction hypothesis $\mu_1 \sim
-					[u \mapsto s]$ holds. 
-					It remains to show that $\mu \sim \{[ds \mapsto ds'] [g
-					\mapsto g'] \}$
-					which follows from the construction of the query $Q$, i.e., the conjunct
-					$LOC(ds,g)$ and the fact that $\sigma \in Q(D)$.
-			\end{enumerate}
-
-			%%% UNION%%%%%
-	%	\item Consider the case where $P$ is a graph pattern $(P_1 \ UNION \ P_2)$. 
-	%		Let $ds,g \in \U$ because UNION is top level.\\
-	%		$\subseteq:$\\
-	%		Let $\mu \in \ll P \rr^{ep(ds)}_{graph(g,ep(ds))}$ be arbitrary:
-	%		By semantics of SPARQL $\mu \in \ll P_1
-	%		\rr^{ep(ds)}_{graph(g,ep(ds))}$ or 
-	%		$\mu \in \ll P_2 \rr^{ep(ds)}_{graph(g,ep(ds))}$. By i.h. 
-	%		$\ll P_i \rr^{ep(ds)}_{graph(g,ep(ds))} = Q_i(D)$
-	%		where $i = 1,2$. 
-	%		Assume $\mu_1 = \mu$ then we have by induction hypothesis
-	%		$\mu_1 = \mu \in Q(D)$.
-	%		Analogously for $\mu_2 = \mu$.
-
-	%		\noindent$\supseteq:$\\
-	%		Let $\mu \in Q(D)$ be arbitrary:
-	%		Because $Q = \{Q_1,Q_2\}$ is a union of conjunctive queries we have
-	%		that $\mu \in Q_1(D)$ or $\mu \in Q_2(D)$.
-	%		Assume $\mu \in Q_1(D)$.
-	%		Because  $ Q_1(D) = \ll P_1 \rr_{ep(ds)}^{graph(g,ds)}$ 
-	%		we have that $\mu \in \ll P \rr^{ep(ds)}_{graph(g,ds)}$.
-	\end{enumerate}
-\end{proof}
-
-%\noindent Let $tr$ be the following function $tr: P \times DS \times \mu \mapsto Q \times D \times h$
-%where $P$ is a SPARQL graph pattern, 
-%$DS$ is a SPARQL dataset and $\mu$ is a mapping.  $Q$ is a
-%well-designed pattern tree, $D$ is a database and $h$ is a mapping 
-%(homomorphism from $Q$ to $D$). Our aim is to define $trans$ in 
-%such way, that the following equivalence holds: 
-%$\mu \in \ll P \rr^{DS}_{G} \Leftrightarrow h \in Q(D)$.
-The next step is to show that our well designed pattern tree that we received
-from our $trans$ function is a pattern tree, as it was defined by Definition~\ref{def:wdpt}.
+\begin{proofidea}
+	The four different cases in the lemma are needed to distinguish if we are currently inside a GRAPH 
+	pattern, inside a SERVICE pattern or inside both a GRAPH and a SERVICE
+	pattern where the destination was a variable. As the evaluation operator of
+	SPARQL, asssuming $P$ is a graph pattern, $\ll P \rr^{DS}_G$ only allows $DS$ to be a dataset and $G$ to be
+	a graph in the dataset $DS$, we utilize the union operator to simulate the
+	evaluation of $P$ over all possible datasets and their respective graphs if we are
+	inside both a GRAPH and a SERVICE operator (last case). If the pattern is only inside a GRAPH
+	operator the evaluation of $P$ over all the graphs in the current dataset is
+	simulated (third case). If the pattern is only inside a SERVICE operator the evaluation
+	of $P$ over all datasets in $range(ep)$ is simulated (second case). After receiving each
+	result mapping of $P$ over the corresponding dataset and graph we add
+	and additional mapping to the resultmapping, depending again if we are inside a SERVICE operator, a
+	GRAPH operator or inside both: This mapping has the variable(s) of
+	either the GRAPH operator or SERVICE operator or both in the domain. The
+	variable(s) map(s) to the current URI(s) of the dataset(second case) or
+	graph(third case) or both(fourth case). If this mapping is compatible with
+	our resultmapping the union of both mappings is added.
+
+	The statement is shown with an induction over the
+	structure of a graph pattern.
+	Because of the construction of $P_{wdgs}$, which doesn't allow
+	that an OPT operator occurs in the scope of an AND operator we are able to
+	argue over conjunctive queries in the cases where $P$ is a triple pattern or
+	$P$ is of the following form $P = (P_1 \AND P_2)$. In all the other cases we
+	need to argue over well-designed pattern trees. In all cases we need to
+	distinguish if we are inside a GRAPH operator, a SERVICE operator,in
+	both or in none. The long proof is due to this distinction.
+	The cases were $P$ is a triple pattern or a pattern of the form $P=(P_1 \AND
+	P_2)$ is described in Example\ref{exconjq}. The only difference is that we
+	have now have to consider the cases where we are inside a GRAPH operator, a SERVICE
+	operator or both. For this reason we are using 5-tuples in our $T$ relation
+	of our database, where the first two positions of the tuple describe the
+	dataset we are currently in and the graph of the dataset we want to evaluate
+	the tuple over. For the case that $P$ is $(P_1 \OPT P_2)$ we merge the wdPT
+	of $P_1$ and the wdPT of $P_2$ so that the roots of the two wdpts are
+	connected. We then use the semantics of wdpts to show that this ``joining''
+	of trees models the semantics of OPT. 
+	The GRAPH and the SERVICE operators are similary designed:
+	The query $P_1$ inside the GRAPH or SERVICE operator is evrluated by
+	$trans(P_1,ds,u)$ (for GRAPH, ds is the current dataset URI) and $trans(P_1,u,def)$ for SERVICE to a wdPT $Q_1$. To the root of $Q_1$ we add two relational
+	atoms. For the GRAPH operator $LOC(u,ds)$ and $LOC(g,ds)$ are added and
+	needed in the proof to justify that if $u$ and $ds$ are URIs there is a
+	dataset $ds$ so that $ds \in dom(ep)$ and $u \in names(ds)$. $LOC(g,ds)$ is
+	needed in the case that $g$ is a variable and we have a nested occurence of
+	GRAPH (e.g. $(\mbox{GRAPH} g (\mbox{GRAPH} u P_1)$). The mapping of $\mu(x)$ would
+	otherwise be lost in the query. The same arguments are there for SERVICE
+	except by semantics of the SERVICE operator $LOC(def,u)$ is needed because
+	SERVICE always changes to the default graph of a dataset.
+	The only difference in GRAPH and SERVICE is that again by semantics of
+	SERVICE we need to return the empty mapping instead of the empty set when an endpoint is not
+	reachable or it doesn't exist, which is modelled by $u \notin dom(ep)$. We
+	thus need to check the $ep$ function if the URI is in the domain of $ep$ and
+	if it isn't return $\{\} \leftarrow$.
+\end{proofidea}
+
+The full proof of Lemma~\ref{smalllemma} can be found in the Appendix. 
+
+The next step is to show that our well-designed pattern tree that we received
+from our $trans$ function is indeed a pattern tree, as it was defined by Definition~\ref{def:wdpt}.
 
 \begin{lemma}
 	Let $ds \in dom(ep)$, $g \in names(ep(ds))$ and $P \in P_{wdgs}$ be a SPARQL pattern.
-	Then $F = trans(P,ds,g)$ is a well-designed pattern tree. 
+	Then $Q = trans(P,ds,g)$ is a well-designed pattern tree. 
 \end{lemma}
 
 \begin{proof}
-	Let $Q=(T,\lambda,x) \in F$ be arbitrary. We prove each property seperately:
+	We prove each property of Definition~\ref{def:wdpt}seperately:
 	\begin{enumerate}
 		\item $T$ is rooted in a distinguished node $r$, the root and maps
 			each node $t$ in  $T$ to a set of relational atoms over $\sigma$:
@@ -1763,10 +364,10 @@ from our $trans$ function is a pattern tree, as it was defined by Definition~\re
 				\item Induction Step: If $\hat{P}$ is $(P_1 \OPT  P_2)$:
 					By induction hypothesis $Q_1 = trans(P_1,ds,g)$ and $Q_2 =
 					trans(P_2,ds,g)$ fulfill the property and $P \in P_{wdgs}$ 
-					and is a well designed SPARQL pattern by assumption. 
+					and is a well-designed SPARQL pattern by assumption. 
 
 					Assume that making $T_2$ a child of the root of $T_1$ 
-					results in a wdPT $Q$ which does not fulfill the well designedness property.
+					results in a wdPT $Q$ which does not fulfill the well-designedness property.
 					There must thus be a variable $x$ in $T$ (the roots of $T_1$
 					and $T_2$ get connected) which appears in two different subgraphs of $T$. This
 					two subgraphs can only be situated in $T_1$ and $T_2$ respectively by induction
@@ -1778,7 +379,7 @@ from our $trans$ function is a pattern tree, as it was defined by Definition~\re
 							construction $(P' \OPT P'')$ where $P''$ contains $x$ but $P'$ doesn't. 
 							As $(P' \OPT P'')$ is part of $P_1$ 
 							and we have $(P_1 \OPT P_2)$ and $P_2$ contains $x$ we have a
-							contradiction to the assumption that $P$ is a well designed SPARQL
+							contradiction to the assumption that $P$ is a well-designed SPARQL
 							patterns.
 						\item $T_2$ contains a subgraph containing $x$ but the root $r_2$ does not
 							contain the variable $x$. This can be shown
@@ -1818,11 +419,11 @@ from our $trans$ function is a pattern tree, as it was defined by Definition~\re
 							subpattern $(P' \OPT P'')$.
 						\item Let $x = g$. This means that we are inside a graph
 							pattern $(\mbox{GRAPH } g \ P^\sim)$ and thus $P$ is
-							not well designed because $P_1$ contains the
+							not well-designed because $P_1$ contains the
 							subpattern $(P' \OPT P'')$.
 						\item Let $x = ds$. This means that we are inside a
 							SERVICE	pattern\\ $(\mbox{SERVICE } g \ P^\sim)$ and thus $P$ is
-							not well designed because $P_1$ contains the
+							not well-designed because $P_1$ contains the
 							subpattern $(P' \OPT P'')$.
 					\end{enumerate}
 
@@ -1885,8 +486,8 @@ wdPT $Q$ and database $D$ with our function $trans$ so that
 $\ll P \rr^{DS}_def = Q(D)$.
 \begin{theorem}\label{biglemma}
     Let $P$ be a graph pattern in $P_{wdgs}$, $DS$ a dataset and $G$ a graph in $DS$.
-    Let $DS = ep(ds)$  and $G = graph(g,DS)$. Let $Q = trans(P,ds,g)$ be the
-    wdPT and $D = \bigcup\limits_{c \in dom(ep)} data(c)$. Then $\ll P \rr^{DS}_G = Q(D)$.
+    Let $DS = ep(ds)$  and $G = graph(g,DS)$. Let $Q = trans(P,ds,g)$ 
+    and $D = \bigcup\limits_{c \in dom(ep)} data(c)$. Then $\ll P \rr^{DS}_G = Q(D)$.
 \end{theorem}
 \begin{proof}
 	The database $D$ is the same database that is created in
@@ -1909,32 +510,67 @@ $\ll P \rr^{DS}_def = Q(D)$.
 \section{The complexity of EVAL($\l$) where $\l \in \{P,\u,\s\}$ }
 
 \begin{corollary}
-	The problems $EVAL(P_{wdgs})$ and $EVAL(\u_{wdgs})$ are coNP-complete and
-	$EVAL(\s_{wdgs})$ is $\Pi^P_2$-complete.
+	The problem $\mathit{\mathbf{EVAL(P_{wdgs})}}$ is coNP-complete.
+%	$\mathit{\mathbf{EVAL(\u_{wdgs})}}$ are coNP-complete and
+%	$\mathit{\mathbf{EVAL(\s_{wdgs})}}$ is $\Pi^P_2$-complete.
 \end{corollary}
-\begin{proof}
-The problem EVAL is defined in the following way:
+\begin{proof}\label{proof:p_wdgs}
+	The problem \textbf{EVAL} is defined in the following way:
 \begin{framed}\noindent \textbf{EVAL($\mathcal{L}$)}\\
 	\textbf{INPUT:} Dataset $DS$, graph pattern $P \in  \mathcal{L}$ and a mapping $\mu$.\\
 	\textbf{QUESTION:} Is $\mu$ in $\ll P \rr^{DS}_{def}$.
 \end{framed}
+Hardness of the problem follows immediately from the hardness of 
+\textbf{EVAL($P_{wd}$)}.
 Assume $ds = ep^{-1}(DS)$. %and $G = graph(def,DS)$.
 For the membership we propose the following procedure:
-Use the transformation function on the input graph pattern $P$ to obtain a wdPF
+Use the transformation function on the input graph pattern $P$ to obtain a wdPT
 $Q$, and the data function to obtain the database $D$. More formally:
 $Q = trans(P,ds,def)$ and $D = \bigcup\limits_{c\in dom(ep)} data(ep(c))$. This transformation is obviously
 possible in polynomial time if we assume $dom(ep)$ to be finite. We know by Theorem~\ref{biglemma} that 
 $\ll P \rr^{DS}_{def} = Q(D)$.
-For the projection-free case we can use the results in 
+For $\mathbf{\mathit{EVAL(P_{wdgs}}}$ we can use the results in 
 \cite{perez2009semantics}, i.e., that the evaluation problem for well-designed
 pattern trees without projection is coNP-complete and conclude a coNP runtime to
-check if $\mu \in Q(D)$.
-The hardness of the problem follows immediately from the hardness of
-\textbf{EVAL($P_{wd}$)}.
-In case of projection we use the results in \cite{letelier2013static}
-that the evaluation of $\mu \in Q(D)$ is $\Pi^P_2$-complete.
-Again hardness of the problem follows immediately from the hardness of 
+check if $\mu \in Q(D)$.  \end{proof}
+
+\begin{corollary}
+The problem $\mathit{\mathbf{EVAL(\u_{wdgs})}}$ is coNP-complete. 
+\end{corollary}
+\begin{proof}
+Hardness of the problem follows immediately from the hardness of 
+\textbf{EVAL($\u_{wd}$)}.
+Assume $ds = ep^{-1}(DS)$. %and $G = graph(def,DS)$.
+For the membership we propose the following procedure:
+If we have top-level union in the input graph pattern $P = P_{1} \UNION \cdots
+\UNION P_{n}$ use the transformation function on all the graph patterns of $P$, i.e., $P_1,\dots,P_n$
+to obtain a wdPF. More formally:
+$\bigcup\limits_{i=1,\dots,n}Q_i = trans(P_i,ds,def)$ and $D = \bigcup\limits_{c\in dom(ep)} data(ep(c))$. This transformation is obviously
+possible in polynomial time if we assume $dom(ep)$ to be finite. We know by Theorem~\ref{biglemma} that 
+$\ll P \rr^{DS}_{def} = Q(D)$.
+For $\mathbf{\mathit{EVAL(P_{wdgs}}}$ we can use the results in 
+\cite{perez2009semantics}, i.e., that the evaluation problem for well-designed
+pattern trees without projection is coNP-complete and conclude a coNP runtime to
+check if $\mu \in Q(D)$. 
+\end{proof}
+
+\begin{corollary}
+The problem	$\mathit{\mathbf{EVAL(\s_{wdgs})}}$ is $\Pi^P_2$-complete.
+\end{corollary}
+\begin{proof}
+Hardness of the problem follows immediately from the hardness of 
 \textbf{EVAL($\s_{wd}$)}.
+Assume $ds = ep^{-1}(DS)$. %and $G = graph(def,DS)$.
+For the membership we propose the following procedure:
+If we have top-level projection of the input graph pattern $P$ we  use the
+transformation function on the wdPT. More formally:
+$\bigcup\limits_{i=1,\dots,n}Q_i = trans(P_i,ds,def)$ and $D = \bigcup\limits_{c\in dom(ep)} data(ep(c))$. This transformation is obviously
+possible in polynomial time if we assume $dom(ep)$ to be finite. We know by Theorem~\ref{biglemma} that 
+$\ll P \rr^{DS}_{def} = Q(D)$.
+For $\mathbf{\mathit{EVAL(P_{wdgs}}}$ we can use the results in 
+\cite{letelier2013static}, i.e., that the evaluation problem for well-designed
+pattern trees with projection is $\Pi^P_2$-complete and conclude a $Pi^Pi_2$ runtime to
+check if $\mu \in Q(D)$. 
 \end{proof}
 
 %\section{Static Analysis}

@@ -1,10 +1,10 @@
 This section is a summary of ~\cite[p. 4-7]{BuilAranda20131}. In order to get a
 deeper understanding of the SERVICE operator it is mandatory to understand which
-problems occur when evaluating the SERVICE-operator.
-A direct implementation of the SERVICE-operator based of the semantics is
-infeasible in practice. Assume we would need to evaluate, given, for example $(\mbox{SERVICE }  x \
-P_1)$ where $P_1$ is any SPARQL graph pattern, $P_1$ over every 
-possible SPARQL endpoint. This is obviously impossible. To ensure that $P_1$
+problems occur when evaluating the SERVICE operator.
+A direct implementation of the SERVICE operator based of the semantics is
+infeasible in practice. Given $(\mbox{SERVICE }  x \
+P_1)$, if $x$ is not restricted to a finite set, we would have to evaluate $P_1$ over every 
+possible SPARQL endpoint in $dom(ep)$. This is obviously impossible. To ensure that $P_1$
 only gets evaluated over a finite set of URIs, $x$ needs to be limited to exactly
 those. In the W3C standard only indications are provided on how to evaluate the
 service operator~\cite{w3standardservice} when the location is a variable and
@@ -19,7 +19,7 @@ Then we consider the following query $P$ over the graph $G$ in the dataset $DS$:
 \begin{align*}
 	P=((x, service\_address, y) \AND (\mbox{SERVICE } y \ (z_n,email,z_e)))
 \end{align*}
-It is easy to se that $P$ is used to compute the list of names and email
+It is easy to see that $P$ is used to compute the list of names and email
 addresses that can be retrieved from the SPARQL endpoints stored in the RDF
 graph $G$ through the $service\_address$ triple. 
 The whole point of this example is to point out that there is a simple practical
@@ -29,8 +29,9 @@ mapping $\mu$ in this set we further evaluate $\ll (\mbox{SERVICE } a \ (z_n, em
 \rr^{DS}_G$, where $a = \mu(y)$. 
 \end{example}
 Throughout the chapter we will provide four different definitions on how the
-destinations of a SERVICE-operator can be bound within a graph pattern given the
-destination is a variable:
+destinations of a SERVICE-operator can be bound within a graph pattern if the
+destination is a variable. Those definitions were first introduced
+in~\cite{BuilAranda20131}.
 \begin{enumerate}
 	\item Boundedness: Boundedness is a na{\"i}ve semantic approach to the
 		problem. After formally defining the property, we will show that
@@ -48,20 +49,22 @@ destination is a variable:
 		graph pattern which is feasible to be evaluated in practice but not
 		strongly bound.
 
-	\item Service-boundedness: Service-boundedness is the ultimate solution for
+	\item Service-Boundedness: Service-Boundedness would be the optimal solution for
 		deciding which graph patterns can be evaluated in practice. If a pattern
-		is service-bound, it can be evaluated in practice. The problem however
+		is service-bounded, it can be evaluated in practice. The problem however
 		is, that the definition builds on the definition of boundedness which is
 		undecidable. Therefore service-boundedness is not feasible for practical
 		use.
-	\item Service-safeness: This is the final solution for the original problem.
-		Service-safeness is easy to decide and we will show that if a pattern is
-		service-safe, it is also service-bound.
+	\item Service-Safeness: The definition of Service-Safeness builds on the
+		definition of strong boundedness. 
+		Service-Safeness is easy to decide and we will show that if a pattern is
+		Service-Safe, it is also Service-Bound. This solution should be used in
+		practice for the original problem.
 \end{enumerate}
 
 In the last section we will discuss the difference of boundedness and strong
-boundedness (and thus service-boundedness and service-safeness because the
-latter definitions build on former definitions).
+boundedness (and thus Service-Boundedness and Service-Safeness because the
+latter definitions build on former definitions). 
 
 \section{The four different ways to bind the destination of a SERVICE-operator}
 
@@ -123,15 +126,30 @@ satisfiable.\\
 $(\Rightarrow)$:\\
 Assume now that the variable $x$ is bound in $Q$, i.e., for every RDF graph $G$
 in $DS$ and every $\mu \in \ll Q \rr^{DS}_G:$ $x \in dom(\mu)$ and $\mu(x) \in
-(dom(DS) \cup names(DS) \cup dom(P))$. We can instantly see that $x \in
-dom(\mu)$ must hold. And because by construction $P$ doesn't contain $x$, $\ll Q
-\rr^{DS}_G$ does not contain a mapping that satisfies $P$.\\
+(dom(DS) \cup names(DS) \cup dom(P))$. Let $DS$ be an arbitrary dataset and let
+$G$ be an arbitrary graph in $DS$.
+\begin{enumerate}
+	\item $\ll Q \rr^{DS}_G = \emptyset$. Because of $\ll Q \rr^{DS}_G =
+		\emptyset$, we can instantly see that $P$ is unsatisfiable.
+	\item $\ll Q \rr^{DS}_G \neq \emptyset$.\\
+		Let $\mu \in \ll Q \rr^{DS}_G$ be arbitrary.
+		We can instantly see that $x \in dom(\mu)$ must hold. 
+		Because by construction $P$ doesn't contain $x$, 
+		$\mu \notin \ll P \rr^{DS}_G$. Thus $P$ is unsatisfiable.
+\end{enumerate}
 \noindent$(\Leftarrow)$:\\
-Assume now that $P$ is satisfiable, i.e., there exists a dataset $DS$ and an RDF
-graph $G$ in $DS$ such that $\ll P \rr^{DS}_G \neq \emptyset$. Because 
-$\ll P \rr^{DS}_G \neq \emptyset$ we have that $\mu \in \ll P \rr^{DS}_G$. But
-$x \notin dom(\mu)$ by the definition of $P$ and thus $x$ cannot be bound in
-$P$ and we are done.
+Assume now that $P$ is not satisfiable. Let $DS$ be an arbitrary dataset and let
+$G$ be an arbitrary graph in $DS$. Because of our initial assumption $\ll P
+\rr^{DS}_G = \emptyset$. We will now further distinguish between two cases:
+\begin{enumerate}
+	\item $\ll Q \rr^{DS}_G = \emptyset$. Then $x$ is trivially bound in $Q$.
+	
+	\item $\ll Q \rr^{DS}_G \neq \emptyset$.\\
+		Let $\mu \in \ll Q \rr^{DS}_G$ be arbitrary.
+		We can instantly see by construction of $Q$ that $x \in
+		dom(\mu)$ must hold. By SPARQL semantics $\mu(x) \in dom(DS)$. Thus $x$
+		is bound in $Q$.\qedhere
+\end{enumerate}
 \end{proof} 
 
 As deciding boundedness for a variable is undecidable the notion of
@@ -208,10 +226,36 @@ operator can be evaluated in practice, the definition of Service-Boundedness is
 introduced. The definition of service-boundedness uses a parse tree to make sure
 that our evaluation takes bounded subpatterns into account.
 
+\begin{example}\label{ex:parsetree}[\cite{BuilAranda20131}]
+Parse tree $\T(Q)$ for the graph pattern \\ $Q = ((y,a,z) \UNION ((x,b,c) \AND (\mbox{SERVICE } x \ (y,a,z))))$.
+
+\begin{tikzpicture}[sibling distance=15em,
+  every node/.style = {shape=rectangle, rounded corners,
+    draw, align=center, top color=white}]]
+  \node {$u_1$: $((y,a,z) \UNION ((x,b,c) \AND (\mbox{SERVICE } x \ (y,a,z))))$}
+    child { node {$u_2$: $(y,a,z)$} }
+    child { node {$u_3$: $((x,b,c) \AND (\mbox{SERVICE } x \ (y,a,z)))$}
+      child { node {$u_4$: $(x,b,c)$}}
+      child { node {$u_5$: $(\mbox{SERVICE } x \ (y,a,z))$}
+	  child	{ node {$u_6$: $(y,a,z)$}} }};
+\end{tikzpicture}
+
+\end{example}
+
 \begin{definition}[Parse Tree, \cite{BuilAranda20131}]
 	A parse tree of a graph pattern $P$, $\T(P)$ is a tree where each
 	node is a sub-pattern of $P$. Each node has an identifier.
+	In the parse tree the child relation is used to store the structure of the
+	sub-patterns of the graph pattern. The root of the parse tree contains the pattern $P$. Then, 
+	in the child(ren) of $P$ the pattern is split up into the respective sub-pattern(s). This is done recursively 	until a node contains only a triple. 
+%Assume we have a SPARQL pattern $P$. 
+%	We will construct the parse tree $(V,E,r,\lambda)$, where $V$ is the set of vertices, 
+%	$E$ the set of edges, $r$ the root and $\lambda$ a labelling function as follows:
+	
+	
 \end{definition}
+In Example~\ref{ex:parsetree} a parse tree can be found
+
 
 Using the definition of a Parse Tree, Service-Boundedness can be defined.
 
@@ -273,8 +317,8 @@ and thus because $x$ occurs in a service operator, $Q$ is not service bound.
 \end{proof}
 
 As the problem of undecidability prevails with the definition of
-service-boundedness, we can again use the syntactic condition, i.e., strong boundedness to define
-service-safeness which is the same as service-boundedness but uses strongly
+Service-Boundedness, we can again use the syntactic condition, i.e., strong boundedness to define
+Service-Safeness which is the same as service-boundedness but uses strongly
 boundedness instead of boundedness. We know from
 Definition~\ref{def:strongboundedness} that evaluating if a variable is strongly
 bound in a graph pattern can be done efficiently.
@@ -295,10 +339,9 @@ As corollary to Proposition 1, the following proposition is obtained:
 \end{proposition}
 
 \section{The difference between boundedness and strong boundedness}
-It remains to find out what the difference between strong boundedness
-and boundedness is. Because boundedness $\not \Leftrightarrow$ strong-boundedness, there
-must be patterns which are bounded but not strongly bounded. These patterns are at least
-of theoretical interest and could harm the decidable procedure:
+It remains to find out what is the difference between strong boundedness
+and boundedness. Because boundedness is not equivalent to strong-boundedness, there
+must be patterns which are bounded but not strongly bounded. The following problem could arise:
 Assume a pattern is bounded but not strongly bounded. Then it is feasible to be evaluated, 
 but the proposed algorithm returns that it is not.
 
@@ -339,16 +382,16 @@ we can establish the following result.
 	$\mathbf{P}$ and a variable $x \in
 	var(P)$, whether $x$ is bound in $P$ is as hard as deciding $(P_1 \AND 
 	P_2)
-	\equiv (P_1 \OPT P_2)$ for every subpattern $(P_1 \OPT  P_2)$ of $P$ in the
-	given SPARQL fragment $\mathbf{P}$.
+	\equiv (P_1 \OPT P_2)$ %for every subpattern $(P_1 \OPT  P_2)$ of $P$% 
+	in the SPARQL fragment $\mathbf{P}$.
 \end{theorem}
 \begin{proof}
 	It is very easy to decide strong boundedness and Proposition~\ref{sbinb}
-	shows that if a variable $x$ is in $SB(P)$ then $x$ is also bound in $P$.
+	shows that if a variable $x$ is in $SB(P)$ then $x$ is also bounded in $P$.
 	We thus modify our pattern $P$ in such a way, that $SB(P)$ collects all the
-	variables which are bound, even those which are only bound but not strongly
-	bound.
-	Assume $x$ is bound in $P$ and $x \notin SB(P)$.
+	variables which are bounded, even those which are only bounded but not strongly
+	bounded.
+	Assume $x$ is bounded in $P$ and $x \notin SB(P)$.
 	There must thus be a subpattern $Q$ where $x \in vars(Q)$ but $x \notin
 	SB(Q)$. We will thus go through every step of the recursive approach of
 	Definition~\ref{def:strongboundedness} to find the culprit subpattern.
@@ -358,35 +401,67 @@ we can establish the following result.
 
 		\item If $Q$ is $(P_1 \AND P_2)$ then $SB(Q) = SB(P_1) \cup SB(P_2)$. By
 			assumption we know that $x \in vars(Q)$. By semantics of $\cup$ we
-			get that $Q$ can never lead to the loss of any variables.
+			get that $x \in SB(Q)$. 
 			
 		\item If Q is $(P_1 \UNION  P_2)$ then $SB(P) = SB(P_1) \cap SB(P_2)$.
 			By assumption we have that $x \in vars(P_1 \UNION P_2)$.
-			Assume $x$ gets lost in $Q$. 
+			Assume $x \notin SB(Q)$. 
 			We have a case distinction:
 			\begin{enumerate}
-				\item $x \in SB(P_1)$ and $x \in SB(P_2)$. We instantly have a
-					contradiction by semantics of $\cap$. 
+				\item $x \in SB(P_1)$ and $x \in SB(P_2)$.
+				 We instantly see by semantics of $\cap$ that $x \in SB(Q)$. 
 
 				\item Assume w.l.o.g. that $x \in SB(P_1)$ but $x \notin SB(P_2)$. 
-					This contradict the fact that $x$ is bounded in $P$:
+					This contradicts the fact that $x$ is bounded in $P$:
 					We could construct a dataset $DS$ with a graph $G$ in it s.t. there
-					is solution $\mu \in \ll P_2
-					\rr^{DS}_G$. By assumption we would then have that $\mu$ does not
-					contain $x$ in its domain. 
+					is a solution $\mu \in \ll P_2
+					\rr^{DS}_G$. By assumption we would then have that $x \notin dom(\mu)$.
 			\end{enumerate}
 
 		\item If $Q$ is $(P_1 \OPT  P_2)$ we have by definition of SB that $SB(P) = SB(P_1)$
 			So a variable $x$ gets lost if it is in $SB(P_2)$, but not in
 			$SB(P_1)$. When we have the case that $x$ is bound in $Q$ but not
-			strongly bound in $Q$ we must thus have $(P_1 \AND  P_2) \equiv
+			strongly bounded in $Q$ we must thus have $(P_1 \AND  P_2) \equiv
 			(P_1 \OPT  P_2)$ for every DS, Graph and $\mu \in \ll Q
 			\rr^{DS}_G$.
-		\item If $Q$ is $(\mbox{GRAPH } u \ P_1)$ it is obvious that no variables get lost
-			in $SB(Q)$.
-		\item If $Q = (\mbox{SERVICE }  u \ P_1)$ is is obvious that no variables are
-			lost.
+
+		\item If $Q$ is $(\mbox{GRAPH } u \ P_1)$. We have a case distinction:
+			\begin{enumerate}
+				\item If $u \in \V$ then it is obvious that if $x \in vars(Q)$ then 
+					$x \in SB(Q)$ holds because $vars(Q) = SB(Q)$.
+				\item If $u \in \U$ no variables in $vars(Q)$ are bounded because we could
+					assume a dataset $DS$ with a graph $G$ in it. Assume
+					further that $u \notin names(DS)$. Then $\ll Q \rr^{DS}_{G}
+					= \emptyset$. Then assume $P = Q \AND (x',y,z)$. 
+					We can easily see that $\ll P \rr^{DS}_{G} \neq \emptyset$.
+					But then there is a mapping $\mu \in \ll P \rr^{DS}_{G}$
+					but $x \notin dom(\mu)$ and thus $x$ would not be bound in $P$.
+			\end{enumerate}
+
+		\item If $Q = (\mbox{SERVICE }  u \ P_1)$ We have a case distinction:
+			\begin{enumerate}
+				\item If $u \in \V$. We again have two cases. 
+					\begin{enumerate}
+						\item $u = x$. 
+							Assume a dataset $DS$ with a graph $G$ in it.	
+							Assume $\mu \in \ll P\rr^{DS}_G$ arbitrary.
+							Then $x$ is not bound in $P$ because $\mu(x) \notin (dom(DS) \cup
+							names(DS) \cup dom(P))$ could hold because there
+							might be an URI referring to an endpoint which is
+							not in $(dom(DS) \cup
+							names(DS) \cup dom(P))$.
+						\item $x \in SB(P_1)$ But then we could possibly have that
+							$\mu(x) \notin (dom(DS) \cup names(DS) \cup dom(P))$
+					\end{enumerate}
+
+				\item If $u \in \U$ no variables in $vars(Q)$ are bounded because we
+					don't know whether $u \in dom(ep)$, SERVICE returns the empty
+					mapping $\mu_\emptyset$ in this case by SPARQL semantics. Thus if $x \in vars(Q)$,
+					$x \notin SB(Q)$ but $x$ is not bounded in $P$ either
+					because $x \notin \mu_\emptyset$.
+			\end{enumerate}
 	\end{itemize}
+
 	To modify our pattern $P$ in such a way, that $SB(P)$ collects all the
 	variables which are bound we would need to replace all occurrences of  $(P_1
 	\OPT P_2)$ with $(P_1 \AND P_2$ iff $(P_1 \AND  P_2) \equiv	(P_1 \OPT  P_2)$
