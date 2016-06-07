@@ -1,9 +1,8 @@
-Before providing any content it is important that several definitions that
-establish a firm basis are introduced. We will begin with conjunctive
-queries then proceed with RDF and SPARQL.
+We will introduce conjunctive queries first and then proceed with RDF and
+SPARQL. After defining these three concepts we will discuss the semantics of
+the GRAPH and SERVICE operator in SPARQL.
 
-\section{Definitions}
-
+\section{Conjunctive Queries, RDF, SPARQL}
 We will start out with the definition of a 
 relational schema, database and conjunctive query. 
 
@@ -17,14 +16,15 @@ schema..
 \begin{definition}[Database and relational atom]
 	Let $\sigma$ be a relational schema, 
 	$\U$ be an infinite set of constants and $\V$ an infinite set of variables.
-	A relational atom over $\sigma$ is an expression of the form $R(v)$ where $R$
-	is a relational name in $\sigma$ and $v$ is an n-tuple over $\U \cup \V$
+	A \emph{relational} atom over $\sigma$ is an expression of the form $R(v)$ where $R$
+	is a relational name with arity $n$ over $\sigma$ and $v$ is an $n$-tuple over
+	$\U \cup \V$.
 
-	A database $D$ over $\sigma$ is a set of relational atoms over $\sigma$ and
-	each n-tuple is in $\U$.
+	A \emph{database} $D$ over $\sigma$ is a set of relational atoms over $\sigma$ and
+	each $n$-tuple is in $\U$.
 \end{definition}
 
-After defining the meaning of a database and a schema we are ready to define
+After defining database and schema we are ready to define
 conjunctive queries.
 
 \begin{definition}[Conjunctive Queries]
@@ -33,17 +33,15 @@ conjunctive queries.
 	\begin{align*}
 		X \leftarrow R_1(\vec{v_1}), \dots, R_m(\vec{v_m}).
 	\end{align*}
-	Each $R_i(\vec{v_i}) (1\leq i \leq m)$ is a relational atom in $\sigma$ and 
+	Each $R_i(\vec{v_i}) (1\leq i \leq m)$ is a relational atom over $\sigma$ and 
 	$X$ is a subset of the set of variables that appear in the
-	$\vec{v_i}$'s.
+	$\vec{v_i}$s.
 \end{definition}
 
-It remains to define the semantics of a conjunctive query, i.e., how to evaluate
-a query over a given database and schema.
+In order to evaluate a CQ given a database over a relational schema, 
+we need to define the semantics which is given in terms of homomorphisms.
 \begin{definition}[Semantics of Conjunctive Queries]
-	In order to evaluate a CQ given a database $D$ over a relational schema $\sigma$
-	we need to define the semantics which is given in terms of homomorphisms.
-	Let $D$ be a database over $\sigma$.  A homomorphism from a CQ $Q$ to $D$ is a
+	Let $D$ be a database over schema $\sigma$.  A homomorphism from a CQ $Q$ to $D$ is a
 	partial mapping $h: X \rightarrow U$ such that $R_i(h(\vec{v_i})) \in D,$ for 
 	$1 \leq i \leq m$. $h_{|X}$ is the restriction of $h$ to the variables in
 	$X$. The evaluation $Q(D)$ is the set of all mappings of the form
@@ -53,24 +51,26 @@ a query over a given database and schema.
 We will now define a simplified but absolutely (for our purposes) sufficient version of the
 original formalisation of the RDF W3C-recommendation~\cite{rdf}:
 URI stands for Uniform Resource Identifier and is a string which is used to identify
-abstract and physical resources in the web.
+abstract and physical resources in the web. 
 We will focus on ground RDF graphs which means that we assume them to be composed of URIs only.
+Usually RDF graphs would also support the usage of blank nodes, which work like
+existential variables (see~\cite{hogan2014everything} for details).
 
 \begin{definition}[RDF]
 	Let $\U$ is the infinite set of URIs. An RDF triple is a tuple in $\U \times \U \times \U$, whereas an
-	RDF graph is a finite set of RDF triples. $dom(G) \subseteq \U$ of an RDF graph $G$ is the set of URIs actually appearing in $G$.
+	RDF graph is a finite set of RDF triples. Let $G$ be an RDF graph. Then
+	$dom(G) \subseteq \U$ is the set of URIs actually appearing in $G$.
 \end{definition}
 
-RDF is the database and SPARQL will be our query language. To use SPARQL we need
+RDF is the data format and SPARQL will be our query language. To use SPARQL we need
 to define the SPARQL syntax and semantics.
 
-\begin{definition}[SPARQL Syntax~\cite{pichler2014containment,
-	BuilAranda20131,perez2006semantics}]
+\begin{definition}[SPARQL Syntax~\cite{BuilAranda20131,perez2006semantics}]
 	Again $\U$ is an infinite set of URIs. 
 	$\V$ is an infinite set of variables with $\U \cap \V = \emptyset$. 
 	We will denote Variables in $\V$ with the letters $x,y,z,x',y',z',\dots$ and
 	symbols which are in $\V \cup \U$ with $u,v,w,u',v',w',\dots$ and
-	symbols which are in $\U$ with\\ $a,b,c,d,e,f,g,a',b',c',d',e',f',g',\dots$.
+	symbols which are in $\U$ with $a,b,c,d,e,f,a',b',c',d',e',f',\dots$.
 	
 	Filter constraints are conditions of the following form:
 	\begin{enumerate}
@@ -83,54 +83,78 @@ to define the SPARQL syntax and semantics.
 	SPARQL graph patterns are recursively defined as follows:
 	\begin{enumerate}
 		\item A triple pattern is a graph pattern.
-		\item If $P_1$ and $P_2$ are graph patterns, then $(P_1  \ \circ \ P_2)$ for
-			$\circ \in \{ AND, OPT, UNION\}$ is a graph pattern.
+		\item If $P_1$ and $P_2$ are graph patterns, then $(P_1  \circ P_2)$ for
+			$\circ \in \{ \mbox{AND}, \mbox{OPT}, \mbox{UNION}\}$ is a graph pattern.
 		\item If $P$ is a graph pattern and $R$ a filter constraint, then $(P \ FILTER \ R)$ is a graph pattern.
-		\item If $P$ is a graph pattern and $u \in (I \cup V)$, then $(\mbox{GRAPH} \  u \ P)$ is a graph pattern.
-		\item If $P$ is a graph pattern and $u \in (I \cup V)$, then $(\mbox{SERVICE} \  u \ P)$ is a graph pattern.
+		\item If $P$ is a graph pattern and $u \in (\U \cup \V)$, then $(\mbox{GRAPH} \  u \ P)$ is a graph pattern.
+		\item If $P$ is a graph pattern and $u \in (\U \cup \V)$, then $(\mbox{SERVICE} \  u \ P)$ is a graph pattern.
 	\end{enumerate}
-If $P$ is a graph pattern, $vars(P)$ denotes the set of variables occuring in $P$.
+If $P$ is a graph pattern, $\vars(P)$ denotes the set of variables occurring in $P$.
 \end{definition}
 
-We proceed by defining the semantics of SPARQL. 
-
-\begin{definition}[SPARQL Semantics~\cite{
-	BuilAranda20131,perez2006semantics}]\label{def:sparqlsem}
+We proceed by defining the semantics of SPARQL. To begin with, we need to define
+what mappings are:
+\begin{definition}[Mapping~\cite{perez2006semantics}]
 	A mapping is a function $\mu: A \rightarrow  \U$ for some $A \subset \V$. 
-	For a triple pattern $t$ with $vars(t) \subseteq dom(\mu)$, we write $\mu(t)$ to 
-	denote the triple after replacing the variables in $t$ by the corresponding 
-	URIs according to $\mu$. 
+\end{definition}
 
-	\noindent Two mappings $\mu_1$ and $\mu_2$ are called compatible (denoted $\mu_1 \sim \mu_2$) 
+For a triple pattern $t$ with $\vars(t) \subseteq dom(\mu)$, we write $\mu(t)$ to 
+denote the triple after replacing the variables in $t$ by the corresponding 
+URIs according to $\mu$. 
+
+We can then proceed to define when two mappings are compatible.
+\begin{definition}[Compatible Mappings~\cite{perez2006semantics}]
+	Two mappings $\mu_1$ and $\mu_2$ are called compatible (denoted $\mu_1 \sim \mu_2$) 
 	if $\mu_1(x) = \mu_2(x)$ for all $x \in dom(\mu_1) \cap dom(\mu_2)$.
+\end{definition}
 
-	\noindent A mapping $\mu_1$ is subsumed by $\mu_2$ (written $\mu_1 \sqsubseteq \mu_2$) 
+We denote $\mu_\emptyset$ as the mapping with empty domain. This means it is
+compatible with any other mapping.
+
+A given pattern is subsumed by another pattern if we can ``extend'' the original
+pattern to the other pattern.
+\begin{definition}[\cite{perez2006semantics}]
+	A mapping $\mu_1$ is subsumed by $\mu_2$ (written $\mu_1 \sqsubseteq \mu_2$) 
 	if $\mu_1 \sim \mu_2$ and $dom(\mu_1) \subseteq dom(\mu_2)$. $\mu_2$ is then called ``extension'' of $\mu_1$.
+\end{definition}
 
+We proceed with the definition of a dataset.
+\begin{definition}[\cite{BuilAranda20131,perez2006semantics}]
 	A dataset is a set $DS = \{(def, G), (g_1,G_1), \dots, (g_k, G_k) \}$, with
 	$k\geq 0$. It contains pairs of URIs and graphs,
 	where the default graph $G$ is identified by the special symbol $def \notin \U$
 	and the remaining so-called ``named'' graphs $(G_i)$ are identified by URIs
-	$(g_i \in \U)$. We assume that any query is evaluated over a fixed dataset $DS$
-	and that any SPARQL endpoint that is identified by an URI $c \in \U$ evaluates
-	its queries against its own fixed dataset 
-	$DS_c = \{ (def, G_c),(g_{c,1},G_{c,1}), \dots, (g_{c,k},G_{c,k})\}$.
-	We assume a function $graph(g,DS)$ which, given a Dataset $DS$ and a graph name $g$ as
+	$(g_i \in \U)$.
+\end{definition}
+We assume that any query is evaluated over a fixed dataset $DS$
+and that any SPARQL endpoint that is identified by an URI $c \in \U$ evaluates
+its queries against its own fixed dataset 
+$DS_c = \{ (def, G_c),(g_{c,1},G_{c,1}), \dots, (g_{c,k},G_{c,k})\}$.
+
+The functions $graph$, $names$ and $ep$ are further assumed to define the
+semantics of SPARQL.
+\begin{definition}[The functions graph, names and ep~\cite{
+	BuilAranda20131,perez2006semantics}]
+	We assume a function $graph(g,DS)$ which, given a Dataset $DS=\{(def, G), (g_1,G_1), \dots, (g_k, G_k) \}$
+	and a graph name $g$ as
 	input returns the graph corresponding to the symbol $g$. The function
-	$names(DS)$ returns the set of names of the input dataset $DS$.
-	$names(DS) = \{g_1,g_2,\dots,g_k\}$.
+	$names(DS)$ returns the set of names of the input dataset $DS$:
+	For example $names(DS) = \{g_1,g_2,\dots,g_k\}$.
 	We also assume a partial function $ep: \U \rightarrow DS$, such that for every $c \in
 	\U$, if $ep(c)$ is defined, then $ep(c) = DS_c$, i.e., the dataset associated with
 	the endpoint accessible via the URI $c$.
-	$\mu_\emptyset$ denotes the mapping with empty domain. This means it is
-	compatible with any other mapping.
-	The evaluation of graph patterns over an RDF Graph $G$, where $(g_1,G) \in
-	DS$ for $g_1 \in \U\cup\{def\}$ is formalized as a
+\end{definition}
+Finally we proceed to define the evaluation given a graph pattern, a dataset and
+a graph.
+\begin{definition}[SPARQL Semantics~\cite{
+	BuilAranda20131,perez2006semantics}]\label{def:sparqlsem}
+	The evaluation of graph patterns over an RDF Graph $G$ and Dataset $\DS$, where $(g_1,G) \in
+	\DS$ for $g_1 \in \U\cup\{def\}$ is formalized as a
 	function  $\llbracket \cdot \rrbracket_G^{DS}$, which, given a SPARQL graph pattern
 	returns a set of mappings.
 	For a graph pattern $P$, it is defined recursively:\\
 	\begin{enumerate}
-		\item $\ll t \rr_G^{DS} = \{ \mu \ | \ dom(\mu) = vars(t) \mbox{ and } \mu(t)
+		\item $\ll t \rr_G^{DS} = \{ \mu \ | \ dom(\mu) = \vars(t) \mbox{ and } \mu(t)
 			\in G \}$ for a triple pattern $t$.
 		\item $\ll P_1 \ \mbox{AND} \ P_2 \rr_G^{DS} = \{ \mu_1 \cup \mu_2  \ | \ \mu_1 \in \ll P_1
 			\rr_G^{DS},  \ \mu_2 \in \ll P_2 \rr_G^{DS} \mbox{ and } \mu_1 \sim \mu_2 \}$.
@@ -193,48 +217,31 @@ We proceed by defining the semantics of SPARQL.
 			destination of the pattern $P$.
 		\end{definition}
 
-		We will also define the fragment $P_{wdsg}$ which is crucial for proving the
-		complexity results. $P_{wdsg}$ is a fragment which allows the arbitrary use of
-		the GRAPH and SERVICE operator in any part of the query.
-		\begin{definition}[$P_{wdsg}$]
-			A pattern $Q \in P_{wdsg}$ if it adheres to the following grammar:
-			\begin{align*}
-				Q::= &\quad Y \mid (Y \OPT R)  \mid B \\
-				Y::= &\quad (Y \AND Y) \mid (\mbox{SERVICE } u \ Y) \mid (\mbox{GRAPH } u \
-				Y) \mid  B\\
-				R::= &\quad(R \OPT R) \mid (\mbox{GRAPH } u \ R) \mid (\mbox{SERVICE } u \ R) \mid B  \\
-				B::= &\quad(u,v,w)
-			\end{align*}
-			where	$u,v,w \in \U \cup \V$. In the first layer we separate the pattern
-			into an AND-part and an OPT-part. In the AND- and OPT-part we can use
-			SERVICE and GRAPH freely.
-		\end{definition}
-
 		\section{The Semantics of the SERVICE and GRAPH Operator}
 		We were introduced to the GRAPH and
-		SERVICE operators by \cite{BuilAranda20131} where Buil-Aranda et al.
-		describe the syntax and semantics of the SERVICE operator and how an efficient query
-		evaluation system can be implemented. 
-		Conversely to the semantic definition of the GRAPH operator in Definition~\ref{def:sparqlsem}, they provided the
+		SERVICE operators by \cite{w3standard}
+		but in the first formalization of it by Buil-Aranda et
+		al.~\cite{BuilAranda20131} the definition varied from the standard.
+		We tweaked their definitions so it reflected the standard.
+		Conversely to our semantic definition of the GRAPH operator in 
+		Definition~\ref{def:sparqlsem}, they provided the
 		following definition for GRAPH (note the difference in the second case):	
-
-		\scalebox{0.68}{
-			\vbox{
 				\begin{enumerate}
 					\item  $\ll \mbox{GRAPH } u \ P_1 \rr_G^{DS}  = \begin{cases} 
 							\ll P_1\rr_{graph(i,DS)}^{DS} &\mbox{if } u \in names(DS)\\	
 							\{ \mu_{\emptyset}\} & \mbox{if } u \in \U \backslash names(DS)\\
-							\bigg\{\mu \cup [u \rightarrow s ] \mid \exists s \in names(DS), \mu
+							^*
+							 & \mbox{if } u \in \V
+							\end{cases}$\\
+							$^*\big\{\mu \cup [u \rightarrow s ] \mid \exists s \in names(DS), \mu
 								\in \ll P_1 \rr^{DS}_{graph(s,DS)} \land [ u \rightarrow s ] \sim \mu
-							\bigg\} & \mbox{if } u \in \V
-							\end{cases}$\\ for $u \in \U \cup \V$.
+							\big\}$\\ for $u \in \U \cup \V$.
 					\end{enumerate}
-				}
-			}
 
-			Trying to propose an algorithm for evaluating CONTAINMENT[$S_1$,$S_2$] in the
-			fragment $P_{wdgs}$ and unveils some unintuitive features regarding the semantics of the
-			GRAPH operator. Consider the following example:
+			%Trying to propose an algorithm for evaluating CONTAINMENT[$S_1$,$S_2$] in the
+			%fragment $P_{wdgs}$ and unveils some unintuitive features regarding the semantics of the
+			%GRAPH operator. 
+			Consider the following example:
 			\begin{example}
 				$DS=\{(def,G_0), (a,G_1) \}$ where $G_0 = \{
 				(c,k,g), (a,k,g) \}$, $G_1$ is arbitrary and  $Q = (GRAPH \ x  \

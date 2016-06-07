@@ -1,4 +1,4 @@
-Though well-designed SPARQL is a fragment that covers a lot of practical SPARQL
+Although well-designed SPARQL is a fragment that covers a lot of practical SPARQL
 queries, (50\% of the queries over DBpedia that use the
 OPT-operator~\cite{Picalausa})
 many practical queries are not well designed and need to be analyzed. 
@@ -13,8 +13,10 @@ practice.
 		Consider the following example:
 		\begin{example}[Preference Pattern~\cite{kaminski_bwd}]\label{prefpattern}
 			\begin{align*}
-				P_1 =	\SELECT x, y  \WHERE ((x,rdf:type,foaf:person)\\ \OPT (x,foaf:name,y))\\
-				\OPT (x,v\_card:name,y)
+				P_1 =	\SELECT x, y  \WHERE
+				((\mathit{x,type,person})\\ \OPT
+				(\mathit{x,name,y}))\\
+				\OPT (\mathit{x,v\_card:name,y})
 			\end{align*}
 		\end{example}
 		It is obvious that the pattern $P$ in Example~\ref{prefpattern} 
@@ -22,23 +24,26 @@ practice.
 		$y$ does occur in two unrelated OPT parts of $P$. The
 		intuitive meaning might seem unclear at the first moment, 
 		but looking at the semantics of OPT sheds light on it: If the first OPT-operator
-		does not bind the variable $y$ through the triple $(x, foaf:name, y)$ 
+		does not bind the variable $y$ through the triple $\mathit{(x,
+		name, y)}$ 
 		and only then, $y$ is bound through the triple $(x, v\_card:name, y)$.
-		This could be used when we have two relations, in this case $foaf:name$
+		This could be used when we have two relations, in this case
+		$\mathit{name}$
 		and $v\_card:name$, which connect a name to an identifier but we prefer
-		the relation $foaf:name$ over $v\_card:name$.
+		the relation $\mathit{name}$ over $v\_card:name$.
 
 	\item The second practical use of non well-designed patterns are top level
-		FILTER expressions. Again for this usage consider the following query:
+		FILTER expressions. For this usage consider the following query:
 		\begin{example}[Top level
 			Filter~\cite{kaminski_bwd}]\label{toplevelfilter}
 			\begin{align*}
-				P_2 = \SELECT x,y \WHERE ((x,rdf:type,foaf:person)\\ \OPT (x,
-				foaf:name,y))\\ 
+				P_2 = \SELECT x,y \WHERE ((\mathit{x,type,person})\\
+				\OPT (\mathit{x,
+				name,y}))\\ 
 				\FILTER(\neg bound(y) \lor \neg(y = Ana)).
 			\end{align*}
 		\end{example}
-		The query $P_2$ again is not well-designed because the FILTER constraint
+		The query $P_2$ is not well-designed because the FILTER constraint
 		mentions the variable $y$, which occurs only in the optional
 		part. The practical intention of the query is to filter for people
 		where the name is not 'Ana' or do only have an id which is bound by
@@ -50,8 +55,8 @@ Example~\ref{prefpattern} and Example~\ref{toplevelfilter}, well-designed SPARQL
 This new fragment subsumes well-designed queries and it was shown in~\cite{kaminski_bwd} 
 that it has the same complexity 
 of query evaluation as well-designed queries. 
-Also, $99\%$ of the practical queries over DBPedia containing OPT are now captured by a 
-fragment which is well designed and thus proven to be efficient to evaluate.
+Also, $99\%$ of the practical queries over DBPedia containing OPT are captured
+by the weakly-well designed fragment of SPARQL and thus proven to be efficient to evaluate.
 To define the fragment of weakly well-designed pattern we need to define what it
 means for a subpattern to be dominated by another subpattern:
 \begin{definition}[~\cite{kaminski_bwd}]
@@ -93,7 +98,7 @@ notation can be generalised to wwd-patterns.
 
 \begin{definition}[OPT-FILTER-normal form~\cite{kaminski_bwd}]\label{ofnf}
 	A pattern $P$ is in OPT-FILTER-normal form (or OF-normal form)
-	if the following grammer can be tested positively:
+	if the following grammar can be tested positively:
 	\begin{align*}
 		&P ::=  F \mid (P \FILTER R) \mid (P \OPT S), \qquad S::= F\mid(S \OPT S),\\ 
 	 &F ::=(B \FILTER R)
@@ -137,7 +142,7 @@ Towards this goal, the following equivalence is needed:
 	\subseteq vars(P_1)$. Then the following equivalences hold:
 	\begin{align*}
 		(P_1 \OPT P_2) \AND P_3 \equiv (P_1 \AND P_3) \OPT P_2,\\
-		(P_1 \OPT P_2) \FILTER R \equiv (P_1 \FILTER R) OPT P_2.
+		(P_1 \OPT P_2) \FILTER R \equiv (P_1 \FILTER R) \OPT P_2.
 	\end{align*}
 \end{proposition}
 Using the two equivalences we can achieve our goal stated in
@@ -158,12 +163,12 @@ at its CPT.
 	A pattern $P$ in OF-normal form is weakly well-designed iff. for each edge
 	$(v,u)$ in its CPT $T(P)$ every variable $x \in vars(u) \backslash vars(v)$
 	occurs only in nodes $w$ such that $v \prec w$. The pattern is well-designed
-	iff. for every variable $x$ in $P$ the set of all nodes $v$ in $T(P)$ with
+	iff for every variable $x$ in $P$ the set of all nodes $v$ in $T(P)$ with
 	$x \in vars(v)$ is connected.
 \end{proposition}
 
-Kaminski and Kostylev found a unique property, which applies only for
-wwd-patterns: Each wwd-pattern is semantically equivalent to a pattern whose corresponding
+In~\cite{kaminski_bwd} a unique property, which applies only for
+wwd-patterns was found: Each wwd-pattern is semantically equivalent to a pattern whose corresponding
 CPT has depth one.
 \begin{definition}[\cite{kaminski_bwd}]
 	A pattern $P$ is in depth-one normal form if it has the structure
@@ -235,9 +240,9 @@ Consider first the formal evaluation problem for a given SPARQL fragment $\mathc
 	\textbf{QUESTION:} Is $\mu$ in $\ll Q \rr_G$.
 \end{framed}
 The fragment of general SPARQL graph patterns is denoted with $\u$ and it is a
-well known result that $EVAL(\u)$ is PSPACE-complete~\cite{perez2009semantics}.
+well known result that \textbf{EVAL($\u$)} is PSPACE-complete~\cite{perez2009semantics}.
 For the fragment of general queries extended with projection (i.e., $\s$)
-it was shown that $EVAL(\s)$) is PSPACE-complete~\cite{letelier2013static}.
+it was shown that \textbf{EVAL($\s$)} is PSPACE-complete~\cite{letelier2013static}.
 
 
 Similar to Algorithm~\ref{conpevalwd}, an algorithm for wwd-patterns exists. 
@@ -269,7 +274,7 @@ extended to a real solution. A real solution may not only extend the domain of a
 with previously undefined variables but it might also extend $T(P_\mu)$ to a
 child that is smaller in the order $\prec$ than some other node which was
 already in $T(P_\mu)$. But this means that variables bindings might get
-overriden. The next difference are non-well-designed top-level filters.
+overridden. The next difference are non-well-designed top-level filters.
 $pp$-solutions ignore top-level filters as it would be too restrictive as real
 solutions do not satisfy them either. 
 
@@ -330,7 +335,7 @@ some variables are assigned differently because $\prec$ visits some node first
 which contains the variable in a different triple resulting in a different
 assignment.
 (3) makes sure that the mapping fulfills the top-level filter at exactly the
-timepoint where the traversal reaches the corresponding special node $s$, which
+time point where the traversal reaches the corresponding special node $s$, which
 is denoted by $\mu_{|s}$.
 
 \begin{theorem}[\cite{kaminski_bwd}]
@@ -340,7 +345,7 @@ is denoted by $\mu_{|s}$.
 	We can easily transform the characterisation in
 	Lemma~\ref{lemsolwwd} to an	algorithm which is in coNP: 
 	Compute the maximal tree for $\mu$, $T(P_\mu)$. This is doable in polynomial
-	time. Now it remains to check that this tree is not extendable to linearly
+	time. Now it remains to check that this tree is not extendible to linearly
 	many of its children. As we then have to do a homomorphism check against
 	$G$, this is in coNP. The checks for top-level filters are polynomial again.
 \end{proofidea}
@@ -408,15 +413,15 @@ Now we are ready to establish our desired result.
 	monotone.
 	Consider the pattern
 	\begin{align*}
-		Q=((x,rdf:type,foaf:person) \OPT (x,foaf:name,y))\\
-		\OPT (x,v\_card:name,y)
+		Q=((\mathit{x,type,person)} \OPT \mathit{(x,name,y)})\\
+		\OPT \mathit{(x,v\_card:name,y)}
 	\end{align*}
 	and the two graphs
 	\begin{align*}
-		G_1 =& \{(P1,rdf:type,foaf:person) (P1, v\_card:name,Anastasia) \}
+		G_1 =& \{\mathit{(P1,type,person)} (P1, v\_card:name,Anastasia) \}
 		\mbox{ and } \\
-		G_2=& \{(P1,rdf:type,foaf:person), (P1, v\_card:name,Anastasia),\\
-			&(P1, foaf:name, Ana) \}.
+		G_2=& \{\mathit{(P1,type,person)}, (P1, v\_card:name,Anastasia),\\
+			   &\mathit{(P1, name, Ana)} \}.
 	\end{align*}
 	Clearly $G_1 \subseteq G_2$. Let $\mu_1 = \{x \mapsto
 	P1, y \mapsto Anastasia\}$ and let $\mu_2 = \{x \mapsto
@@ -424,7 +429,7 @@ Now we are ready to establish our desired result.
 	pattern that $\mu_1 \in \ll Q \rr_{G_1}$ and  $\mu_2 \in \ll Q \rr_{G_2}$. But
 	we cannot extend $\mu_1$ to $\mu_2$. Thus $\mu_1 \not\sqsubseteq \mu_2$ and
 	thus $P_{wd} < P_{wwd}$ follows from the fact that $P_{wd}$ is weakly
-	montone and the fact that $P_{wd} \subseteq P_{wwd}$.
+	monotone and the fact that $P_{wd} \subseteq P_{wwd}$.
 \end{proof}
 
 \begin{definition}[\cite{kaminski_bwd}]
@@ -494,6 +499,40 @@ Queries over unions of wwd-patterns are as expressive as full SPARQL.
 \begin{theorem}[\cite{kaminski_bwd}]
 	It holds that $\s_{wwd} \sim \s.$
 \end{theorem}
+\begin{proofidea}
+The Tr-normal form can be described by the following grammar:
+\begin{align*}
+	S::= T \FILTER R  \qquad T::= B \mid T \OPT B
+\end{align*}
+$B$ is a set of triple patterns and $R$ is a filter condition.
+A pattern $P$ is called Tr-normal if $P$ is a union of patterns $S$ described
+in the grammar. Every Tr-normal pattern is contained in $\u_{wwd}$.
+Let $Q$ be a graph pattern of the form\\ $\mbox{SELECT } X \mbox{ WHERE} \UNION U$. Where
+$U=\{P_1,\dots,P_n\}$ is a set of UNION-free patterns and UNION $U$ stands for
+$(\dots (P_1 \UNION P_2) \UNION \dots )  \UNION P_n$.
+$Tr(Q)$ describes the graph pattern $\mbox{SELECT } X \mbox{ WHERE } \UNION \{Tr_X(P) \mid
+P \in U\}$. A UNION-normal pattern is a graph pattern of the form 
+$(P_1 \UNION P_2 \UNION P_3 \\ \UNION \cdots \UNION P_n)$, where each $P_i \ (1\leq i
+\leq n)$ is UNION-free.
+
+Assume a pattern $P$ from general SPARQL which is UNION-free. The authors
+in~\cite{kaminski_bwd} developed a recursive procedure called $Tr_S(\cdot)$
+which transforms a graph pattern into a graph pattern in a special form.
+The following facts could be shown for $Tr_S(\cdot)$:
+$P|_S \equiv Tr_S(P)|_S$ for any finite set $S$ which means that $Tr_s(\cdot)$
+preserves the meaning of projection. $Tr(P)$ has been
+shown to have a result of the form $\mbox{UNION} U$ where every pattern $P' \in U$ is weakly well-designed.
+Additionally it has been shown that $Tr(P)$ is Tr-normal and hence in $\u_{wwd}$.
+For any UNION-normal pattern $Q$, it follows immediately that $Q \equiv Tr(Q)$. And as
+every query is equivalent to a UNION-normal pattern we are
+done~\cite{perez2009semantics}.
+
+
+
+
+
+
+\end{proofidea}
 
 \section{Static Analysis of wwd-Patterns}
 
@@ -522,6 +561,6 @@ for such procedure.
 	and \textbf{SUBSUMPTION($\u_{wwd}$)} are also in $\Pi^P_2$.
 	The hardness proofs for \textbf{SUBSUMPTION($P_{wwd}$)} and\\
 	\textbf{EQUIVALENCE($P_{wwd}$)} are by reduction from
-	$\forall\exists3SAT$.\\
+	$3-QSAT_{\forall,2}$.\\
 	\textbf{CONTAINMENT($P_{wwd}$)} is $\Pi^p_2$-hard by the results from~\cite{pichler2014containment}.
 \end{proofidea}
